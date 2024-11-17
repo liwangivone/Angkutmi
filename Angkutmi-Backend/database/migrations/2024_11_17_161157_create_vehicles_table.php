@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('vehicles', function (Blueprint $table) {
-            $table->id();
+            $table->integer('vehicle_id')->primary();
+            $table->enum('type', ['motor', 'pickup', 'truck']);
+            $table->integer('capacity');
+            $table->string('plat');
             $table->timestamps();
         });
     }
