@@ -12,8 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('drivers', function (Blueprint $table) {
-            $table->id();
+            $table->integer('phone_number')->primary();
+            $table->unsignedBigInteger('vehicle_id');
+            $table->string('password');
             $table->timestamps();
+
+            $table->foreign('vehicle_id')
+                  ->references('vehicle_id')
+                  ->on('vehicles')
+                  ->onDelete('cascade');
         });
     }
 
@@ -22,6 +29,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('drivers', function (Blueprint $table) {
+            $table->dropForeign(['vehicle_id']);
+        });
+
         Schema::dropIfExists('drivers');
     }
 };
