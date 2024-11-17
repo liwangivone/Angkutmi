@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
+            $table->enum('payment_type', ['debit', 'ovo'])->default('debit');
             $table->timestamps();
         });
     }
