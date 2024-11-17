@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
-            $table->id();
+            $table->integer('payment_id')->primary();
             $table->enum('payment_type', ['debit', 'ovo'])->default('debit');
             $table->timestamps();
         });

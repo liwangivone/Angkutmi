@@ -12,8 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('payment_processes', function (Blueprint $table) {
-            $table->id();
+            $table->unsignedBigInteger('trip_id');
+            $table->unsignedBigInteger('payment_id');
+            $table->boolean('payment_status')->default(false);
             $table->timestamps();
+
+            $table->foreign('trip_id')
+                  ->references('trip_id')
+                  ->on('trips')
+                  ->onDelete('cascade');
+      
+            $table->foreign('payment_id')
+                  ->references('payment_id')
+                  ->on('payments')
+                  ->onDelete('cascade'); 
         });
     }
 
@@ -22,6 +34,14 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('payment_processes', function (Blueprint $table) {
+            $table->dropForeign(['trip_id']);
+        });
+
+        Schema::table('payment_processes', function (Blueprint $table) {
+            $table->dropForeign(['payment_id']);
+        });
+
         Schema::dropIfExists('payment_processes');
     }
 };
