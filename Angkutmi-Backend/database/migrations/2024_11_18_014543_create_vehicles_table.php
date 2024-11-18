@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('vehicles', function (Blueprint $table) {
-            $table->integer('vehicle_id')->primary();
+            $table->unsignedBigInteger('vehicle_id')->primary();
             $table->enum('type', ['motor', 'pickup', 'truck']);
             $table->integer('capacity');
             $table->string('plat');
@@ -28,3 +28,8 @@ return new class extends Migration
         Schema::dropIfExists('vehicles');
     }
 };
+
+
+
+
+

@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('trips', function (Blueprint $table) {
-            $table->integer('trip_id')->primary();
-            $table->unsignedBigInteger('driver_id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('trip_id')->primary();
+            $table->integer('user_phone_number');
+            $table->integer('driver_phone_number');
             $table->boolean('is_started')->default(false);
             $table->boolean('is_completed')->default(false);
             $table->json('origin');
@@ -23,14 +23,14 @@ return new class extends Migration
             $table->dateTime('reserve_datetime');
             $table->timestamps();
 
-            $table->foreign('driver_id')
-                  ->references('driver_id')
-                  ->on('drivers')
+            $table->foreign('user_phone_number')
+                  ->references('phone_number')
+                  ->on('users')
                   ->onDelete('cascade');
             
-            $table->foreign('user_id')
-                  ->references('user_id')
-                  ->on('user')
+            $table->foreign('driver_phone_number')
+                  ->references('phone_number')
+                  ->on('drivers')
                   ->onDelete('cascade');
         });
     }
