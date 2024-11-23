@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('payment_processes', function (Blueprint $table) {
             $table->unsignedBigInteger('trip_id');
             $table->unsignedBigInteger('payment_id');
-            $table->integer('trip_price');
+            $table->integer('base_price');
+            $table->integer('final_price');
             $table->boolean('payment_status')->default(false);
             $table->timestamps();
 

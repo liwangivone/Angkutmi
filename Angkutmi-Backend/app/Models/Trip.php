@@ -16,8 +16,8 @@ class Trip extends Model
      */
     protected $fillable = [
         'trip_id',
-        'driver_id',
         'user_id',
+        'driver_id',
         'subscription_id',
         'is_started',
         'is_completed',

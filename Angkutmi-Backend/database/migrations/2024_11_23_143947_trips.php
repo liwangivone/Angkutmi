@@ -15,6 +15,7 @@ return new class extends Migration
             $table->unsignedBigInteger('trip_id')->primary();
             $table->integer('user_phone_number');
             $table->integer('driver_phone_number');
+            $table->unsignedBigInteger('subscription_id');
             $table->boolean('is_started')->default(false);
             $table->boolean('is_completed')->default(false);
             $table->json('origin');
@@ -32,6 +33,11 @@ return new class extends Migration
                   ->references('phone_number')
                   ->on('drivers')
                   ->onDelete('cascade');
+
+            $table->foreign('subscription_id')
+                  ->references('subscription_id')
+                  ->on('subscriptions')
+                  ->onDelete('cascade');
         });
     }
 
@@ -45,7 +51,11 @@ return new class extends Migration
         });
 
         Schema::table('trips', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
+            $table->dropForeign(['phone_number']);
+        });
+
+        Schema::table('trips', function (Blueprint $table) {
+            $table->dropForeign(['subscription_id']);
         });
 
         Schema::dropIfExists('trips');
