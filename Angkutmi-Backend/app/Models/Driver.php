@@ -21,4 +21,8 @@ class Driver extends Model
         'password',
         'profile_picture'
     ];
+
+    public function trips(){
+        return $this->hasMany(Trip::class);
+    }
 }
