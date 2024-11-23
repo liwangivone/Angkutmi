@@ -224,6 +224,8 @@ class HomeScreen extends StatelessWidget {
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white, // Changed background color to blue
+        selectedItemColor: const Color.fromARGB(255, 44, 158, 75), // Changed selected item color to blue
+        unselectedItemColor: Colors.grey, // Changed unselected item color to grey
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
