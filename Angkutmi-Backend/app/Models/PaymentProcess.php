@@ -17,6 +17,7 @@ class PaymentProcess extends Model
     protected $fillable = [
         'trip_id',
         'payment_id',
+        'trip_price',
         'payment_status'
     ];
 }
