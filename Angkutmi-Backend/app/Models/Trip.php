@@ -18,6 +18,7 @@ class Trip extends Model
         'trip_id',
         'driver_id',
         'user_id',
+        'subscription_id',
         'is_started',
         'is_completed',
         'origin',
@@ -31,5 +32,8 @@ class Trip extends Model
     }
     public function driver(){
         return $this->belongsTo(Driver::class);
+    }
+    public function subscription(){
+        return $this->belongsTo(Subscription::class);
     }
 }
