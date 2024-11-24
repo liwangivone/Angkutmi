@@ -52,4 +52,11 @@ class User extends Authenticatable
     public function trips(){
         return $this->hasMany(Trip::class);
     }
+
+
+    public function driver()
+    {
+        return $this->hasOne(Driver::class, 'user_id'); 
+    }
+
 }

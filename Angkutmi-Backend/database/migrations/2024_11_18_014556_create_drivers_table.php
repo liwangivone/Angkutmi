@@ -28,6 +28,12 @@ return new class extends Migration
                   ->references('vehicle_id')
                   ->on('vehicles')
                   ->onDelete('cascade');
+
+            // Foreign key relationship with users table
+            $table->foreign('user_id')
+                  ->references('id') // Assuming `id` is the primary key in `users` table
+                  ->on('users')
+                  ->onDelete('cascade');
         });
     }
 
@@ -42,6 +48,7 @@ return new class extends Migration
 
         Schema::table('drivers', function (Blueprint $table) {
             $table->dropForeign(['vehicle_id']);
+            $table->dropForeign(['user_id']); // Drop foreign key for user_id
         });
 
         Schema::dropIfExists('drivers');
