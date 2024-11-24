@@ -22,7 +22,7 @@ return new class extends Migration
         
             // Define the foreign key relationship
             $table->foreign('user_id')
-                  ->references('id')
+                  ->references('user_id')
                   ->on('users')
                   ->onDelete('cascade');
         });
@@ -35,7 +35,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('subscription', function (Blueprint $table) {
-            $table->dropForeign(['phone_number']);
+            $table->dropForeign(['user_id']);
         });
 
         Schema::dropIfExists('subscription');
