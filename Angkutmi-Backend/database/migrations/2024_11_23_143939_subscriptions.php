@@ -12,19 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('subscriptions', function (Blueprint $table) {
-            $table->unsignedBigInteger('subscription_id')->primary();
-            $table->integer('user_id');
+            $table->id('subscription_id'); // Primary key
+            $table->unsignedBigInteger('user_id'); // Foreign key
             $table->string('duration');
-            $table->string('purchase_date');
-            $table->string('expired_date');
-            $table->string('discount_rate');
+            $table->date('purchase_date'); // Use `date` for dates
+            $table->date('expired_date');  // Use `date` for dates
+            $table->decimal('discount_rate', 5, 2); // Use `decimal` for rates (e.g., percentages)
             $table->timestamps();
-
+        
+            // Define the foreign key relationship
             $table->foreign('user_id')
-                  ->references('phone_number')
+                  ->references('user_id')
                   ->on('users')
                   ->onDelete('cascade');
         });
+        
     }
 
     /**
@@ -33,7 +35,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('subscription', function (Blueprint $table) {
-            $table->dropForeign(['phone_number']);
+            $table->dropForeign(['user_id']);
         });
 
         Schema::dropIfExists('subscription');
