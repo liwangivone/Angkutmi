@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Driver extends Model
 {
     use HasFactory;
-
+    protected $primaryKey = 'driver_id';
     /**
      * Fillable attributes for the Driver model.
      *
@@ -33,7 +33,7 @@ class Driver extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
     /**

@@ -12,43 +12,31 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('drivers', function (Blueprint $table) {
-            $table->unsignedBigInteger('driver_id')->primary(); // Primary key `id` for drivers table (auto-incrementing)
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('driver_id')->primary(); // Primary key `driver_id`
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('vehicle_id');
-            $table->string('phone_number'); 
-            $table->string('password'); // Driver's password
+            $table->string('profile_picture')->nullable(); // Profile picture path or filename
             $table->timestamps(); // Timestamps for created_at and updated_at
-
+    
             $table->foreign('user_id')
-                  ->references('user_id')
+                  ->references('id') // References `id` in the `users` table
                   ->on('users')
                   ->onDelete('cascade');
-
+    
             $table->foreign('vehicle_id')
-                  ->references('vehicle_id')
+                  ->references('vehicle_id') // Assuming `id` is the primary key in `vehicles` table
                   ->on('vehicles')
-                  ->onDelete('cascade');
-
-            // Foreign key relationship with users table
-            $table->foreign('user_id')
-                  ->references('id') // Assuming `id` is the primary key in `users` table
-                  ->on('users')
                   ->onDelete('cascade');
         });
     }
-
-    /**
+        /**
      * Reverse the migrations.
      */
     public function down(): void
     {
         Schema::table('drivers', function (Blueprint $table) {
             $table->dropForeign(['user_id']);
-        });
-
-        Schema::table('drivers', function (Blueprint $table) {
             $table->dropForeign(['vehicle_id']);
-            $table->dropForeign(['user_id']); // Drop foreign key for user_id
         });
 
         Schema::dropIfExists('drivers');
