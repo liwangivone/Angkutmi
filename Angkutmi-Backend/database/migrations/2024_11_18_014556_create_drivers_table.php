@@ -12,12 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('drivers', function (Blueprint $table) {
-            $table->id(); // Primary key `id` for drivers table (auto-incrementing)
-            $table->unsignedBigInteger('vehicle_id'); // Foreign key for vehicles
-            $table->unsignedBigInteger('user_id'); // Foreign key for users (added field)
+            $table->unsignedBigInteger('driver_id')->primary(); // Primary key `id` for drivers table (auto-incrementing)
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('vehicle_id');
+            $table->string('phone_number'); 
+            $table->string('password'); // Driver's password
             $table->timestamps(); // Timestamps for created_at and updated_at
 
-            // Foreign key relationship with vehicles table
+            $table->foreign('user_id')
+                  ->references('user_id')
+                  ->on('users')
+                  ->onDelete('cascade');
+
             $table->foreign('vehicle_id')
                   ->references('vehicle_id')
                   ->on('vehicles')
@@ -36,6 +42,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('drivers', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+        });
+
         Schema::table('drivers', function (Blueprint $table) {
             $table->dropForeign(['vehicle_id']);
             $table->dropForeign(['user_id']); // Drop foreign key for user_id

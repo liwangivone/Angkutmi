@@ -26,12 +26,12 @@ return new class extends Migration
 
             // Define foreign key relationships
             $table->foreign('user_id')
-                  ->references('id')
+                  ->references('user_id')
                   ->on('users')
                   ->onDelete('cascade');
             
             $table->foreign('driver_id')
-                  ->references('id')
+                  ->references('driver_id')
                   ->on('drivers')
                   ->onDelete('cascade');
 
