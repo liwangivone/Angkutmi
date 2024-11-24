@@ -12,22 +12,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('payment_processes', function (Blueprint $table) {
-            $table->unsignedBigInteger('trip_id');
-            $table->unsignedBigInteger('payment_id');
+            $table->id(); // Primary key for the payment process record
+            $table->unsignedBigInteger('trip_id'); // Foreign key for trips
+            $table->unsignedBigInteger('payment_id'); // Foreign key for payments
             $table->integer('base_price');
             $table->integer('final_price');
             $table->boolean('payment_status')->default(false);
             $table->timestamps();
 
+            // Define foreign key relationships
             $table->foreign('trip_id')
-                  ->references('trip_id')
+                  ->references('trip_id') // References the `id` column in trips table
                   ->on('trips')
                   ->onDelete('cascade');
-      
+
             $table->foreign('payment_id')
-                  ->references('payment_id')
+                  ->references('payment_id') // References the `id` column in payments table
                   ->on('payments')
-                  ->onDelete('cascade'); 
+                  ->onDelete('cascade');
         });
     }
 
@@ -38,9 +40,6 @@ return new class extends Migration
     {
         Schema::table('payment_processes', function (Blueprint $table) {
             $table->dropForeign(['trip_id']);
-        });
-
-        Schema::table('payment_processes', function (Blueprint $table) {
             $table->dropForeign(['payment_id']);
         });
 

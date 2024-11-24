@@ -12,11 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('drivers', function (Blueprint $table) {
-            $table->integer('phone_number')->primary();
-            $table->unsignedBigInteger('vehicle_id');
-            $table->string('password');
-            $table->timestamps();
+            $table->id(); // Primary key `id` for drivers table (auto-incrementing)
+            $table->string('phone_number')->unique(); // Unique phone number for driver
+            $table->unsignedBigInteger('vehicle_id'); // Foreign key for vehicles
+            $table->string('password'); // Driver's password
+            $table->timestamps(); // Timestamps for created_at and updated_at
 
+            // Foreign key relationship with vehicles table
             $table->foreign('vehicle_id')
                   ->references('vehicle_id')
                   ->on('vehicles')

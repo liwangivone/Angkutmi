@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('trips', function (Blueprint $table) {
-            $table->unsignedBigInteger('trip_id')->primary();
-            $table->integer('user_phone_number');
-            $table->integer('driver_phone_number');
-            $table->unsignedBigInteger('subscription_id');
+            $table->id('trip_id'); // Primary key
+            $table->unsignedBigInteger('user_id'); // Foreign key to `users(id)`
+            $table->unsignedBigInteger('driver_id'); // Foreign key to `drivers(id)`
+            $table->unsignedBigInteger('subscription_id'); // Foreign key to `subscriptions(subscription_id)`
             $table->boolean('is_started')->default(false);
             $table->boolean('is_completed')->default(false);
             $table->json('origin');
@@ -24,13 +24,14 @@ return new class extends Migration
             $table->dateTime('reserve_datetime');
             $table->timestamps();
 
-            $table->foreign('user_phone_number')
-                  ->references('phone_number')
+            // Define foreign key relationships
+            $table->foreign('user_id')
+                  ->references('id')
                   ->on('users')
                   ->onDelete('cascade');
             
-            $table->foreign('driver_phone_number')
-                  ->references('phone_number')
+            $table->foreign('driver_id')
+                  ->references('id')
                   ->on('drivers')
                   ->onDelete('cascade');
 
@@ -47,14 +48,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('trips', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
             $table->dropForeign(['driver_id']);
-        });
-
-        Schema::table('trips', function (Blueprint $table) {
-            $table->dropForeign(['phone_number']);
-        });
-
-        Schema::table('trips', function (Blueprint $table) {
             $table->dropForeign(['subscription_id']);
         });
 
