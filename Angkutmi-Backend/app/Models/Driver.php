@@ -10,37 +10,25 @@ class Driver extends Model
     use HasFactory;
 
     /**
-     * Fillable attributes for the Driver model.
+     * fillable
      *
      * @var array
      */
     protected $fillable = [
-        'user_id',        // Foreign key for User
-        'vehicle_id',     // Foreign key for Vehicle
-        'profile_picture' // Driver's profile picture
+        'driver_id',
+        'user_id',
+        'vehicle_id',
+        'phone_number',
+        'full_name',
+        'password',
+        'profile_picture'
     ];
 
-    /**
-     * Get the trips associated with the driver.
-     */
-    public function trips()
-    {
-        return $this->hasMany(Trip::class);
+    public function user(){
+        return $this->hasMany(User::class);
     }
 
-    /**
-     * Get the user that owns the driver (user details like phone, password, etc.).
-     */
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    /**
-     * Get the vehicle associated with the driver.
-     */
-    public function vehicle()
-    {
-        return $this->belongsTo(Vehicle::class, 'vehicle_id');
+    public function vehicle(){
+        return $this->hasMany(Vehicle::class);
     }
 }
