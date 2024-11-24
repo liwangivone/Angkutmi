@@ -15,14 +15,20 @@ class Driver extends Model
      * @var array
      */
     protected $fillable = [
-        'phone_number',
+        'driver_id',
+        'user_id',
         'vehicle_id',
+        'phone_number',
         'full_name',
         'password',
         'profile_picture'
     ];
 
-    public function trips(){
-        return $this->hasMany(Trip::class);
+    public function user(){
+        return $this->hasMany(User::class);
+    }
+
+    public function vehicle(){
+        return $this->hasMany(Vehicle::class);
     }
 }
