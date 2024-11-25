@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('drivers', function (Blueprint $table) {
-            $table->id('driver_id'); // Primary key `driver_id`
+            $table->id(); // Primary key `driver_id`
             $table->unsignedBigInteger('user_id'); // Foreign key to `users` table, now non-nullable
             $table->unsignedBigInteger('vehicle_id'); // Foreign key to `vehicles` table
             $table->string('profile_picture')->nullable(); // Path or filename for profile picture
@@ -25,7 +25,7 @@ return new class extends Migration
                   ->onDelete('cascade');
 
             $table->foreign('vehicle_id')
-                  ->references('vehicle_id') // Assuming `vehicle_id` is the primary key in `vehicles`
+                  ->references('id') // Assuming `vehicle_id` is the primary key in `vehicles`
                   ->on('vehicles')
                   ->onDelete('cascade');
         });

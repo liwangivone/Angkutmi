@@ -10,18 +10,49 @@ class DriverController extends Controller
 {
     public function show(Request $request)
     {
-        // Get the authenticated user
-        $user = $request->user();
+        try {
+            // Get the authenticated user
+            $user = $request->user();
     
-        // Load the associated driver and vehicle information
-        $user->load(['driver', 'driver.vehicle']); // Ensure the relationship exists
+            // If the user is not authenticated, return an error
+            if (!$user) {
+                return response()->json(['error' => 'User not authenticated.'], 401);
+            }
+            
+            // Load the associated driver and vehicle information
+            $user->load(['driver', 'driver.vehicle']); // This will load the driver and vehicle relations
     
-        return response()->json([
-            'user' => $user,
-            'driver' => $user->driver,
-            'vehicle' => $user->driver ? $user->driver->vehicle : null, // Load the vehicle associated with the driver
-        ], 200);
+            // Check if the driver exists
+            $driver = $user->driver;
+            if (!$driver) {
+                return response()->json(['error' => 'Driver not found.'], 404);
+            }
+    
+            // Check if the vehicle exists
+            $vehicle = $driver->vehicle;
+            if (!$vehicle) {
+                return response()->json(['error' => 'Vehicle not found.'], 404);
+            }
+
+            $body = [
+                "user" => [
+                    "id_user" => $user->id
+                ]
+            ];
+    
+            // Return the user, driver, and vehicle information
+            return response()->json([
+                $body // Return the vehicle_id
+            ], 200);
+    
+        } catch (\Exception $e) {
+            // Handle unexpected errors and return a generic message
+            return response()->json(['error' => 'An error occurred while fetching the data.'], 500);
+        }
     }
+    
+    
+
         
 
     public function update(Request $request)

@@ -21,12 +21,12 @@ return new class extends Migration
 
             // Define foreign key relationships
             $table->foreign('subscription_id')
-                  ->references('subscription_id') // References the `subscription_id` column in subscriptions table
+                  ->references('id') // References the `subscription_id` column in subscriptions table
                   ->on('subscriptions')
                   ->onDelete('cascade');
 
             $table->foreign('payment_id')
-                  ->references('payment_id') // References the `id` column in payments table
+                  ->references('id') // References the `id` column in payments table
                   ->on('payments')
                   ->onDelete('cascade');
         });
