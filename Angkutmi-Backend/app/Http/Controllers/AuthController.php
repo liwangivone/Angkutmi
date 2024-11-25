@@ -52,29 +52,33 @@ class AuthController extends Controller
         try {
             // Attempt to find the user by phone number
             $user = User::where('phone_number', $request->phone_number)->first();
+     
+            // Log user for debugging
+            \Log::info('User found: ', [$user]);
     
             // Check if user exists and verify password
             if ($user && Hash::check($request->password, $user->password)) {
                 Auth::login($user);
-        
+         
                 // Generate and return token
                 $token = $user->createToken('auth_token')->plainTextToken;
-        
+         
                 return response()->json([
                     'message' => 'Login successful',
                     'token' => $token,
-                    // 'user' => $user, ini ks liat user py data json
+                    // 'user' => $user, Uncomment if you want to return user data
                 ], 200);
             }    
             // Return error for invalid credentials
             return response()->json(['error' => 'Invalid phone number or password.'], 401);
         } catch (\Exception $e) {
-            // Log and display error
-            \Log::error($e->getMessage());
+            // Log the error message for debugging
+            \Log::error('Error during login: ' . $e->getMessage());
+    
             return response()->json(['error' => 'An unexpected error occurred.'], 500);
         }
     }
-    
+        
     // Logout
     public function logout()
     {

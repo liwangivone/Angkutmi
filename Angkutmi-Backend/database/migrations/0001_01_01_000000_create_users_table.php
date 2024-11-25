@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->primary(); // Primary key
+            $table->id();  // Primary key
             $table->string('phone_number')->unique();
             $table->string('name');
             $table->timestamp('phone_number_verified_at')->nullable();
@@ -29,13 +29,26 @@ return new class extends Migration
         });
 
         Schema::create('sessions', function (Blueprint $table) {
-            $table->string('session_id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
+            // The session ID is used as the primary key for the session table.
+            $table->string('id')->primary(); // `id` should be the primary key for session identification.
+        
+            // Foreign key to associate the session with a user (nullable).
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade'); // This will create a foreign key on the `user_id` column.
+        
+            // Store the user's IP address and user agent (optional but useful for security).
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
-            $table->longText('payload');
-            $table->integer('last_activity')->index();
+        
+            // Session payload storage (to hold session data).
+            $table->longText('payload'); 
+        
+            // Store the last activity timestamp for the session.
+            $table->integer('last_activity')->index(); // The index on this column allows efficient searching by last activity.
+        
+            // Timestamps can be useful for tracking when the session was created or updated.
+            $table->timestamps();
         });
+        
     }
 
     /**

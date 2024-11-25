@@ -20,4 +20,10 @@ class Vehicle extends Model
         'capacity',
         'plat'
     ];
+
+    public function drivers()
+{
+    return $this->hasMany(Driver::class, 'vehicle_id');
+}
+
 }

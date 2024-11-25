@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Driver extends Model
 {
     use HasFactory;
-
+    protected $primaryKey = 'driver_id';
     /**
      * fillable
      *
@@ -24,11 +24,23 @@ class Driver extends Model
         'profile_picture'
     ];
 
-    public function user(){
-        return $this->hasMany(User::class);
+    public function trip(){
+        return $this->hasMany(trip::class);
     }
 
-    public function vehicle(){
-        return $this->hasMany(Vehicle::class);
+    /**
+     * Get the user that owns the driver (user details like phone, password, etc.).
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the vehicle associated with the driver.
+     */
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class, 'vehicle_id');
     }
 }
