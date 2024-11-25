@@ -1,245 +1,179 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'terms.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    theme: ThemeData(
+      fontFamily: 'Poppins', // Set default font to Poppins
+    ),
+    home: OnboardingScreen(),
+  ));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class OnboardingScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'Poppins'),
-      home: const HomeScreen(),
+  _OnboardingScreenState createState() => _OnboardingScreenState();
+}
+
+class _OnboardingScreenState extends State<OnboardingScreen> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  // Update the current page index
+  void _onPageChanged(int index) {
+    setState(() {
+      _currentPage = index;
+    });
+  }
+
+  void _nextPage() {
+  if (_currentPage < 3) {
+    _pageController.nextPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  } else {
+    // Navigate to the Terms and Conditions screen when onboarding completes
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => TermsAndConditionsScreen()),
     );
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: Image.asset(
-            'assets/home/logoAngkutmi.png', width: 125,
-            // height: 30
-          ),
-        ),
-        backgroundColor: const Color.fromARGB(255, 44, 158, 75),
-      ),
-      backgroundColor: const Color.fromARGB(255, 44, 158, 75),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            padding: const EdgeInsets.only(
-              left: 15.0,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Expanded(
-                  child: Image.asset(
-                    'assets/home/orang.png',
-                    height: 193,
-                  ),
+        children: [
+          Expanded(
+            child: PageView(
+              controller: _pageController,
+              onPageChanged: _onPageChanged,
+              children: [
+                _buildPage(
+                  image: Image.asset('assets/onboard/onboard1.png', height: 300),
+                  title: 'Selamat datang\ndi Angkutmi !',
+                  description: 'Sampah numpuk bikin risih, sini kita Angkutmi !',
+                  activeIndex: 0,
                 ),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const Text(
-                        'Selamat Datang, \nIvone !',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 19.0,
-                          fontWeight: FontWeight.w500,
-                        ),
+                _buildPage(
+                  image: Image.asset('assets/onboard/onboard2.png', height: 300),
+                  title: '',
+                  description: '"Mulai dari langkah kecil untuk menuju bumi yang lebih bersih"',
+                  activeIndex: 1,
+                ),
+                _buildPage(
+                  image: Image.asset('assets/onboard/onboard3.png', height: 300),
+                  title: '',
+                  description: '"Sampahmu punya potensi. Kami angkut, daur ulang, dan jaga bumi bersama"',
+                  activeIndex: 2,
+                ),
+                _buildPage(
+                  image: Image.asset('assets/onboard/onboard4.png', height: 300),
+                  title: '',
+                  description: '"Cepat, mudah, dan bisa \n diandalkan - Angkutmi solusinya!"',
+                  activeIndex: 3,
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // Page Indicator
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(4, (index) {
+                    return _buildIndicator(isActive: _currentPage == index);
+                  }),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 24.0), // Adjusted spacing with margin
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _nextPage,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 30, right: 30, left: 30),
-                        child: Column(
-                          children: <Widget>[
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: const LinearProgressIndicator(
-                                value: 0.48,
-                                backgroundColor: Color.fromARGB(255, 255, 242, 178),
-                                valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 158, 215, 99)),
-                                minHeight: 10.0,
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    const Padding(
-                                      padding: EdgeInsets.only(right: 3.0),
-                                      child: Text(
-                                        '5',
-                                        style: TextStyle(
-                                          color: Color.fromARGB(255, 255, 242, 178),
-                                          fontSize: 15.0,
-                                        ),
-                                      ),
-                                    ),
-                                    SvgPicture.asset('assets/home/poin.svg', height: 15),
-                                  ],
-                                ),
-                                const Text(
-                                  '48%',
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 255, 242, 178),
-                                    fontSize: 15.0,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: const Text(
+                      'Lanjutkan',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          Expanded(
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(66.0),
-                  topRight: Radius.circular(66.0),
-                ),
-              ),
-              child: Column(
-                children: <Widget>[
-                  const Align(
-                    alignment: Alignment.topLeft,
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        left: 30.0,
-                        top: 30,
-                      ),
-                      child: Text(
-                        'Layanan',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 24.0,
-                        ),
-                      ),
+        ],
+      ),
+    );
+  }
+
+  // Method to build each onboarding page
+  Widget _buildPage({required Widget image, required String title, required String description, required int activeIndex}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0), // Padding used for spacing
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          image,
+          Padding(
+            padding: const EdgeInsets.only(top: 24.0), // Adjusted spacing with padding
+            child: title.isNotEmpty
+                ? Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 26, // Adjusted font size for title
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 25),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        SizedBox(
-                          width: 120,
-                          height: 120,
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              elevation: 3,
-                              backgroundColor: const Color.fromARGB(
-                                  255, 44, 158, 75), // Changed background color
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                SvgPicture.asset('assets/home/trash.svg',
-                                    fit: BoxFit.cover, width: 60),
-                                const Text(
-                                  'Angkutmi',
-                                  style: TextStyle(
-                                      fontSize: 13, color: Colors.white),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 120,
-                          height: 120,
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              elevation: 3,
-                              backgroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                SvgPicture.asset('assets/home/nantipi.svg',
-                                    fit: BoxFit.cover, width: 60),
-                                const Text(
-                                  'Nantipi',
-                                  style: TextStyle(
-                                      fontSize: 13, color: Color.fromARGB(255, 44, 158, 75)),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(top: 60),
-                    height: 150,
-                    width: 300,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 115, 115, 115),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      child: const Text(' '),
-                    ),
-                    
-                  ),
-                ],
+                  )
+                : SizedBox.shrink(), // Avoid using unnecessary SizedBox
+          ),
+          if (title.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0), // Adjusted spacing with padding
+            ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0), // Adjusted spacing with padding
+            child: Text(
+              description,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16, // Adjusted font size for description
+                color: Colors.grey,
+                fontFamily: 'Poppins',
               ),
             ),
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white, // Changed background color to blue
-        selectedItemColor: const Color.fromARGB(255, 44, 158, 75), // Changed selected item color to blue
-        unselectedItemColor: Colors.grey, // Changed unselected item color to grey
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.local_activity),
-            label: 'Voucher',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'Profile',
-          ),
-        ],
+    );
+  }
+
+  // Method to build the page indicator
+  Widget _buildIndicator({bool isActive = false}) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      height: 12,
+      width: 12,
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      decoration: BoxDecoration(
+        color: isActive ? Colors.green : Colors.grey.shade400,
+        shape: BoxShape.circle,
       ),
     );
   }
