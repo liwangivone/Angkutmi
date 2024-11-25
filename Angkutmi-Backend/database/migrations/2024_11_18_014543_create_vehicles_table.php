@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('vehicles', function (Blueprint $table) {
-            $table->unsignedBigInteger('vehicle_id')->primary();
+            $table->id('vehicle_id'); // Auto-increment primary key
             $table->enum('type', ['motor', 'pickup', 'truck']);
             $table->integer('capacity');
-            $table->string('plat');
+            $table->string('plat')->unique(); // Ensure plate numbers are unique
             $table->timestamps();
         });
+        
     }
 
     /**
