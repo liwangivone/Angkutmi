@@ -55,7 +55,7 @@ class AuthController extends Controller
             $user = User::where('phone_number', $request->phone_number)->first();
      
             // Log user for debugging
-            \Log::info('User found: ', [$user]);
+            Log::info('User found: ', [$user]);
     
             // Check if user exists and verify password
             if ($user && Hash::check($request->password, $user->password)) {
