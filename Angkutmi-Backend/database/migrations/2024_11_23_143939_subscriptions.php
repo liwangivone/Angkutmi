@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('subscriptions', function (Blueprint $table) {
-            $table->id('subscription_id'); // Primary key
+            $table->id(); // Primary key
             $table->unsignedBigInteger('user_id'); // Foreign key
             $table->string('duration');
             $table->date('purchase_date'); // Use `date` for dates
@@ -22,7 +22,7 @@ return new class extends Migration
         
             // Define the foreign key relationship
             $table->foreign('user_id')
-                  ->references('user_id')
+                  ->references('id')
                   ->on('users')
                   ->onDelete('cascade');
         });
