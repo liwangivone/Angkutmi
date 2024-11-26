@@ -28,16 +28,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // Kembali ke halaman regis_login.dart
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => RegistrationScreen()),
-            );
-          },
-        ),
+        automaticallyImplyLeading: false,
         title: Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: Image.asset(
