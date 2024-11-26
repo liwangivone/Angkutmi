@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -70,7 +71,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'Invalid phone number or password.'], 401);
         } catch (\Exception $e) {
             // Log and display error
-            \Log::error($e->getMessage());
+            Log::error($e->getMessage());
             return response()->json(['error' => 'An unexpected error occurred.'], 500);
         }
     }
