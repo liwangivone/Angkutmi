@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('vehicles', function (Blueprint $table) {
-            $table->id('vehicle_id'); // Auto-increment primary key
+            $table->id(); // Auto-increment primary key
             $table->enum('type', ['motor', 'pickup', 'truck']);
             $table->integer('capacity');
             $table->string('plat')->unique(); // Ensure plate numbers are unique

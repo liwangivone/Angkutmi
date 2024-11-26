@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('trips', function (Blueprint $table) {
-            $table->id('trip_id'); // Primary key
+            $table->id(); // Primary key
             $table->unsignedBigInteger('user_id'); // Foreign key to `users(id)`
             $table->unsignedBigInteger('driver_id'); // Foreign key to `drivers(id)`
             $table->unsignedBigInteger('subscription_id'); // Foreign key to `subscriptions(subscription_id)`
@@ -31,12 +31,12 @@ return new class extends Migration
                   ->onDelete('cascade');
             
             $table->foreign('driver_id')
-                  ->references('driver_id')
+                  ->references('id')
                   ->on('drivers')
                   ->onDelete('cascade');
 
             $table->foreign('subscription_id')
-                  ->references('subscription_id')
+                  ->references('id')
                   ->on('subscriptions')
                   ->onDelete('cascade');
         });

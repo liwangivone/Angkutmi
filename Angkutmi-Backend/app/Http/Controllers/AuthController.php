@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -54,7 +55,7 @@ class AuthController extends Controller
             $user = User::where('phone_number', $request->phone_number)->first();
      
             // Log user for debugging
-            \Log::info('User found: ', [$user]);
+            Log::info('User found: ', [$user]);
     
             // Check if user exists and verify password
             if ($user && Hash::check($request->password, $user->password)) {
@@ -72,9 +73,9 @@ class AuthController extends Controller
             // Return error for invalid credentials
             return response()->json(['error' => 'Invalid phone number or password.'], 401);
         } catch (\Exception $e) {
-            // Log the error message for debugging
-            \Log::error('Error during login: ' . $e->getMessage());
-    
+
+            // Log and display error
+            Log::error($e->getMessage());
             return response()->json(['error' => 'An unexpected error occurred.'], 500);
         }
     }
