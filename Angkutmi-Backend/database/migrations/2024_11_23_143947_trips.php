@@ -14,14 +14,15 @@ return new class extends Migration
         Schema::create('trips', function (Blueprint $table) {
             $table->id(); // Primary key
             $table->unsignedBigInteger('user_id'); // Foreign key to `users(id)`
-            $table->unsignedBigInteger('driver_id'); // Foreign key to `drivers(id)`
-            $table->unsignedBigInteger('subscription_id'); // Foreign key to `subscriptions(subscription_id)`
+            $table->unsignedBigInteger('driver_id')->nullable(); // Foreign key to `drivers(id)`
+            $table->unsignedBigInteger('subscription_id')->nullable(); // Foreign key to `subscriptions(subscription_id)`
             $table->boolean('is_started')->default(false);
             $table->boolean('is_completed')->default(false);
-            $table->json('origin');
-            $table->json('destination');
-            $table->json('driver_location');
-            $table->dateTime('reserve_datetime');
+            $table->json('origin')->nullable();
+            $table->json('destination')->nullable();
+            $table->string('destination_name')->nullable();
+            $table->json('driver_location')->nullable();
+            $table->dateTime('reserve_datetime')->nullable();
             $table->timestamps();
 
             // Define foreign key relationships
