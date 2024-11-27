@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Driver extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'driver_id';
     /**
      * fillable
      *
@@ -25,7 +24,7 @@ class Driver extends Model
     ];
 
     public function trip(){
-        return $this->hasMany(trip::class);
+        return $this->hasMany(Trip::class);
     }
 
     /**

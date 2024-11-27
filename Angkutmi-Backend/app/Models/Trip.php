@@ -39,9 +39,11 @@ class Trip extends Model
     public function user(){
         return $this->belongsTo(User::class);
     }
-    public function driver(){
-        return $this->belongsTo(Driver::class);
+    public function driver()
+    {
+        return $this->belongsTo(Driver::class, 'driver_id', 'id');
     }
+    
     public function subscription(){
         return $this->belongsTo(Subscription::class);
     }
