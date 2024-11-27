@@ -22,14 +22,13 @@ class Trip extends Model
         'is_started',
         'is_completed',
         'origin',
-        'destination',
+        'destination_name',
         'driver_location',
         'reserve_datetime'
     ];
 
     protected $casts = [
         'origin' => 'array',
-        'destination' =>'array',
         'driver_location' => 'array',
         'is_started'=>'boolean',
         'is_completed'=>'boolean',

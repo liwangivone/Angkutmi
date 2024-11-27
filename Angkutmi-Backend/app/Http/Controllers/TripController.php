@@ -7,6 +7,7 @@ use App\Models\Trip;
 use App\Events\TripStarted;
 use App\Events\TripAccepted;
 use App\Events\TripEnded;
+use App\Events\TripCreated;
 use App\Events\TripLocationUpdated;
 
 
@@ -55,29 +56,48 @@ class TripController extends Controller
     public function accept(Request $request, Trip $trip)
     {
         // Validate the required driver location field
-        $request->validate([
-            'driver_location' => 'required'
-        ]);
+        try {
+            $request->validate([
+                'driver_location' => 'required'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Driver location is required.',
+                'errors' => $e->errors() // You can return the validation errors as well
+            ], 400); // You can choose a different status code like 422 if preferred
+        }
+        
+        // Your other logic goes here...
+        
     
         // Check if the trip already has an assigned driver
         if ($trip->driver_id) {
             return response()->json(['message' => 'This trip has already been accepted by another driver.'], 400);
         }
     
-        // If the trip does not have a driver, assign the driver and update the trip
-        $trip->update([
-            'driver_id' => $request->user()->id, // Assign the driver who is accepting the trip
-            'driver_location' => $request->driver_location, // Update the driver's location
-        ]);
+        try {
+            // If the trip does not have a driver, assign the driver and update the trip
+            $trip->update([
+                'driver_id' => $request->user()->id, // Assign the driver who is accepting the trip
+                'driver_location' => $request->driver_location, // Update the driver's location
+            ]);
     
-        // Load the driver and user relationships for further use
-        $trip->load('driver.user');
+            // Load the driver and user relationships for further use
+            $trip->load('driver.user');
     
-        // Dispatch the event that the trip has been accepted
-        TripAccepted::dispatch($trip, $trip->user);
+            // Dispatch the event that the trip has been accepted
+            TripAccepted::dispatch($trip, $trip->user);
     
-        return $trip;
-    } //driver_id nd ada msk
+            return $trip;
+    
+        } catch (\Exception $e) {
+            // Handle exceptions during the trip update process
+            return response()->json([
+                'message' => 'Failed to accept the trip. Please try again.',
+                'error' => $e->getMessage(), // Include error message for debugging (optional)
+            ], 500);
+        }
+    }
     
 
     public function start(Request $request, Trip $trip){
