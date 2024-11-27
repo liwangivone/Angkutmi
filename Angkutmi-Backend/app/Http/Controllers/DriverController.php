@@ -36,14 +36,15 @@ class DriverController extends Controller
 
             $body = [
                 "user" => [
-                    "id_user" => $user->id
+                    "id_user" => $user->id,
+                    "nama_user" => $user->name
                 ]
             ];
     
             // Return the user, driver, and vehicle information
-            return response()->json([
+            return response()->json(
                 $body // Return the vehicle_id
-            ], 200);
+            , 200);
     
         } catch (\Exception $e) {
             // Handle unexpected errors and return a generic message
