@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('destination_name')->nullable();
             $table->json('driver_location')->nullable();
             $table->dateTime('reserve_datetime')->nullable();
+            $table->decimal('price', 8, 2)->nullable(); // Added price column for trip cost
             $table->timestamps();
 
             // Define foreign key relationships
