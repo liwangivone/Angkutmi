@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
-import 'home.dart';
 import 'package:flutter/gestures.dart';
-import 'login.dart';
+import 'regis_login.dart';
+import 'home.dart';
 
-class RegistrationScreen extends StatefulWidget {
+class LoginScreen extends StatefulWidget {
   @override
-  _RegistrationScreenState createState() => _RegistrationScreenState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _RegistrationScreenState extends State<RegistrationScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  bool _isCheckboxChecked = false;
-  bool _isPasswordVisible = false; // Tambahkan variabel ini untuk toggle visibilitas
-
-  // Controllers untuk mendapatkan nilai dari TextField
-  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   late TapGestureRecognizer _tapGestureRecognizer;
+  bool _isPasswordVisible = false; // Mengontrol visibilitas password
 
   @override
   void initState() {
@@ -27,7 +23,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       ..onTap = () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
+          MaterialPageRoute(builder: (context) => RegistrationScreen()),
         );
       };
   }
@@ -40,16 +36,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    // Mendapatkan ukuran layar untuk responsif
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(
-          horizontal: screenWidth * 0.08,
-          vertical: screenHeight * 0.05,
+          horizontal: screenWidth * 0.08, // Padding horizontal responsif
+          vertical: screenHeight * 0.05, // Padding vertikal responsif
         ),
         child: Form(
           key: _formKey,
@@ -61,50 +58,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   Padding(
                     padding: EdgeInsets.only(top: screenHeight * 0.05),
                     child: Text(
-                      'Buat akun anda',
-                      style: const TextStyle(
-                        fontSize: 20,
+                      'Selamat datang kembali',
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.05, // Font size responsif
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Image.asset(
-                    'assets/onboard/onboard1.png',
-                    height: screenHeight * 0.3,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 0),
+                    child: Image.asset(
+                      'assets/onboard/onboard1.png',
+                      height: screenHeight * 0.3, // Tinggi gambar responsif
+                    ),
                   ),
                 ],
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: TextFormField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        labelText: 'Nama lengkap',
-                        labelStyle: const TextStyle(color: Colors.black),
-                        hintText: 'Nama lengkap anda',
-                        border: const UnderlineInputBorder(),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.green, width: 2.0),
-                        ),
-                        suffixText: '*',
-                        suffixStyle: const TextStyle(color: Colors.red),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Nama lengkap tidak boleh kosong';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: TextFormField(
@@ -116,10 +90,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         hintText: '0895-xxx-xxx',
                         border: const UnderlineInputBorder(),
                         enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
+                          borderSide:
+                              BorderSide(color: Colors.grey), // Warna border saat field tidak fokus
                         ),
                         focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.green, width: 2.0),
+                          borderSide: BorderSide(
+                              color: Colors.green,
+                              width: 2.0), // Warna border saat field fokus
+                        ),
+                        errorBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Colors.red,
+                              width: 1.0), // Warna border saat terjadi error
+                        ),
+                        focusedErrorBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Colors.red,
+                              width: 1.0), // Warna border saat error dan field fokus
                         ),
                         suffixText: '*',
                         suffixStyle: const TextStyle(color: Colors.red),
@@ -136,24 +123,37 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: TextFormField(
                       controller: _passwordController,
-                      obscureText: !_isPasswordVisible, // Toggle visibilitas
+                      obscureText: !_isPasswordVisible, // Mengontrol visibilitas password
                       decoration: InputDecoration(
                         labelText: 'Kata sandi',
                         labelStyle: const TextStyle(color: Colors.black),
                         border: const UnderlineInputBorder(),
                         enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
+                          borderSide:
+                              BorderSide(color: Colors.grey), // Warna border saat field tidak fokus
                         ),
                         focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.green, width: 2.0),
+                          borderSide: BorderSide(
+                              color: Colors.green,
+                              width: 2.0), // Warna border saat field fokus
+                        ),
+                        errorBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Colors.red,
+                              width: 1.0), // Warna border saat terjadi error
+                        ),
+                        focusedErrorBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Colors.red,
+                              width: 1.0), // Warna border saat error dan field fokus
                         ),
                         suffixText: '*',
                         suffixStyle: const TextStyle(color: Colors.red),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _isPasswordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
+                                ? Icons.visibility // Ikon untuk menyembunyikan
+                                : Icons.visibility_off, // Ikon untuk menampilkan
                           ),
                           onPressed: () {
                             setState(() {
@@ -166,64 +166,29 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Kata sandi tidak boleh kosong';
                         }
-                        if (value.length < 6) {
-                          return 'Kata sandi minimal 6 karakter';
-                        }
                         return null;
                       },
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: Row(
-                      children: [
-                        Checkbox(
-                          value: _isCheckboxChecked,
-                          activeColor: Colors.green,
-                          onChanged: (value) {
-                            setState(() {
-                              _isCheckboxChecked = value ?? false;
-                            });
-                          },
-                        ),
-                        Expanded(
-                          child: RichText(
-                            text: const TextSpan(
-                              text: 'Saya setuju dengan ',
-                              style: TextStyle(color: Colors.black, fontSize: 12),
-                              children: [
-                                TextSpan(
-                                  text: 'Syarat dan Ketentuan Aplikasi',
-                                  style: TextStyle(
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    padding: const EdgeInsets.only(top: 16.0), // Padding atas tombol
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          if (_isCheckboxChecked) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => HomeScreen()),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                    'Anda harus menyetujui syarat dan ketentuan'),
-                              ),
-                            );
-                          }
+                          // login berhasil
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HomeScreen(),
+                            ),
+                          );
+
+                          // Menampilkan notifikasi berhasil login
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Login berhasil!'),
+                            ),
+                          );
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -234,7 +199,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                       ),
                       child: const Text(
-                        'Buat akun',
+                        'Masuk',
                         style: TextStyle(fontSize: 16),
                       ),
                     ),
@@ -242,15 +207,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 16.0),
+                padding: EdgeInsets.only(top: screenHeight * 0.02),
                 child: Center(
                   child: RichText(
                     text: TextSpan(
-                      text: 'Sudah memiliki akun? ',
-                      style: const TextStyle(color: Colors.black, fontSize: 14),
+                      text: 'Belum memiliki akun? ',
+                      style: TextStyle(color: Colors.black, fontSize: 14),
                       children: [
                         TextSpan(
-                          text: 'Masuk',
+                          text: 'Buat akun',
                           style: const TextStyle(
                             color: Colors.green,
                             fontWeight: FontWeight.bold,
@@ -273,6 +238,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: RegistrationScreen(),
+    home: LoginScreen(),
   ));
 }
