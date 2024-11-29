@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\TripController;
+use App\Http\Controllers\CouponController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -23,4 +24,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user', function(Request $request){
         return $request->user();
     });
-});
+    Route::post('/coupons', [CouponController::class, 'store']);
+    Route::get('/coupons', [CouponController::class, 'get']);
+    Route::post('/coupons/{coupon}/redeem', [CouponController::class, 'redeem']);
+    Route::get('/coupons/redeemed', [CouponController::class, 'redeemedProducts']);
+
+    
+}
+
+);
