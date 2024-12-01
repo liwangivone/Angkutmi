@@ -28,10 +28,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0; // Track the selected index
+  int _selectedIndex = 0;
   final List<Widget> _pages = const [
-    // Add your pages here
-    HomeContent(), // Replace with your actual home content widget
+    HomeContent(),
     VoucherPage(),
     ProfileScreen(),
   ];
@@ -51,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: const Color.fromARGB(255, 44, 158, 75),
       ),
       backgroundColor: const Color.fromARGB(255, 44, 158, 75),
-      body: _pages[_selectedIndex], // Display the selected page
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         selectedItemColor: const Color.fromARGB(255, 44, 158, 75),
@@ -70,10 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Profile',
           ),
         ],
-        currentIndex: _selectedIndex, // Set the current index
+        currentIndex: _selectedIndex,
         onTap: (index) {
           setState(() {
-            _selectedIndex = index; // Update the selected index
+            _selectedIndex = index;
           });
         },
       ),
@@ -81,7 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// Create a separate widget for the home content
 class HomeContent extends StatelessWidget {
   const HomeContent({super.key});
 
@@ -217,7 +215,7 @@ class HomeContent extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             elevation: 3,
                             backgroundColor: const Color.fromARGB(
-                                255, 44, 158, 75), // Changed background color
+                                255, 44, 158, 75),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
