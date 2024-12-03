@@ -6,9 +6,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\WheelOfFortuneController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/driver', [DriverController::class, 'show']);
@@ -26,8 +28,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
     Route::post('/coupons', [CouponController::class, 'store']);
     Route::get('/coupons', [CouponController::class, 'get']);
+    Route::get('/coupons/inventory', [CouponController::class, 'getUserClaimedCoupons']);
     Route::post('/coupons/{coupon}/redeem', [CouponController::class, 'redeem']);
     Route::get('/coupons/redeemed', [CouponController::class, 'redeemedProducts']);
+
+    Route::post('/wheel/spin', [WheelOfFortuneController::class, 'spin']);
+    Route::post('/reward/claim', [WheelOfFortuneController::class, 'claimReward']);
+
 
     
 }
