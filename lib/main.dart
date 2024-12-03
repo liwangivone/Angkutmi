@@ -91,12 +91,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   }),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(top: 24.0), // Adjusted spacing with margin
+                  margin: const EdgeInsets.only(top: 24.0), 
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _nextPage,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: const Color.fromARGB(255, 44, 158, 75),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -121,7 +121,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  // Method to build each onboarding page
+  // Method onboardbuild
   Widget _buildPage({required Widget image, required String title, required String description, required int activeIndex}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0), // Padding used for spacing
@@ -136,16 +136,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     title,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 26, // Adjusted font size for title
+                      fontSize: 26, 
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Poppins',
                     ),
                   )
-                : SizedBox.shrink(), // Avoid using unnecessary SizedBox
+                : SizedBox.shrink(),
           ),
           if (title.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(top: 16.0), // Adjusted spacing with padding
+              padding: const EdgeInsets.only(top: 16.0),
             ),
           Padding(
             padding: const EdgeInsets.only(top: 8.0), // Adjusted spacing with padding

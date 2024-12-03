@@ -136,7 +136,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: TextFormField(
                       controller: _passwordController,
-                      obscureText: !_isPasswordVisible, // Toggle visibilitas
+                      obscureText: !_isPasswordVisible,
                       decoration: InputDecoration(
                         labelText: 'Kata sandi',
                         labelStyle: const TextStyle(color: Colors.black),
