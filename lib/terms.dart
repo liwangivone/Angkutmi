@@ -6,7 +6,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green,
+        backgroundColor:const Color.fromARGB(255, 44, 158, 75),
         elevation: 0,
       ),
       body: Column(
@@ -14,7 +14,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(24.0),
             decoration: const BoxDecoration(
-              color: Colors.green,
+              color: const Color.fromARGB(255, 44, 158, 75),
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(30),
                 bottomRight: Radius.circular(30),
@@ -87,7 +87,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: const Color.fromARGB(255, 44, 158, 75),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
