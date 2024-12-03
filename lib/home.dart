@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'pemesanannantipi.dart';
 // import 'regis_login.dart';
 
 // void main() {
@@ -238,7 +239,15 @@ class HomeContent extends StatelessWidget {
                         width: 120,
                         height: 120,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    PemesananNantipi(),
+                              ),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             elevation: 3,
                             backgroundColor: Colors.white,
@@ -373,6 +382,7 @@ class _VoucherPageState extends State<VoucherPage> {
   }
 }
 
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -385,3 +395,4 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 }
+
