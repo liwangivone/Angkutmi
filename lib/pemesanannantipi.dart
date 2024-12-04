@@ -7,7 +7,7 @@ class PemesananNantipi extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.green,
+          backgroundColor: Color.fromARGB(255, 44, 158, 75),
           elevation: 0,
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -22,40 +22,51 @@ class PemesananNantipi extends StatelessWidget {
         ),
         body: Column(
           children: [
-            // Bagian atas melengkung
+            // Header hijau dengan lengkungan melengkung
             Stack(
               children: [
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.15,
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(30),
-                      bottomRight: Radius.circular(30),
-                    ),
-                  ),
+                  height: 140,
+                  color: const Color.fromARGB(255, 44, 158, 75),
+                  
                 ),
+                // TabBar di tengah area hijau
                 Positioned.fill(
-                  top: MediaQuery.of(context).size.height * 0.05,
+                  top: 10,
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: TabBar(
                       labelColor: Colors.black,
                       unselectedLabelColor: Colors.white70,
-                      indicatorSize: TabBarIndicatorSize.tab, // Underline mengikuti lebar tab
-                      indicatorColor: Colors.green!,
-                      indicator: UnderlineTabIndicator(
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      indicatorColor: Colors.green,
+                      indicator: const UnderlineTabIndicator(
                         borderSide: BorderSide(width: 2, color: Colors.black),
-                        insets: EdgeInsets.symmetric(horizontal: 45.0), // Margin tetap nol
+                        insets: EdgeInsets.symmetric(horizontal: 60.0),
                       ),
-                      tabs: [
-                        Tab(text: 'Paket'),
-                        Tab(text: 'Lagi aktif'),
+                      tabs: const [
+                        Tab(child: Text('Paket',style: TextStyle(fontSize: 16),),),
+                        
+                        Tab(child: Text('Lagi aktif',style: TextStyle(fontSize: 16),),),
                       ],
-                       onTap: (index) {},
+                      onTap: (index) {},
                     ),
-
-
+                  ),
+                ),
+                // Bagian putih melengkung di bawah
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 50,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(66.0),
+                        topRight: Radius.circular(66.0),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -64,11 +75,14 @@ class PemesananNantipi extends StatelessWidget {
               child: TabBarView(
                 children: [
                   PaketTab(),
-                  Center(
-                    child: Text(
-                      'Lagi aktif',
-                      style: TextStyle(fontSize: 16),
-                    ),
+                  Container(
+                    color: Colors.white,
+                      child: Center(
+                        child: Text(
+                        'Lagi aktif',
+                        style: TextStyle(fontSize: 16),
+                        )
+                      ),
                   ),
                 ],
               ),
@@ -79,32 +93,35 @@ class PemesananNantipi extends StatelessWidget {
     );
   }
 }
-
 class PaketTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.all(16.0),
-      children: const [
-        SubscriptionCard(
-          title: 'Cobami dulu satu bulan',
-          duration: 'Durasi: 1 bulan',
-          price: 'Rp45.000',
-        ),
-        SubscriptionCard(
-          title: 'Langsungmi tiga bulan',
-          duration: 'Durasi: 3 bulan',
-          price: 'Rp80.000',
-        ),
-        SubscriptionCard(
-          title: 'Paling hematmi enam bulan',
-          duration: 'Durasi: 6 bulan',
-          price: 'Rp125.000',
-        ),
-      ],
+    return Container(
+      color: Colors.white, // Tambahkan warna putih di Container luar
+      child: ListView(
+        padding: EdgeInsets.only(top: 5, bottom: 16.0, left: 16.0, right: 16.0),
+        children: const [
+          SubscriptionCard(
+            title: 'Cobami dulu satu bulan',
+            duration: 'Durasi: 1 bulan',
+            price: 'Rp45.000',
+          ),
+          SubscriptionCard(
+            title: 'Langsungmi tiga bulan',
+            duration: 'Durasi: 3 bulan',
+            price: 'Rp80.000',
+          ),
+          SubscriptionCard(
+            title: 'Paling hematmi enam bulan',
+            duration: 'Durasi: 6 bulan',
+            price: 'Rp125.000',
+          ),
+        ],
+      ),
     );
   }
 }
+
 
 class SubscriptionCard extends StatelessWidget {
   final String title;
@@ -112,21 +129,18 @@ class SubscriptionCard extends StatelessWidget {
   final String price;
 
   const SubscriptionCard({
-    Key? key, // Tambahkan Key untuk lebih fleksibel.
+    Key? key,
     required this.title,
     required this.duration,
     required this.price,
-  }) : super(key: key); 
-
-
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      // Color: Color(value),
       elevation: 3,
-      margin: EdgeInsets.only(bottom: 16),
+      margin: EdgeInsets.only(bottom: 16,),
       color: Color(0xFFFFF2B2),
       child: Padding(
         padding: EdgeInsets.all(16.0),
