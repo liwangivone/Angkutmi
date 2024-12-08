@@ -58,5 +58,16 @@ class User extends Authenticatable
     {
         return $this->hasOne(Driver::class); 
     }
+    
+        public function redemptions()
+    {
+        return $this->hasMany(Redemption::class);
+    }
+
+    public function redeemedCoupons()
+    {
+        return $this->hasManyThrough(Coupon::class, Redemption::class);
+    }
+
 
 }
