@@ -10,7 +10,7 @@ The front-end is built using Flutter and the back-end is built using Laravel 11.
 4. Ivone (UI/UX, Back-end)
 
 # Features List
-1. Instat Order
+1. Instant Order
 2. Subscription
 3. Voucher and Gacha
 
