@@ -205,12 +205,274 @@
                     }
                 }
             }
+        },
+        "/api/trips": {
+            "post": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Create a new trip",
+                "description": "Endpoint to create a new trip",
+                "operationId": "330c41008c88334c0e7653cbe4f0710a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "origin",
+                                    "destination",
+                                    "destination_name"
+                                ],
+                                "properties": {
+                                    "origin": {
+                                        "description": "Origin coordinates (array with lat and lng)",
+                                        "type": "object",
+                                        "example": {
+                                            "lat": -5.135399,
+                                            "lng": 119.412293
+                                        }
+                                    },
+                                    "destination": {
+                                        "description": "Destination coordinates (array with lat and lng)",
+                                        "type": "object",
+                                        "example": {
+                                            "lat": -5.135831,
+                                            "lng": 119.422559
+                                        }
+                                    },
+                                    "destination_name": {
+                                        "description": "Name of the destination",
+                                        "type": "string",
+                                        "example": "Mall Panakkukang"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Trip created successfully"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/trips/{trip}/accept": {
+            "post": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Accept a trip",
+                "description": "Endpoint for drivers to accept a trip",
+                "operationId": "36a91a2c1510be0ffd6c37907b80d9df",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "description": "ID of the trip",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "driver_location"
+                                ],
+                                "properties": {
+                                    "driver_location": {
+                                        "description": "Driver's current location (array with lat and lng)",
+                                        "type": "object",
+                                        "example": {
+                                            "lat": -5.135999,
+                                            "lng": 119.411111
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Trip accepted successfully"
+                    },
+                    "400": {
+                        "description": "Trip already accepted or validation error"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/trips/{trip}/start": {
+            "post": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Start a trip",
+                "description": "Endpoint to start a trip",
+                "operationId": "3e429523ea51900ae07a96f803716d10",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "description": "ID of the trip",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Trip started successfully"
+                    },
+                    "400": {
+                        "description": "Trip has already started"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/trips/{trip}/end": {
+            "post": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "End a trip",
+                "description": "Endpoint to end a trip",
+                "operationId": "ea5950a9b82817d5404f644c20068d0a",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "description": "ID of the trip",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Trip ended successfully"
+                    },
+                    "400": {
+                        "description": "Validation error or invalid distance"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/trips/{trip}/location": {
+            "post": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Update driver location",
+                "description": "Endpoint to update the driver's current location",
+                "operationId": "1ba7edd708d1817ab6b26c1778f2a9b7",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "description": "ID of the trip",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "driver_location"
+                                ],
+                                "properties": {
+                                    "driver_location": {
+                                        "description": "Driver's current location (array with lat and lng)",
+                                        "type": "object",
+                                        "example": {
+                                            "lat": -5.135999,
+                                            "lng": 119.411111
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Driver location updated successfully"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "tags": [
         {
             "name": "Subscription",
             "description": "Subscription"
+        },
+        {
+            "name": "Trips",
+            "description": "Trips"
         }
     ]
 }

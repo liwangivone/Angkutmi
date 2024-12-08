@@ -13,198 +13,267 @@ use App\Events\TripLocationUpdated;
 
 class TripController extends Controller
 {
-
-
+    /**
+     * @OA\Post(
+     *     path="/api/trips",
+     *     summary="Create a new trip",
+     *     description="Endpoint to create a new trip",
+     *     tags={"Trips"},
+     *     security={{"sanctum": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"origin", "destination", "destination_name"},
+     *             @OA\Property(property="origin", type="object", description="Origin coordinates (array with lat and lng)", example={"lat": -5.135399, "lng": 119.412293}),
+     *             @OA\Property(property="destination", type="object", description="Destination coordinates (array with lat and lng)", example={"lat": -5.135831, "lng": 119.422559}),
+     *             @OA\Property(property="destination_name", type="string", description="Name of the destination", example="Mall Panakkukang")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Trip created successfully"),
+     *     @OA\Response(response=400, description="Validation error"),
+     *     @OA\Response(response=500, description="Internal server error")
+     * )
+     */
     public function store(Request $request)
     {
-        // Validate the incoming request data
         $request->validate([
-            'origin' => 'required|array',  // Ensure 'origin' is an array
-            'destination' => 'required|array',  // Ensure 'destination' is an array
-            'destination_name' => 'required|string',  // Ensure 'destination_name' is a string
+            'origin' => 'required|array',
+            'destination' => 'required|array',
+            'destination_name' => 'required|string',
         ]);
-    
-        // Create the trip and save to the database
+
         $trip = $request->user()->trips()->create([
-            'origin' => $request->origin,  // Pass the 'origin' directly as it is
-            'destination' => $request->destination,  // Pass the 'destination' directly as it is
-            'destination_name' => $request->destination_name,  // Pass the destination name
+            'origin' => $request->origin,
+            'destination' => $request->destination,
+            'destination_name' => $request->destination_name,
         ]);
-    
-        // Dispatch the TripCreated event
+
         TripCreated::dispatch($trip, $request->user());
-    
-        // Return the created trip
+
         return response()->json($trip, 201);
     }
-    
+
+    /**
+     * @OA\Post(
+     *     path="/api/trips/{trip}/accept",
+     *     summary="Accept a trip",
+     *     description="Endpoint for drivers to accept a trip",
+     *     tags={"Trips"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="trip",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the trip",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"driver_location"},
+     *             @OA\Property(property="driver_location", type="object", description="Driver's current location (array with lat and lng)", example={"lat": -5.135999, "lng": 119.411111})
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Trip accepted successfully"),
+     *     @OA\Response(response=400, description="Trip already accepted or validation error"),
+     *     @OA\Response(response=500, description="Internal server error")
+     * )
+     */
     public function accept(Request $request, Trip $trip)
     {
-        // Validate the required driver location field
         $request->validate([
             'driver_location' => 'required'
         ]);
-    
-        // Check if the trip already has an assigned driver
+
         if ($trip->driver_id) {
             return response()->json(['message' => 'This trip has already been accepted by another driver.'], 400);
         }
-    
+
         try {
-            // If the trip does not have a driver, assign the driver and update the trip
             $trip->update([
-                'driver_id' => $request->user()->id, // Assign the driver who is accepting the trip
-                'driver_location' => $request->driver_location, // Update the driver's location
+                'driver_id' => $request->user()->id,
+                'driver_location' => $request->driver_location,
             ]);
-    
-            // Load the driver and user relationships for further use
+
             $trip->load('driver.user');
-    
-            // Dispatch the event that the trip has been accepted
+
             TripAccepted::dispatch($trip, $trip->user);
-    
+
             return $trip;
-    
         } catch (\Exception $e) {
-            // Handle exceptions during the trip update process
             return response()->json([
                 'message' => 'Failed to accept the trip. Please try again.',
-                'error' => $e->getMessage(), // Include error message for debugging (optional)
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/trips/{trip}/start",
+     *     summary="Start a trip",
+     *     description="Endpoint to start a trip",
+     *     tags={"Trips"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="trip",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the trip",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Trip started successfully"),
+     *     @OA\Response(response=400, description="Trip has already started"),
+     *     @OA\Response(response=500, description="Internal server error")
+     * )
+     */
     public function start(Request $request, Trip $trip)
-{
-    // Check if the trip has already started
-    if ($trip->is_started) {
-        return response()->json(['message' => 'This trip has already started.'], 400);
+    {
+        if ($trip->is_started) {
+            return response()->json(['message' => 'This trip has already started.'], 400);
+        }
+
+        $trip->update([
+            'is_started' => true,
+        ]);
+
+        $trip->load('driver.user');
+
+        TripStarted::dispatch($trip, $request->user());
+
+        return response()->json($trip, 200);
     }
 
-    // Update the trip to mark it as started
-    $trip->update([
-        'is_started' => true,
-    ]);
-
-    // Load the driver and user relationships for further use
-    $trip->load('driver.user');
-
-    // Dispatch the TripStarted event with the trip and user
-    TripStarted::dispatch($trip, $request->user());
-
-    // Return the updated trip
-    return response()->json($trip, 200);
-}
-
-    
+    /**
+     * @OA\Post(
+     *     path="/api/trips/{trip}/end",
+     *     summary="End a trip",
+     *     description="Endpoint to end a trip",
+     *     tags={"Trips"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="trip",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the trip",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Trip ended successfully"),
+     *     @OA\Response(response=400, description="Validation error or invalid distance"),
+     *     @OA\Response(response=500, description="Internal server error")
+     * )
+     */
     public function end(Request $request, Trip $trip)
     {
-        // Check if the trip is already completed
         if ($trip->is_completed) {
             return response()->json(['message' => 'Trip is already completed.'], 400);
         }
-    
-        // Ensure both origin and destination are available
+
         $origin = $trip->origin;
         $destination = $trip->destination;
-    
+
         if (!$origin || !$destination) {
             return response()->json(['message' => 'Origin or destination coordinates are missing'], 400);
         }
-    
-        // Extract latitude and longitude from origin and destination
+
         $originLat = $origin['lat'];
         $originLng = $origin['lng'];
         $destinationLat = $destination['lat'];
         $destinationLng = $destination['lng'];
-    
-        // Calculate the distance between origin and destination using the Haversine formula
+
         $distance = $this->haversine($originLat, $originLng, $destinationLat, $destinationLng);
-    
-        // Check if the distance is valid
+
         if ($distance <= 0) {
             return response()->json(['message' => 'Invalid distance calculated.'], 400);
         }
-    
-        // Calculate the price for the trip based on the distance
+
         $price = $this->calculateTripPrice($originLat, $originLng, $destinationLat, $destinationLng);
-    
-        // Update the trip status and set the price
+
         $trip->update([
             'is_completed' => true,
             'price' => $price
         ]);
-    
-        // Reload the trip with related driver data (optional)
+
         $trip->load('driver.user');
-    
-        // Dispatch the TripEnded event
+
         TripEnded::dispatch($trip, $request->user());
-    
-        // Return a success response with trip details
+
         return response()->json([
             'message' => 'Trip has ended successfully.',
             'trip' => $trip
         ]);
     }
-    
+
+    /**
+     * @OA\Post(
+     *     path="/api/trips/{trip}/location",
+     *     summary="Update driver location",
+     *     description="Endpoint to update the driver's current location",
+     *     tags={"Trips"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="trip",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the trip",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"driver_location"},
+     *             @OA\Property(property="driver_location", type="object", description="Driver's current location (array with lat and lng)", example={"lat": -5.135999, "lng": 119.411111})
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Driver location updated successfully"),
+     *     @OA\Response(response=400, description="Validation error"),
+     *     @OA\Response(response=500, description="Internal server error")
+     * )
+     */
     public function location(Request $request, Trip $trip)
     {
-        // Validate the driver location field
         $request->validate([
             'driver_location' => 'required'
         ]);
-    
-        // Update the driver's location in the trip
+
         $trip->update([
             'driver_location' => $request->driver_location,
         ]);
-    
-        // Load the driver and user relationships
+
         $trip->load('driver.user');
-    
-        // Dispatch the TripLocationUpdated event
+
         TripLocationUpdated::dispatch($trip, $request->user());
-    
-        // Return the updated trip
+
         return $trip;
     }
-    
-    public function haversine($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo)
+
+    private function haversine($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo)
     {
-        $radius = 6371; // Earth radius in kilometers
-    
-        // Convert degrees to radians
+        $radius = 6371;
         $latFrom = deg2rad($latitudeFrom);
         $lonFrom = deg2rad($longitudeFrom);
         $latTo = deg2rad($latitudeTo);
         $lonTo = deg2rad($longitudeTo);
-    
-        // Haversine formula
+
         $latDelta = $latTo - $latFrom;
         $lonDelta = $lonTo - $lonFrom;
-    
+
         $a = sin($latDelta / 2) * sin($latDelta / 2) +
             cos($latFrom) * cos($latTo) *
             sin($lonDelta / 2) * sin($lonDelta / 2);
-    
+
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-    
-        // Distance in kilometers
+
         return $radius * $c;
     }
-    
-    public function calculateTripPrice($originLat, $originLng, $destinationLat, $destinationLng)
+
+    private function calculateTripPrice($originLat, $originLng, $destinationLat, $destinationLng)
     {
-        // Calculate the distance using the Haversine formula
         $distance = $this->haversine($originLat, $originLng, $destinationLat, $destinationLng);
-    
-        // Assuming a base rate and per kilometer price
-        $basePrice = 10; // Example base price in your currency (e.g., $10)
-        $pricePerKm = 2; // Example price per kilometer (e.g., $2 per km)
-    
-        // Calculate the total price (base price + price based on distance)
-        $totalPrice = $basePrice + ($distance * $pricePerKm);
-    
-        return $totalPrice;
+
+        $basePrice = 10;
+        $pricePerKm = 2;
+
+        return $basePrice + ($distance * $pricePerKm);
     }
-}    
+}
