@@ -5,11 +5,21 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\TripController;
+use App\Http\Controllers\SubscriptionController;
+use L5Swagger\Http\Controllers\SwaggerController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\WheelOfFortuneController;
 
+Route::get('/docs', [SwaggerController::class, 'api'])->name('l5-swagger.api');
+
+
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+
+Route::post('/driver/create', [DriverController::class, 'createDriver']);
+Route::get('/driver/show', [DriverController::class, 'showDrivers']);
+Route::post('/driver/update', [DriverController::class, 'updateDriver']);
+
 
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
@@ -26,6 +36,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user', function(Request $request){
         return $request->user();
     });
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/packages', [SubscriptionController::class, 'packages']); // Menampilkan daftar paket
+    Route::post('/subscriptions', [SubscriptionController::class, 'createSubscription']); // Membuat langganan
+    Route::post('/subscriptions/{id}/payment', [SubscriptionController::class, 'createPayment']); // Membuat pembayaran
+});
     Route::post('/coupons', [CouponController::class, 'store']);
     Route::get('/coupons', [CouponController::class, 'get']);
     Route::get('/coupons/inventory', [CouponController::class, 'getUserClaimedCoupons']);
@@ -37,6 +54,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 
     
-}
 
-);
+
+

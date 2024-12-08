@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'mapsnantipi.dart';
 
 class PemesananNantipi extends StatelessWidget {
   @override
@@ -168,7 +169,9 @@ class SubscriptionCard extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Maps()),);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       shape: RoundedRectangleBorder(
