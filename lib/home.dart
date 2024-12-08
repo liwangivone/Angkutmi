@@ -385,14 +385,73 @@ class _VoucherPageState extends State<VoucherPage> {
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
-
-  @override
+@override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: const Text("Profile Page"),
+    return SafeArea(
+      child: Scaffold(
+        // appBar: AppBar(
+        //   elevation: 0.0,
+        //   backgroundColor: const Color.fromARGB(255, 44, 158, 75),
+        //   leading: Icon(
+        //     Icons.menu,
+        //     color: Colors.white,
+        //   ),
+        // ),
+        body: Stack(
+          alignment: Alignment.center,
+          children: [
+            CustomPaint(
+              painter: HeaderCurvedContainer(),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 40.0, bottom: 30),
+                  child: Text(
+                    'Profile anda',
+                    style: TextStyle(
+                      fontSize: 30.0,
+                      letterSpacing: 1.5,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+
+                    ),
+                  ),
+                ),
+                CircleAvatar(
+                  radius: MediaQuery.of(context).size.width / 5,
+                  backgroundColor: Colors.white,
+                  // backgroundImage: AssetImage('path/to/your/image'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
+class HeaderCurvedContainer extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()..color = const Color.fromARGB(255, 44, 158, 75);
+    Path path = Path()
+      ..relativeLineTo(0, 150)
+      ..quadraticBezierTo(size.width / 2, 250.0, size.width, 150)
+      ..relativeLineTo(0, -150)
+      ..close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
 
