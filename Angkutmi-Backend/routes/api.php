@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\TripController;
+use App\Http\Controllers\SubscriptionController;
+use L5Swagger\Http\Controllers\SwaggerController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -23,4 +25,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user', function(Request $request){
         return $request->user();
     });
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/packages', [SubscriptionController::class, 'packages']); // Menampilkan daftar paket
+    Route::post('/subscriptions', [SubscriptionController::class, 'createSubscription']); // Membuat langganan
+    Route::post('/subscriptions/{id}/payment', [SubscriptionController::class, 'createPayment']); // Membuat pembayaran
 });

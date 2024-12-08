@@ -1,0 +1,216 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Subscription Service",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/packages": {
+            "get": {
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Menampilkan daftar paket langganan",
+                "operationId": "e064a567bc8c091bed9a5879bf25d080",
+                "responses": {
+                    "200": {
+                        "description": "Daftar paket berhasil ditampilkan.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Paket 1 Bulan"
+                                            },
+                                            "price": {
+                                                "type": "integer",
+                                                "example": 450000
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/subscriptions": {
+            "post": {
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Membuat langganan baru",
+                "operationId": "4cc9ea688290fdd26467b03f2a7f74b9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "package_name": {
+                                        "type": "string",
+                                        "example": "Paket 3 Bulan"
+                                    },
+                                    "price": {
+                                        "type": "integer",
+                                        "example": 800000
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Jl. Contoh No. 123"
+                                    },
+                                    "schedule_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-12-15"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Langganan berhasil dibuat.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Subscription created successfully"
+                                        },
+                                        "subscription": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "package_name": {
+                                                    "type": "string",
+                                                    "example": "Paket 3 Bulan"
+                                                },
+                                                "price": {
+                                                    "type": "integer",
+                                                    "example": 800000
+                                                },
+                                                "address": {
+                                                    "type": "string",
+                                                    "example": "Jl. Contoh No. 123"
+                                                },
+                                                "schedule_date": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2024-12-15"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validasi input gagal."
+                    }
+                }
+            }
+        },
+        "/api/subscriptions/{id}/payment": {
+            "post": {
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Membuat pembayaran untuk langganan",
+                "operationId": "44e9d5b082436119fc684219b2395559",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID dari langganan",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "payment_method": {
+                                        "type": "string",
+                                        "example": "OVO"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pembayaran berhasil.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Payment successful"
+                                        },
+                                        "payment": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "subscription_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "payment_method": {
+                                                    "type": "string",
+                                                    "example": "OVO"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "success"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Langganan tidak ditemukan."
+                    },
+                    "422": {
+                        "description": "Validasi input gagal."
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Subscription",
+            "description": "Subscription"
+        }
+    ]
+}
