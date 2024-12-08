@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * @OA\Info(title="API Subscription Service", version="1.0")
+ * @OA\Info(title="Angkutmi API Documentation", version="1.0")
  */
 class SubscriptionController extends Controller
 {

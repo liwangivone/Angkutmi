@@ -1,10 +1,359 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "API Subscription Service",
+        "title": "Angkutmi API Documentation",
         "version": "1.0"
     },
     "paths": {
+        "/api/driver/create": {
+            "post": {
+                "tags": [
+                    "Driver"
+                ],
+                "summary": "Create a new driver",
+                "description": "Create a new driver with associated vehicle details.",
+                "operationId": "a90188be8f53ffc184850d809937f0d7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "motor",
+                                            "pickup",
+                                            "truck"
+                                        ],
+                                        "example": "pickup"
+                                    },
+                                    "capacity": {
+                                        "type": "integer",
+                                        "example": 100
+                                    },
+                                    "plat": {
+                                        "type": "string",
+                                        "example": "D1234ABC"
+                                    },
+                                    "profile_picture": {
+                                        "description": "Driver's profile picture",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Driver created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Driver created successfully."
+                                        },
+                                        "driver": {
+                                            "description": "Details of the newly created driver",
+                                            "type": "object"
+                                        },
+                                        "vehicle": {
+                                            "description": "Details of the associated vehicle",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Validation error details."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "An error occurred while creating the driver.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "An error occurred while creating the driver."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/driver/show": {
+            "get": {
+                "tags": [
+                    "Driver"
+                ],
+                "summary": "Get driver and vehicle details",
+                "description": "Retrieve authenticated user's driver and vehicle information.",
+                "operationId": "d6bcdb77a963c31cd024b408a421b944",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved driver and vehicle details.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "properties": {
+                                                "id_user": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "nama_user": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "User not authenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "User not authenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Driver or vehicle not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Driver not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "An error occurred while fetching the data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "An error occurred while fetching the data."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/driver/update": {
+            "post": {
+                "tags": [
+                    "Driver"
+                ],
+                "summary": "Update driver and vehicle information",
+                "description": "Allows an authenticated user to update their driver profile and associated vehicle details. If a driver or vehicle record does not exist, a new one is created.",
+                "operationId": "5b8ab3a5750b7dc0d3f8ef354092fa68",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "type",
+                                    "capacity",
+                                    "plat"
+                                ],
+                                "properties": {
+                                    "type": {
+                                        "description": "Vehicle type ('motor', 'pickup', or 'truck')",
+                                        "type": "string",
+                                        "example": "motor"
+                                    },
+                                    "capacity": {
+                                        "description": "Vehicle capacity (minimum 1)",
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "plat": {
+                                        "description": "Unique vehicle license plate",
+                                        "type": "string",
+                                        "example": "AB123CD"
+                                    },
+                                    "profile_picture": {
+                                        "description": "Profile picture of the driver (image file)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Driver and vehicle information updated successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Driver and vehicle information updated successfully."
+                                        },
+                                        "driver": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "profile_picture": {
+                                                    "type": "string",
+                                                    "example": "profile_pictures/driver1.jpg"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "vehicle": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "motor"
+                                                },
+                                                "capacity": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "plat": {
+                                                    "type": "string",
+                                                    "example": "AB123CD"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "User not authenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "User not authenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error occurred during the update process.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "An error occurred while updating the driver and vehicle information."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/packages": {
             "get": {
                 "tags": [
@@ -466,6 +815,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Driver",
+            "description": "Driver"
+        },
         {
             "name": "Subscription",
             "description": "Subscription"

@@ -12,8 +12,14 @@ use App\Http\Controllers\WheelOfFortuneController;
 
 Route::get('/docs', [SwaggerController::class, 'api'])->name('l5-swagger.api');
 
+
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+
+Route::post('/driver/create', [DriverController::class, 'createDriver']);
+Route::get('/driver/show', [DriverController::class, 'showDrivers']);
+Route::post('/driver/update', [DriverController::class, 'updateDriver']);
+
 
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
