@@ -4,7 +4,7 @@
             "outputFile": "com.example.angkutmi.app-mergeDebugResources-24:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\USER\\Desktop\\GitHub\\AngkutmiProject\\Angkutmi\\android\\app\\src\\main\\res\\values-night\\styles.xml",
+                    "source": "C:\\Users\\USER\\Desktop\\GitHub\\AngkutmiProject\\Angkutmi\\Angkutmi-Frontend\\android\\app\\src\\main\\res\\values-night\\styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",

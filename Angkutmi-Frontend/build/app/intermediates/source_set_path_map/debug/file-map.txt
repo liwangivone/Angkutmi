@@ -18,10 +18,10 @@ com.example.angkutmi.app-core-1.13.1-16 C:\Users\USER\.gradle\caches\transforms-
 com.example.angkutmi.app-lifecycle-runtime-2.7.0-17 C:\Users\USER\.gradle\caches\transforms-3\c8996eb6ce8efabee1883fe1486006c9\transformed\lifecycle-runtime-2.7.0\res
 com.example.angkutmi.app-jetified-lifecycle-viewmodel-savedstate-2.7.0-18 C:\Users\USER\.gradle\caches\transforms-3\ca2eed4266fd24517e583e6618aa3924\transformed\jetified-lifecycle-viewmodel-savedstate-2.7.0\res
 com.example.angkutmi.app-jetified-tracing-1.2.0-19 C:\Users\USER\.gradle\caches\transforms-3\fee79d0d8ef3af5dbc14ef6d22d028cf\transformed\jetified-tracing-1.2.0\res
-com.example.angkutmi.app-debug-20 C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\debug\res
-com.example.angkutmi.app-main-21 C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\main\res
-com.example.angkutmi.app-pngs-22 C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\build\app\generated\res\pngs\debug
-com.example.angkutmi.app-resValues-23 C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\build\app\generated\res\resValues\debug
-com.example.angkutmi.app-packageDebugResources-24 C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\build\app\intermediates\incremental\debug\packageDebugResources\merged.dir
-com.example.angkutmi.app-packageDebugResources-25 C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\build\app\intermediates\incremental\debug\packageDebugResources\stripped.dir
-com.example.angkutmi.app-merged_res-26 C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\build\app\intermediates\merged_res\debug
+com.example.angkutmi.app-debug-20 C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\debug\res
+com.example.angkutmi.app-main-21 C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\main\res
+com.example.angkutmi.app-pngs-22 C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\build\app\generated\res\pngs\debug
+com.example.angkutmi.app-resValues-23 C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\build\app\generated\res\resValues\debug
+com.example.angkutmi.app-packageDebugResources-24 C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\build\app\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.example.angkutmi.app-packageDebugResources-25 C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\build\app\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.example.angkutmi.app-merged_res-26 C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\build\app\intermediates\merged_res\debug

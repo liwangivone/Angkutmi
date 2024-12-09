@@ -1,7 +1,7 @@
 -- Merging decision tree log ---
 application
-INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\main\AndroidManifest.xml:2:5-33:19
-INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\debug\AndroidManifest.xml
+INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\main\AndroidManifest.xml:2:5-33:19
+INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\debug\AndroidManifest.xml
 MERGED from [androidx.window:window:1.2.0] C:\Users\USER\.gradle\caches\transforms-3\3e108fe9d597d03770ae82acaebb5b63\transformed\jetified-window-1.2.0\AndroidManifest.xml:22:5-29:19
 MERGED from [androidx.window:window:1.2.0] C:\Users\USER\.gradle\caches\transforms-3\3e108fe9d597d03770ae82acaebb5b63\transformed\jetified-window-1.2.0\AndroidManifest.xml:22:5-29:19
 MERGED from [androidx.core:core:1.13.1] C:\Users\USER\.gradle\caches\transforms-3\c666c258fca39b3353b46678a6b928ab\transformed\core-1.13.1\AndroidManifest.xml:28:5-89
@@ -15,17 +15,17 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\USER\.gradle\cache
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\USER\.gradle\caches\transforms-3\ee01e2b20f52029a052c42ac95f9e8b2\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\USER\.gradle\caches\transforms-3\ee01e2b20f52029a052c42ac95f9e8b2\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
 	android:extractNativeLibs
-		INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\debug\AndroidManifest.xml
+		INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\debug\AndroidManifest.xml
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.13.1] C:\Users\USER\.gradle\caches\transforms-3\c666c258fca39b3353b46678a6b928ab\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
 	android:name
-		INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\main\AndroidManifest.xml
 manifest
-ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\main\AndroidManifest.xml:1:1-45:12
-MERGED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\main\AndroidManifest.xml:1:1-45:12
-INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\debug\AndroidManifest.xml:1:1-7:12
-INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\debug\AndroidManifest.xml:1:1-7:12
-INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\debug\AndroidManifest.xml:1:1-7:12
+ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\main\AndroidManifest.xml:1:1-45:12
+MERGED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\main\AndroidManifest.xml:1:1-45:12
+INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\debug\AndroidManifest.xml:1:1-7:12
+INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\debug\AndroidManifest.xml:1:1-7:12
+INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\debug\AndroidManifest.xml:1:1-7:12
 MERGED from [androidx.fragment:fragment:1.7.1] C:\Users\USER\.gradle\caches\transforms-3\a49cd171355a6a39687e69f028c8bcbc\transformed\fragment-1.7.1\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.window:window:1.2.0] C:\Users\USER\.gradle\caches\transforms-3\3e108fe9d597d03770ae82acaebb5b63\transformed\jetified-window-1.2.0\AndroidManifest.xml:17:1-31:12
 MERGED from [androidx.window:window-java:1.2.0] C:\Users\USER\.gradle\caches\transforms-3\bf78d940cc78ca45c77421e3af64376e\transformed\jetified-window-java-1.2.0\AndroidManifest.xml:17:1-21:12
@@ -52,33 +52,33 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\US
 MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\USER\.gradle\caches\transforms-3\de4e1f54747892e0930cd2e3ecf5513e\transformed\interpolator-1.0.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.window.extensions.core:core:1.0.0] C:\Users\USER\.gradle\caches\transforms-3\6dde453803d512b3f23cc981e264e9e0\transformed\jetified-core-1.0.0\AndroidManifest.xml:2:1-7:12
 	package
-		INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\debug\AndroidManifest.xml
+		INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\debug\AndroidManifest.xml
 	android:versionName
-		INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\debug\AndroidManifest.xml
+		INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\debug\AndroidManifest.xml
 	android:versionCode
-		INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\debug\AndroidManifest.xml
+		INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\debug\AndroidManifest.xml
 	xmlns:android
-		ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\main\AndroidManifest.xml:1:11-69
+		ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\main\AndroidManifest.xml:1:11-69
 queries
-ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\main\AndroidManifest.xml:39:5-44:15
+ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\main\AndroidManifest.xml:39:5-44:15
 intent#action:name:android.intent.action.PROCESS_TEXT+data:mimeType:text/plain
-ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\main\AndroidManifest.xml:40:9-43:18
+ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\main\AndroidManifest.xml:40:9-43:18
 action#android.intent.action.PROCESS_TEXT
-ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\main\AndroidManifest.xml:41:13-72
+ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\main\AndroidManifest.xml:41:13-72
 	android:name
-		ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\main\AndroidManifest.xml:41:21-70
+		ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\main\AndroidManifest.xml:41:21-70
 data
-ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\main\AndroidManifest.xml:42:13-50
+ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\main\AndroidManifest.xml:42:13-50
 	android:mimeType
-		ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\main\AndroidManifest.xml:42:19-48
+		ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\main\AndroidManifest.xml:42:19-48
 uses-permission#android.permission.INTERNET
-ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\debug\AndroidManifest.xml:6:5-66
+ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\debug\AndroidManifest.xml:6:5-66
 	android:name
-		ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\debug\AndroidManifest.xml:6:22-64
+		ADDED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\debug\AndroidManifest.xml:6:22-64
 uses-sdk
-INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\debug\AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\debug\AndroidManifest.xml
-INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\debug\AndroidManifest.xml
+INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\debug\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\debug\AndroidManifest.xml
+INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\debug\AndroidManifest.xml
 MERGED from [androidx.fragment:fragment:1.7.1] C:\Users\USER\.gradle\caches\transforms-3\a49cd171355a6a39687e69f028c8bcbc\transformed\fragment-1.7.1\AndroidManifest.xml:5:5-44
 MERGED from [androidx.fragment:fragment:1.7.1] C:\Users\USER\.gradle\caches\transforms-3\a49cd171355a6a39687e69f028c8bcbc\transformed\fragment-1.7.1\AndroidManifest.xml:5:5-44
 MERGED from [androidx.window:window:1.2.0] C:\Users\USER\.gradle\caches\transforms-3\3e108fe9d597d03770ae82acaebb5b63\transformed\jetified-window-1.2.0\AndroidManifest.xml:20:5-44
@@ -130,9 +130,9 @@ MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\USER\.gradle\cac
 MERGED from [androidx.window.extensions.core:core:1.0.0] C:\Users\USER\.gradle\caches\transforms-3\6dde453803d512b3f23cc981e264e9e0\transformed\jetified-core-1.0.0\AndroidManifest.xml:5:5-44
 MERGED from [androidx.window.extensions.core:core:1.0.0] C:\Users\USER\.gradle\caches\transforms-3\6dde453803d512b3f23cc981e264e9e0\transformed\jetified-core-1.0.0\AndroidManifest.xml:5:5-44
 	android:targetSdkVersion
-		INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\debug\AndroidManifest.xml
+		INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\debug\AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\android\app\src\debug\AndroidManifest.xml
+		INJECTED from C:\Users\USER\Desktop\GitHub\AngkutmiProject\Angkutmi\Angkutmi-Frontend\android\app\src\debug\AndroidManifest.xml
 uses-library#androidx.window.extensions
 ADDED from [androidx.window:window:1.2.0] C:\Users\USER\.gradle\caches\transforms-3\3e108fe9d597d03770ae82acaebb5b63\transformed\jetified-window-1.2.0\AndroidManifest.xml:23:9-25:40
 	android:required
