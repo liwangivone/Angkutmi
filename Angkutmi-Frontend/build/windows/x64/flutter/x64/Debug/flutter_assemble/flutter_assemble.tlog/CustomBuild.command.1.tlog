@@ -1,0 +1,28 @@
+^D:\A\ANGKUTMI\ANGKUTMI-FRONTEND\BUILD\WINDOWS\X64\CMAKEFILES\0B814B7628591D4C6337E07AAEBBF945\FLUTTER_WINDOWS.DLL.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E env FLUTTER_ROOT=C:\Flutter\Flutter\flutter PROJECT_DIR=D:\a\Angkutmi\Angkutmi-Frontend FLUTTER_ROOT=C:\Flutter\Flutter\flutter FLUTTER_EPHEMERAL_DIR=D:\a\Angkutmi\Angkutmi-Frontend\windows\flutter\ephemeral PROJECT_DIR=D:\a\Angkutmi\Angkutmi-Frontend FLUTTER_TARGET=D:\a\Angkutmi\Angkutmi-Frontend\lib\login.dart DART_OBFUSCATION=false TRACK_WIDGET_CREATION=true TREE_SHAKE_ICONS=false PACKAGE_CONFIG=D:\a\Angkutmi\Angkutmi-Frontend\.dart_tool\package_config.json C:/Flutter/Flutter/flutter/packages/flutter_tools/bin/tool_backend.bat windows-x64 Debug
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\A\ANGKUTMI\ANGKUTMI-FRONTEND\BUILD\WINDOWS\X64\CMAKEFILES\5867D8C8615A8351281DB993E625A1B1\FLUTTER_ASSEMBLE.RULE
+setlocal
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\A\ANGKUTMI\ANGKUTMI-FRONTEND\WINDOWS\FLUTTER\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SD:/a/Angkutmi/Angkutmi-Frontend/windows -BD:/a/Angkutmi/Angkutmi-Frontend/build/windows/x64 --check-stamp-file D:/a/Angkutmi/Angkutmi-Frontend/build/windows/x64/flutter/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

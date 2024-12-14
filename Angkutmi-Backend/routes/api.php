@@ -36,13 +36,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user', function(Request $request){
         return $request->user();
     });
-});
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/packages', [SubscriptionController::class, 'packages']); // Menampilkan daftar paket
-    Route::post('/subscriptions', [SubscriptionController::class, 'createSubscription']); // Membuat langganan
-    Route::post('/subscriptions/{id}/payment', [SubscriptionController::class, 'createPayment']); // Membuat pembayaran
-});
     Route::post('/coupons', [CouponController::class, 'store']);
     Route::get('/coupons', [CouponController::class, 'get']);
     Route::get('/coupons/inventory', [CouponController::class, 'getUserClaimedCoupons']);
@@ -51,6 +44,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/wheel/spin', [WheelOfFortuneController::class, 'spin']);
     Route::post('/reward/claim', [WheelOfFortuneController::class, 'claimReward']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/packages', [SubscriptionController::class, 'packages']); // Menampilkan daftar paket
+    Route::post('/subscriptions', [SubscriptionController::class, 'createSubscription']); // Membuat langganan
+    Route::post('/subscriptions/{id}/payment', [SubscriptionController::class, 'createPayment']); // Membuat pembayaran
+});
+
 
 
     
