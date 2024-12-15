@@ -81,52 +81,57 @@ class _HomeScreenState extends State<HomeScreen> {
     ProfileScreen(),
   ];
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: Image.asset(
-            'assets/home/logoAngkutmi.png',
-            width: 125,
-          ),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      automaticallyImplyLeading: false,
+      title: Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: Image.asset(
+          'assets/home/logoAngkutmi.png',
+          width: 125,
         ),
-        backgroundColor: const Color.fromARGB(255, 44, 158, 75),
       ),
       backgroundColor: const Color.fromARGB(255, 44, 158, 75),
-      body: userName.isEmpty
-          ? const Center(child: CircularProgressIndicator()) // Show loading until user name is fetched
-          : HomeContent(userName: userName), // Pass dynamic userName
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color.fromARGB(255, 44, 158, 75),
-        unselectedItemColor: Colors.grey,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.local_activity),
-            label: 'Voucher',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-      ),
-    );
-  }
+    ),
+    backgroundColor: const Color.fromARGB(255, 44, 158, 75),
+    body: IndexedStack(
+      index: _selectedIndex, // Display the page corresponding to _selectedIndex
+      children: [
+        HomeContent(userName: userName), // Home page
+        const VoucherPage(), // Voucher page
+        const ProfileScreen(), // Profile page
+      ],
+    ),
+    bottomNavigationBar: BottomNavigationBar(
+      backgroundColor: Colors.white,
+      selectedItemColor: const Color.fromARGB(255, 44, 158, 75),
+      unselectedItemColor: Colors.grey,
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.local_activity),
+          label: 'Voucher',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.account_circle),
+          label: 'Profile',
+        ),
+      ],
+      currentIndex: _selectedIndex,
+      onTap: (index) {
+        setState(() {
+          _selectedIndex = index; // Update the selected index
+        });
+      },
+    ),
+  );
 }
+  }
 
 // HomeContent Widget to display the greeting and services
 class HomeContent extends StatelessWidget {
@@ -349,16 +354,23 @@ class ProfileScreen extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const CircleAvatar(
-                  radius: 70,
-                  backgroundImage: AssetImage('assets/images/avatar.jpg'),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Ivone',
-                  style: TextStyle(color: Colors.white, fontSize: 30),
-                ),
-              ],
+                const Padding(
+                  padding: EdgeInsets.only(top: 40.0, bottom: 30),
+                  child: Text(
+                    'Profile anda',
+                    style: TextStyle(
+                      fontSize: 30.0,
+                      letterSpacing: 1.5,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+
+                    ),
+                  ),       
+                  ),
+                  CircleAvatar(
+                  radius: MediaQuery.of(context).size.width / 5,
+                  backgroundColor: Colors.white,
+                  // backgroundImage: AssetImage('path/to/your/image'),       ],
             ),
           ],
         ),
@@ -413,35 +425,61 @@ class _VoucherPageState extends State<VoucherPage> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 44, 158, 75),
       body: Container(
+        // padding: const EdgeInsets.only(top: 20),
+        // margin: EdgeInsets.only(top: 20),
         decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(66.0),
-            topRight: Radius.circular(66.0),
-          ),
-        ),
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(66.0),
+                topRight: Radius.circular(66.0))),
         child: Column(
-          children: <Widget>[
+          children: [
             const Padding(
-              padding: EdgeInsets.only(left: 30.0, top: 30),
+              padding: EdgeInsets.only(top: 35, bottom: 20),
               child: Text(
-                'Vouchers',
-                style: TextStyle(fontSize: 24.0),
+                "Voucher anda",
+                style: TextStyle(fontSize: 18, color: Colors.black,),
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: _vouchers.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(_vouchers[index]),
-                  );
-                },
-              ),
+              child: _vouchers.isEmpty
+                  ? const Center(
+                      child: Text(
+                        "Belum ada voucher",
+                        style: TextStyle(fontSize: 18, color: Colors.grey),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: _vouchers.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 30),
+                          color: Colors.white,
+                          elevation: 3,
+                          child: ListTile(
+                            leading: const Icon(
+                              Icons.local_cafe,
+                              color: Colors.grey,
+                              size: 40,
+                            ),
+                            title: Text(_vouchers[index]),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 20, horizontal: 25),
+                          ),
+                        );
+                      },
+                    ),
             ),
-            ElevatedButton(
-              onPressed: _addVoucher,
-              child: const Text('Add Voucher'),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: ElevatedButton(
+                onPressed: _addVoucher,
+                style: ElevatedButton.styleFrom(
+                  textStyle: const TextStyle(fontSize: 16),
+                ),
+                child: const Text("tes tambah"),
+              ),
             ),
           ],
         ),
