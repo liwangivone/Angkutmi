@@ -374,8 +374,8 @@ class ProfileScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      ]),
+    ));
   }
 }
 class HeaderCurvedContainer extends CustomPainter {
