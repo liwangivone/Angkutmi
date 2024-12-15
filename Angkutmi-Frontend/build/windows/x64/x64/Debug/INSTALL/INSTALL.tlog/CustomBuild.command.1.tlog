@@ -1,0 +1,10 @@
+^D:\A\ANGKUTMI\ANGKUTMI-FRONTEND\BUILD\WINDOWS\X64\CMAKEFILES\A5151061203843C2F07A4524C4DC4332\INSTALL_FORCE.RULE
+setlocal
+cd .
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

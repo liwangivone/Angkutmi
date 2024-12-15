@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import 'regis_login.dart';
+import 'service/auth_service.dart';  // Import AuthService
 import 'home.dart';
+import 'regis_login.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -34,9 +35,26 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  // Function to handle login
+  Future<void> _login() async {
+    if (_formKey.currentState!.validate()) {
+      final phone = _phoneController.text;
+      final password = _passwordController.text;
+
+      // Call AuthService to handle login logic
+      final authService = AuthService();
+
+      bool success = await authService.login(phone, password, context);
+      if (!success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login failed, please try again')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Mendapatkan ukuran layar untuk responsif
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -90,23 +108,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         hintText: '0895-xxx-xxx',
                         border: const UnderlineInputBorder(),
                         enabledBorder: UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.grey), // Warna border saat field tidak fokus
+                          borderSide: BorderSide(color: Colors.grey),
                         ),
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Colors.green,
-                              width: 2.0), // Warna border saat field fokus
+                              color: Colors.green, width: 2.0),
                         ),
                         errorBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 1.0), // Warna border saat terjadi error
+                              color: Colors.red, width: 1.0),
                         ),
                         focusedErrorBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 1.0), // Warna border saat error dan field fokus
+                              color: Colors.red, width: 1.0),
                         ),
                         suffixText: '*',
                         suffixStyle: const TextStyle(color: Colors.red),
@@ -123,37 +137,33 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: TextFormField(
                       controller: _passwordController,
-                      obscureText: !_isPasswordVisible, // Mengontrol visibilitas password
+                      obscureText: !_isPasswordVisible, 
                       decoration: InputDecoration(
                         labelText: 'Kata sandi',
                         labelStyle: const TextStyle(color: Colors.black),
                         border: const UnderlineInputBorder(),
                         enabledBorder: UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.grey), // Warna border saat field tidak fokus
+                          borderSide: BorderSide(color: Colors.grey),
                         ),
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Colors.green,
-                              width: 2.0), // Warna border saat field fokus
+                              color: Colors.green, width: 2.0),
                         ),
                         errorBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 1.0), // Warna border saat terjadi error
+                              color: Colors.red, width: 1.0),
                         ),
                         focusedErrorBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 1.0), // Warna border saat error dan field fokus
+                              color: Colors.red, width: 1.0),
                         ),
                         suffixText: '*',
                         suffixStyle: const TextStyle(color: Colors.red),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _isPasswordVisible
-                                ? Icons.visibility // Ikon untuk menyembunyikan
-                                : Icons.visibility_off, // Ikon untuk menampilkan
+                                ? Icons.visibility
+                                : Icons.visibility_off,
                           ),
                           onPressed: () {
                             setState(() {
@@ -174,26 +184,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 16.0), // Padding atas tombol
+                    padding: const EdgeInsets.only(top: 16.0),
                     child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          // login berhasil
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomeScreen(),
-                            ),
-                          );
-
-                          // Menampilkan notifikasi berhasil login
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Login berhasil!'),
-                            ),
-                          );
-                        }
-                      },
+                      onPressed: _login,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         minimumSize: const Size(double.infinity, 50),
