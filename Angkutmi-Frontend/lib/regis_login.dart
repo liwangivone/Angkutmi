@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'home.dart';
 import 'package:flutter/gestures.dart';
+import 'service/auth_service.dart';
+import 'home.dart';
 import 'login.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -11,14 +12,16 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isCheckboxChecked = false;
-  bool _isPasswordVisible = false; // Tambahkan variabel ini untuk toggle visibilitas
+  bool _isPasswordVisible = false;
 
-  // Controllers untuk mendapatkan nilai dari TextField
+  // Controllers
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   late TapGestureRecognizer _tapGestureRecognizer;
+
+  final AuthService _authService = AuthService();
 
   @override
   void initState() {
@@ -35,7 +38,50 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   void dispose() {
     _tapGestureRecognizer.dispose();
+    _nameController.dispose();
+    _phoneController.dispose();
+    _passwordController.dispose();
     super.dispose();
+  }
+
+  // Method to handle registration
+  Future<void> _register() async {
+    debugPrint("Register button clicked");
+    if (_formKey.currentState!.validate()) {
+      if (!_isCheckboxChecked) {
+        debugPrint("Terms and conditions checkbox is unchecked");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Anda harus menyetujui syarat dan ketentuan'),
+          ),
+        );
+        return;
+      }
+
+      final name = _nameController.text;
+      final phone = _phoneController.text;
+      final password = _passwordController.text;
+
+      // Call the register method from AuthService
+      final result = await _authService.register(name, phone, password);
+
+      if (result['success']) {
+        debugPrint("Registration successful");
+        // Navigate to the home screen on successful registration
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen(userName: 'fetchedUserName')),
+        );
+      } else {
+        debugPrint("Registration failed: ${result['message']}");
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result['message'] ?? 'Registrasi gagal')),
+        );
+      }
+    } else {
+      debugPrint("Form validation failed");
+    }
   }
 
   @override
@@ -56,6 +102,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Header Section
               Column(
                 children: [
                   Padding(
@@ -76,6 +123,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                 ],
               ),
+              // Input Fields
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -209,23 +257,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          if (_isCheckboxChecked) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => HomeScreen()),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                    'Anda harus menyetujui syarat dan ketentuan'),
-                              ),
-                            );
-                          }
-                        }
-                      },
+                      onPressed: _register,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         minimumSize: const Size(double.infinity, 50),
@@ -241,6 +273,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                 ],
               ),
+              // Login Link
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: Center(
