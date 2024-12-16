@@ -3,6 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'pemesanannantipi.dart';
 
+import 'gacha.dart';
+
 // Main entry point for the app
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -420,13 +422,18 @@ class _VoucherPageState extends State<VoucherPage> {
     });
   }
 
+  void _navigateToFortuneWheelPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ExamplePage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 44, 158, 75),
       body: Container(
-        // padding: const EdgeInsets.only(top: 20),
-        // margin: EdgeInsets.only(top: 20),
         decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
@@ -434,8 +441,18 @@ class _VoucherPageState extends State<VoucherPage> {
                 topRight: Radius.circular(66.0))),
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: ElevatedButton(
+                onPressed: _navigateToFortuneWheelPage,
+                style: ElevatedButton.styleFrom(
+                  textStyle: const TextStyle(fontSize: 16),
+                ),
+                child: const Text("Go to Fortune Wheel"),
+              ),
+            ),
             const Padding(
-              padding: EdgeInsets.only(top: 35, bottom: 20),
+              padding: EdgeInsets.only(top: 15, bottom: 20),
               child: Text(
                 "Voucher anda",
                 style: TextStyle(fontSize: 18, color: Colors.black,),
@@ -487,3 +504,4 @@ class _VoucherPageState extends State<VoucherPage> {
     );
   }
 }
+

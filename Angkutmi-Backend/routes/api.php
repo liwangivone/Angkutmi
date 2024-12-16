@@ -9,6 +9,7 @@ use App\Http\Controllers\SubscriptionController;
 use L5Swagger\Http\Controllers\SwaggerController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\WheelOfFortuneController;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/docs', [SwaggerController::class, 'api'])->name('l5-swagger.api');
 
@@ -52,6 +53,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/subscriptions/{id}/payment', [SubscriptionController::class, 'createPayment']); // Membuat pembayaran
 });
 
+
+Route::post('payments', [PaymentController::class, 'store']);
+Route::get('payments/{trip_id}', [PaymentController::class, 'show']);
 
 
     
