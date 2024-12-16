@@ -67,137 +67,155 @@ class _MapState extends State<Maps> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Peta Flutter
-          FlutterMap(
-            mapController: _mapController,
-            options: MapOptions(
-              initialCenter: _selectedLocation,
-              initialZoom: 14.0,
-              onTap: (_, point) {
-                setState(() {
-                  _selectedLocation = point;
-                });
-              },
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: Stack(
+      children: [
+        // Peta Flutter
+        FlutterMap(
+          mapController: _mapController,
+          options: MapOptions(
+            initialCenter: _selectedLocation,
+            initialZoom: 14.0,
+            onTap: (_, point) {
+              setState(() {
+                _selectedLocation = point;
+              });
+            },
+          ),
+          children: [
+            TileLayer(
+              urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+              subdomains: ['a', 'b', 'c'],
             ),
-            children: [
-              TileLayer(
-                urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                subdomains: ['a', 'b', 'c'],
-              ),
-              MarkerLayer(
-                markers: [
-                  Marker(
-                    width: 80.0,
-                    height: 80.0,
-                    point: _selectedLocation,
-                    child: const Icon(
-                      Icons.location_on,
-                      color: Colors.red,
-                      size: 40,
+            MarkerLayer(
+              markers: [
+                Marker(
+                  width: 80.0,
+                  height: 80.0,
+                  point: _selectedLocation,
+                  child: const Icon(
+                    Icons.location_on,
+                    color: Colors.red,
+                    size: 40,
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
+        Column(
+          children: [
+            Stack(
+              children: [
+                // Header hijau melengkung
+                Container(
+                  height: 250,
+                  decoration: const BoxDecoration(
+                    color: Color.fromARGB(255, 44, 158, 75),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(66.0),
+                      bottomRight: Radius.circular(66.0),
                     ),
-                  )
-                ],
-              ),
-            ],
-          ),
-          // Header hijau melengkung dan form input
-          Column(
-            children: [
-              Stack(
-                children: [
-                  // Header hijau melengkung
-                  Container(
-                    height: 250,
-                    decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 44, 158, 75),
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(66.0),
-                        bottomRight: Radius.circular(66.0),
+                  ),
+                ),
+                // Tombol back dan teks "Nantipi" di atas header
+                Positioned(
+                  top: 30, 
+                  left: 16, 
+                  right: 16, 
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
+                        onPressed: () {
+                          Navigator.pop(context); 
+                        },
                       ),
-                    ),
+                      const SizedBox(width: 8), 
+                      const Text(
+                        "Nantipi",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
-                  // Form input di atas header
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 40),
-                        const Text(
-                          "Nantipi",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                ),
+                // Form input di atas header
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 100), // Memberi jarak agar form tidak menutupi header
+                      TextField(
+                        controller: _searchController,
+                        onSubmitted: _searchLocation,
+                        decoration: InputDecoration(
+                          hintText: "Masukkan alamat anda",
+                          prefixIcon: const Icon(Icons.search, color: Colors.green),
+                          filled: true,
+                          fillColor: Colors.white,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                            borderSide: const BorderSide(color: Colors.green, width: 2),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                            borderSide: const BorderSide(color: Colors.green, width: 2),
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        TextField(
-                          controller: _searchController,
-                          onSubmitted: _searchLocation,
-                          decoration: InputDecoration(
-                            hintText: "Masukkan alamat anda",
-                            prefixIcon: const Icon(Icons.search, color: Colors.green),
-                            filled: true,
-                            fillColor: Colors.white,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              borderSide: const BorderSide(color: Colors.green, width: 2),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              borderSide: const BorderSide(color: Colors.green, width: 2),
-                            ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _dateController,
+                        readOnly: true,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => DateTimePickerPage()),
+                          ).then((value) {
+                            if (value != null) {
+                              setState(() {
+                                _dateController.text = value['date'];
+                                _timeController.text = value['time'];
+                              });
+                            }
+                          });
+                        },
+                        decoration: InputDecoration(
+                          hintText: "Tentukan tanggal & jam pengangkutan",
+                          prefixIcon: const Icon(Icons.calendar_today, color: Colors.green),
+                          filled: true,
+                          fillColor: Colors.white,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                            borderSide: const BorderSide(color: Colors.green, width: 2),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                            borderSide: const BorderSide(color: Colors.green, width: 2),
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _dateController,
-                          readOnly: true,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => DateTimePickerPage()),
-                            ).then((value) {
-                              if (value != null) {
-                                setState(() {
-                                  _dateController.text = value['date'];
-                                  _timeController.text = value['time'];
-                                });
-                              }
-                            });
-                          },
-                          decoration: InputDecoration(
-                            hintText: "Tentukan tanggal & jam pengangkutan",
-                            prefixIcon: const Icon(Icons.calendar_today, color: Colors.green),
-                            filled: true,
-                            fillColor: Colors.white,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              borderSide: const BorderSide(color: Colors.green, width: 2),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              borderSide: const BorderSide(color: Colors.green, width: 2),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+                ),
+              ],
+            ),
+          ],
+        ),
+
+      ],
+    ),
+  );
+}
+
 }
 
 class Event {
@@ -229,7 +247,13 @@ class _DateTimePickerPageState extends State<DateTimePickerPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Pilih Tanggal & Jam"),
-        backgroundColor: const Color.fromARGB(255, 44, 158, 75), // Hijau
+        backgroundColor: const Color.fromARGB(255, 44, 158, 75), 
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back), 
+          onPressed: () {
+            Navigator.pop(context); 
+          },
+        ),
       ),
       body: Container(
         decoration: const BoxDecoration(

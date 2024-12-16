@@ -257,7 +257,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: ElevatedButton(
-                      onPressed: _register,
+                      onPressed: () async {
+                        await _register(); // Jalankan logika pendaftaran terlebih dahulu
+                        if (_formKey.currentState!.validate() && _isCheckboxChecked) {
+                          // Jika validasi berhasil dan checkbox diceklis, navigasikan ke LoginScreen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => LoginScreen()),
+                          );
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         minimumSize: const Size(double.infinity, 50),
@@ -271,6 +280,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                     ),
                   ),
+
                 ],
               ),
               // Login Link
