@@ -1,76 +1,100 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_svg/flutter_svg.dart'; // menggunakan SVG logo.
+import 'package:shared_preferences/shared_preferences.dart';
 import 'regis_login.dart';
 
 class TermsAndConditionsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          // Header hijau dengan lengkungan melengkung
-          Stack(
+    return FutureBuilder<bool>(
+      future: _checkAgreementStatus(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Show a loading screen while checking agreement status
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
+        if (snapshot.hasData && snapshot.data == true) {
+          // User has already agreed, navigate to the registration screen
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => RegistrationScreen()),
+            );
+          });
+          return SizedBox.shrink(); // Empty widget since navigation is happening
+        }
+
+        // Show terms and conditions screen if user has not agreed
+        return Scaffold(
+          body: Column(
             children: [
-              Container(
-                height: 160,
-                color: const Color.fromARGB(255, 44, 158, 75),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0, top: 40.0),
-                    child: Row(
-                      children: [
-                        // Logo di bagian kiri atas
-                        Image.asset(
-                          'assets/home/logoAngkutmi.png', 
-                          width: 125,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              // Bagian putih melengkung di bawah
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  height: 50,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(66.0),
-                      topRight: Radius.circular(66.0),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          // Konten Utama
-          Expanded(
-            child: Container(
-              color: Colors.white,
-              child: Column(
+              // Header hijau dengan lengkungan melengkung
+              Stack(
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 0, bottom: 15),
-                    child: Text(
-                      "Syarat dan Ketentuan",
-                      style: TextStyle(
-                        fontSize: 21,
-                        letterSpacing: 2,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Poppins',
+                  Container(
+                    height: 160,
+                    color: const Color.fromARGB(255, 44, 158, 75),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16.0, top: 40.0),
+                        child: Row(
+                          children: [
+                            // Logo di bagian kiri atas
+                            Image.asset(
+                              'assets/home/logoAngkutmi.png', 
+                              width: 125,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(16),
-                      child: const Text(
+                  // Bagian putih melengkung di bawah
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 50,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(66.0),
+                          topRight: Radius.circular(66.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              // Konten Utama
+              Expanded(
+                child: Container(
+                  color: Colors.white,
+                  child: Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(top: 0, bottom: 15),
+                        child: Text(
+                          "Syarat dan Ketentuan",
+                          style: TextStyle(
+                            fontSize: 21,
+                            letterSpacing: 2,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(16),
+                          child: const Text(
                         '1. Pengguna wajib membaca dan memahami syarat dan ketentuan ini sebelum menggunakan layanan Angkutmi.\n'
                         '2. Dengan menggunakan aplikasi Angkutmi, pengguna dianggap telah menyetujui seluruh syarat dan ketentuan ini.\n'
                         '3. Angkutmi hanya melayani wilayah operasional yang telah ditentukan dan tertera dalam aplikasi.\n'
@@ -101,52 +125,63 @@ class TermsAndConditionsScreen extends StatelessWidget {
                         '28. Komunikasi resmi hanya melalui fitur aplikasi atau kontak yang disediakan oleh Angkutmi.\n'
                         '29. Segala perselisihan yang timbul akan diselesaikan berdasarkan hukum yang berlaku di wilayah operasional.\n'
                         '30. Pengguna dianggap setuju dengan syarat dan ketentuan ini dengan mengunduh atau menggunakan aplikasi Angkutmi.\n',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black,
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                            
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => RegistrationScreen()),
-                            );
-                          },
-
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 44, 158, 75),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: const Text(
-                          'Setuju',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontFamily: 'Poppins',
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              await _setAgreementStatus();
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => RegistrationScreen()),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color.fromARGB(255, 44, 158, 75),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: const Text(
+                              'Setuju',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
+  }
+
+  Future<bool> _checkAgreementStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('hasAgreedToTerms') ?? false;
+  }
+
+  Future<void> _setAgreementStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('hasAgreedToTerms', true);
   }
 }

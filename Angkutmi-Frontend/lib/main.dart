@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'terms.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Check if onboarding has been completed
+  final prefs = await SharedPreferences.getInstance();
+  final hasSeenOnboarding = prefs.getBool('hasSeenOnboarding') ?? false;
+
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
       fontFamily: 'Poppins', // Set default font to Poppins
     ),
-    home: OnboardingScreen(),
+    home: hasSeenOnboarding ? TermsAndConditionsScreen() : OnboardingScreen(),
   ));
 }
 
@@ -27,20 +34,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     });
   }
 
-  void _nextPage() {
-  if (_currentPage < 3) {
-    _pageController.nextPage(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  } else {
-    // Navigate to the Terms and Conditions screen when onboarding completes
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => TermsAndConditionsScreen()),
-    );
+  // Handle "Lanjutkan" button
+  Future<void> _nextPage() async {
+    if (_currentPage < 3) {
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      // Save onboarding completion status
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('hasSeenOnboarding', true);
+
+      // Navigate to the Terms and Conditions screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => TermsAndConditionsScreen()),
+      );
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +103,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   }),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(top: 24.0), 
+                  margin: const EdgeInsets.only(top: 24.0),
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _nextPage,
@@ -124,19 +136,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   // Method onboardbuild
   Widget _buildPage({required Widget image, required String title, required String description, required int activeIndex}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0), // Padding used for spacing
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           image,
           Padding(
-            padding: const EdgeInsets.only(top: 24.0), // Adjusted spacing with padding
+            padding: const EdgeInsets.only(top: 24.0),
             child: title.isNotEmpty
                 ? Text(
                     title,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 26, 
+                      fontSize: 26,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Poppins',
                     ),
@@ -148,12 +160,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               padding: const EdgeInsets.only(top: 16.0),
             ),
           Padding(
-            padding: const EdgeInsets.only(top: 8.0), // Adjusted spacing with padding
+            padding: const EdgeInsets.only(top: 8.0),
             child: Text(
               description,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 16, // Adjusted font size for description
+                fontSize: 16,
                 color: Colors.grey,
                 fontFamily: 'Poppins',
               ),

@@ -98,41 +98,41 @@ class _LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: TextFormField(
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        labelText: 'Nomor telepon',
-                        labelStyle: const TextStyle(color: Colors.black),
-                        hintText: '0895-xxx-xxx',
-                        border: const UnderlineInputBorder(),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: TextFormField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                          labelText: 'Nomor telepon',
+                          labelStyle: const TextStyle(color: Colors.black),
+                          hintText: '0895-xxx-xxx',
+                          border: const UnderlineInputBorder(),
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.green, width: 2.0),
+                          ),
+                          suffixText: '*',
+                          suffixStyle: const TextStyle(color: Colors.red),
                         ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.green, width: 2.0),
-                        ),
-                        errorBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.red, width: 1.0),
-                        ),
-                        focusedErrorBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.red, width: 1.0),
-                        ),
-                        suffixText: '*',
-                        suffixStyle: const TextStyle(color: Colors.red),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Nomor telepon tidak boleh kosong';
+                          }
+                          if (!RegExp(r'^08\d{0,}$').hasMatch(value)) {
+                            return 'Nomor telepon harus diawali dengan "08" dan hanya mengandung angka';
+                          }
+                          if (value.length < 10) {
+                            return 'Nomor telepon harus minimal 10 digit';
+                          }
+                          if (value.length > 12) {
+                            return 'Nomor telepon tidak boleh lebih dari 12 digit';
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Nomor telepon tidak boleh kosong';
-                        }
-                        return null;
-                      },
                     ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: TextFormField(
@@ -176,8 +176,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Kata sandi tidak boleh kosong';
                         }
-                        if (value.length < 6) {
-                          return 'Kata sandi minimal 6 karakter';
+                        if (value.length < 8) {
+                          return 'Kata sandi minimal 8 karakter';
                         }
                         return null;
                       },

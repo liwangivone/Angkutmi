@@ -3,6 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'service/auth_service.dart';
 import 'home.dart';
 import 'login.dart';
+import 'terms.dart';
+import 'terms2.dart';
 
 class RegistrationScreen extends StatefulWidget {
   @override
@@ -154,32 +156,43 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: TextFormField(
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        labelText: 'Nomor telepon',
-                        labelStyle: const TextStyle(color: Colors.black),
-                        hintText: '0895-xxx-xxx',
-                        border: const UnderlineInputBorder(),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: TextFormField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                          labelText: 'Nomor telepon',
+                          labelStyle: const TextStyle(color: Colors.black),
+                          hintText: '0895-xxx-xxx',
+                          border: const UnderlineInputBorder(),
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.green, width: 2.0),
+                          ),
+                          suffixText: '*',
+                          suffixStyle: const TextStyle(color: Colors.red),
                         ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.green, width: 2.0),
-                        ),
-                        suffixText: '*',
-                        suffixStyle: const TextStyle(color: Colors.red),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Nomor telepon tidak boleh kosong';
+                          }
+                          if (!RegExp(r'^08\d{0,}$').hasMatch(value)) {
+                            return 'Nomor telepon harus diawali dengan "08" dan hanya mengandung angka';
+                          }
+                          if (value.length < 10) {
+                            return 'Nomor telepon harus minimal 10 digit';
+                          }
+                          if (value.length > 12) {
+                            return 'Nomor telepon tidak boleh lebih dari 12 digit';
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Nomor telepon tidak boleh kosong';
-                        }
-                        return null;
-                      },
                     ),
-                  ),
+
+
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: TextFormField(
@@ -214,8 +227,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Kata sandi tidak boleh kosong';
                         }
-                        if (value.length < 6) {
-                          return 'Kata sandi minimal 6 karakter';
+                        if (value.length < 8) {
+                          return 'Kata sandi minimal 8 karakter';
                         }
                         return null;
                       },
@@ -235,22 +248,36 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           },
                         ),
                         Expanded(
-                          child: RichText(
-                            text: const TextSpan(
-                              text: 'Saya setuju dengan ',
-                              style: TextStyle(color: Colors.black, fontSize: 12),
-                              children: [
-                                TextSpan(
-                                  text: 'Syarat dan Ketentuan Aplikasi',
-                                  style: TextStyle(
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
+                        child: RichText(
+                          text: TextSpan(
+                            text: 'Saya setuju dengan ',
+                            style: const TextStyle(color: Colors.black, fontSize: 12),
+                            children: [
+                              WidgetSpan(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    // Arahkan ke halaman Terms and Conditions
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => TermsAndConditionsScreen2()),
+                                    );
+                                  },
+                                  child: Text(
+                                    'Syarat dan Ketentuan Aplikasi',
+                                    style: const TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12,
+                                      
+                                    ),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
+                      ),
+
                       ],
                     ),
                   ),
