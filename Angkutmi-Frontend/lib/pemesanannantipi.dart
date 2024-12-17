@@ -8,19 +8,39 @@ class PemesananNantipi extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 44, 158, 75),
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+  backgroundColor: Color.fromARGB(255, 44, 158, 75),
+  elevation: 0,
+  automaticallyImplyLeading: false, // Menonaktifkan leading default
+  flexibleSpace: Padding(
+    padding: const EdgeInsets.only(top: 0, left: 0, right: 0), // Sesuaikan padding atas untuk menurunkan header
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center, // Menyelaraskan ikon dan teks di tengah secara vertikal
+      children: [
+        IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+            size: 28,
           ),
-          title: Text(
-            'Nantipi',
-            style: TextStyle(color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        const SizedBox(width: 8), // Jarak antara ikon dan teks
+        const Text(
+          "Nantipi",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontFamily: 'Poppins',
           ),
         ),
+      ],
+    ),
+  ),
+),
+
         body: Column(
           children: [
             // Header hijau dengan lengkungan melengkung

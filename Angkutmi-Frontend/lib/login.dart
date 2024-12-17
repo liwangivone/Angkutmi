@@ -184,7 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: ElevatedButton(
                       onPressed: _login,
                       style: ElevatedButton.styleFrom(
@@ -203,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.only(top: screenHeight * 0.02),
+                padding: const EdgeInsets.only(top: 16.0),
                 child: Center(
                   child: RichText(
                     text: TextSpan(
