@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'mapsnantipi.dart';
+import 'pemesanannantipidetail.dart';
+import 'modelsnantipi.dart';
 
 class PemesananNantipi extends StatelessWidget {
   @override
@@ -144,6 +146,7 @@ class PaketTab extends StatelessWidget {
 }
 
 
+
 class SubscriptionCard extends StatelessWidget {
   final String title;
   final String duration;
@@ -188,18 +191,34 @@ class SubscriptionCard extends StatelessWidget {
                     price,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => Maps()),);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: Text('Beli'),
-                  ),
+                  // PaketTab.dart
+ElevatedButton(
+  onPressed: () {
+    // Navigate to mapsnantipi.dart and pass PaketModel data (price and duration)
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Maps(
+          paket: PaketModel(
+            price: price,
+            duration: duration,
+          ),
+        ),
+      ),
+    );
+  },
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Colors.green,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+    ),
+  ),
+  child: const Text('Beli'),
+)
+
+
+
+
                 ],
               ),
             ),
