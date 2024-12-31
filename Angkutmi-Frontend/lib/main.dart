@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'terms.dart';
+import 'package:intl/date_symbol_data_local.dart'; // Untuk inisialisasi data lokal
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Inisialisasi data format tanggal untuk locale Indonesia
+  await initializeDateFormatting('id_ID', null);
 
   // Check if onboarding has been completed
   final prefs = await SharedPreferences.getInstance();

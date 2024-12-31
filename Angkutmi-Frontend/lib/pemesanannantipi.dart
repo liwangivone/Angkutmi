@@ -126,17 +126,17 @@ class PaketTab extends StatelessWidget {
         children: const [
           SubscriptionCard(
             title: 'Cobami dulu satu bulan',
-            duration: 'Durasi: 1 bulan',
+            duration: 'Durasi: 30 hari',
             price: 'Rp45.000',
           ),
           SubscriptionCard(
             title: 'Langsungmi tiga bulan',
-            duration: 'Durasi: 3 bulan',
+            duration: 'Durasi: 90 hari',
             price: 'Rp80.000',
           ),
           SubscriptionCard(
             title: 'Paling hematmi enam bulan',
-            duration: 'Durasi: 6 bulan',
+            duration: 'Durasi: 180 hari',
             price: 'Rp125.000',
           ),
         ],
