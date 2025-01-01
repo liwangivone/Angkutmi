@@ -71,7 +71,7 @@ class AuthService {
   // Register function
   Future<Map<String, dynamic>> register(
       String name, String phone, String password) async {
-    final url = Uri.parse('http://127.0.0.1:8000/api/register'); // Replace with your backend URL
+    final url = Uri.parse('http://127.0.0.1:8000/api/register');
 
     try {
       print("Attempting to register with name: $name, phone: $phone");
