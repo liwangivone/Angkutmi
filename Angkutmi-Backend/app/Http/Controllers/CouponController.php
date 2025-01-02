@@ -47,21 +47,14 @@ class CouponController extends Controller
      */
     public function get(): JsonResponse
     {
-        $coupons = Coupon::where(function ($query) {
-                $query->whereNull('start_date')
-                    ->orWhere('start_date', '<=', now());
-            })
-            ->where(function ($query) {
-                $query->whereNull('end_date')
-                    ->orWhere('end_date', '>=', now());
-            })
-            ->get();
-
+        $coupons = Coupon::all(); // Test without filtering dates
+    
         return response()->json([
             'message' => 'Coupons retrieved successfully.',
             'data' => $coupons
         ], Response::HTTP_OK);
     }
+    
 
     /**
      * Redeem a coupon.

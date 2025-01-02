@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'pemesanannantipi.dart';
+import 'package:http/http.dart' as http;
+import 'service/coupon_service.dart';
 
 import 'gacha.dart';
 
@@ -406,6 +410,7 @@ class HeaderCurvedContainer extends CustomPainter {
 
 
 // VoucherPage Widget
+
 class VoucherPage extends StatefulWidget {
   const VoucherPage({super.key});
 
@@ -414,12 +419,30 @@ class VoucherPage extends StatefulWidget {
 }
 
 class _VoucherPageState extends State<VoucherPage> {
-  final List<String> _vouchers = [];
+  final List<String> _vouchers = []; // List to store claimed vouchers
+  bool _isLoading = true; // Loading indicator state
+  final CouponService couponService = CouponService(baseUrl: 'http://127.0.0.1:8000/api');
 
-  void _addVoucher() {
-    setState(() {
-      _vouchers.add("Voucher #${_vouchers.length + 1}");
-    });
+  @override
+  void initState() {
+    super.initState();
+    _fetchVouchers(); // Fetch claimed vouchers when the page is loaded
+  }
+
+  // Fetch the list of claimed vouchers from the backend
+  Future<void> _fetchVouchers() async {
+    try {
+      final vouchers = await couponService.fetchClaimedCoupons(); // Fetch claimed coupons
+      setState(() {
+        _vouchers.addAll(vouchers); // Add the fetched claimed vouchers to the list
+        _isLoading = false; // Update loading state
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false; // Update loading state in case of an error
+      });
+      print('Error: $e');
+    }
   }
 
   void _navigateToFortuneWheelPage() {
@@ -429,16 +452,25 @@ class _VoucherPageState extends State<VoucherPage> {
     );
   }
 
+  // Method to add a test voucher manually (for testing)
+  void _addVoucher() {
+    setState(() {
+      _vouchers.add("Voucher #${_vouchers.length + 1}");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 44, 158, 75),
       body: Container(
         decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(66.0),
-                topRight: Radius.circular(66.0))),
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(66.0),
+            topRight: Radius.circular(66.0),
+          ),
+        ),
         child: Column(
           children: [
             Padding(
@@ -455,43 +487,45 @@ class _VoucherPageState extends State<VoucherPage> {
               padding: EdgeInsets.only(top: 15, bottom: 20),
               child: Text(
                 "Voucher anda",
-                style: TextStyle(fontSize: 18, color: Colors.black,),
+                style: TextStyle(fontSize: 18, color: Colors.black),
               ),
             ),
             Expanded(
-              child: _vouchers.isEmpty
-                  ? const Center(
-                      child: Text(
-                        "Belum ada voucher",
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: _vouchers.length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 30),
-                          color: Colors.white,
-                          elevation: 3,
-                          child: ListTile(
-                            leading: const Icon(
-                              Icons.local_cafe,
-                              color: Colors.grey,
-                              size: 40,
-                            ),
-                            title: Text(_vouchers[index]),
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 20, horizontal: 25),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _vouchers.isEmpty
+                      ? const Center(
+                          child: Text(
+                            "Belum ada voucher",
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
                           ),
-                        );
-                      },
-                    ),
+                        )
+                      : ListView.builder(
+                          itemCount: _vouchers.length,
+                          itemBuilder: (context, index) {
+                            return Card(
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 30),
+                              color: Colors.white,
+                              elevation: 3,
+                              child: ListTile(
+                                leading: const Icon(
+                                  Icons.local_cafe,
+                                  color: Colors.grey,
+                                  size: 40,
+                                ),
+                                title: Text(_vouchers[index]),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 20, horizontal: 25),
+                              ),
+                            );
+                          },
+                        ),
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 20),
               child: ElevatedButton(
-                onPressed: _addVoucher,
+                onPressed: _addVoucher, // Add test voucher manually for testing
                 style: ElevatedButton.styleFrom(
                   textStyle: const TextStyle(fontSize: 16),
                 ),
@@ -504,4 +538,3 @@ class _VoucherPageState extends State<VoucherPage> {
     );
   }
 }
-
