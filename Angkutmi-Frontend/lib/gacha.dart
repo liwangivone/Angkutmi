@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // For secure storage
@@ -38,60 +39,96 @@ class _ExamplePageState extends State<ExamplePage> {
   }
 
   // Fetch the wheel slices from the backend
-  Future<void> fetchWheelSlices() async {
-    try {
-      final slices = await gachaService.fetchWheelSlices();
-      print('Fetched slices: $slices'); // Print the fetched slices to debug
+Future<void> fetchWheelSlices() async {
+  try {
+    final slices = await gachaService.fetchWheelSlices();
+
+    // Debug: Print fetched slices
+    print('Fetched slices from API: $slices');
+
+    if (slices != null && slices is List<Map<String, dynamic>>) {
       setState(() {
-        wheelSlices = slices;
+        wheelSlices = slices; // Assign fetched slices to the UI
       });
-    } catch (e) {
-      print("Error fetching wheel slices: $e");
+    } else {
+      throw Exception('Unexpected response format: $slices');
     }
+  } catch (e) {
+    print("Error fetching wheel slices: $e");
   }
+}
 
-  // Spin the wheel
-  void spinWheel() async {
-    // Call the spin API and get the progress response
-    try {
-      final response = await gachaService.spinWheel(); // This should return the updated progress
-      if (response != null) {
-        setState(() {
-          progress = response['progress'] / 100.0; // Assuming 'progress' is between 0 and 100
-        });
-      }
+void spinWheel() async {
+  try {
+    // Fetch the backend response
+    final response = await gachaService.spinWheel();
+
+    if (response != null) {
+      // Debug: Log the backend response
+      print("Full JSON Response: $response");
+
+      // Debug: Log the progress value
+      print("Progress from API: ${response['progress']}");
+
+      // Update progress
       setState(() {
-        selected.add(Fortune.randomInt(0, wheelSlices.length)); // Spin with the number of slices available
+        progress = response['progress'] / 100.0; // Normalize progress (0-1)
       });
 
-      // Check if the progress reached 100% and show the claim reward dialog
+      // Find the selected slice based on the backend response
+      final selectedSlice = wheelSlices.firstWhere(
+        (slice) => slice['label'] == response['slice']['label'],
+        orElse: () => {}, // Return an empty map instead of null
+      );
+
+      if (selectedSlice.isNotEmpty) {
+        final selectedIndex = wheelSlices.indexOf(selectedSlice);
+
+        // Debug: Log selected slice and index
+        print("Selected Slice Index: $selectedIndex");
+        print("Selected Slice Details: $selectedSlice");
+
+        setState(() {
+          // Update the reward details
+          setReward(selectedIndex);
+
+          // Spin the wheel to the selected index
+          selected.add(selectedIndex);
+        });
+      } else {
+        print("Error: No matching slice found for ${response['slice']['label']}");
+      }
+
+      // Show progress bar full dialog if progress reaches 100%
       if (progress == 1.0) {
         showDialog(
           barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
-            return Center(
-              child: AlertDialog(
-                title: const Text("Roda Penuh!"),
-                content: const Text("Bar Anda sudah penuh. Silakan klaim hadiah Anda!"),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context); // Close the dialog
-                      // You can trigger any action here to claim the reward
-                    },
-                    child: const Text("Klaim Hadiah"),
-                  ),
-                ],
-              ),
+            return AlertDialog(
+              title: const Text("Roda Penuh!"),
+              content: const Text("Bar Anda sudah penuh. Silakan klaim hadiah Anda!"),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Close the dialog
+                    // Optionally trigger any additional actions to claim the reward
+                  },
+                  child: const Text("Klaim Hadiah"),
+                ),
+              ],
             );
           },
         );
       }
-    } catch (e) {
-      print("Error spinning the wheel: $e");
+    } else {
+      print("Error: Response is null");
     }
+  } catch (e) {
+    print("Error spinning the wheel: $e");
   }
+}
+
 
   // Set reward details when a slice is selected
   void setReward(int index) {
@@ -193,40 +230,38 @@ class _ExamplePageState extends State<ExamplePage> {
                                       ),
                                     ),
                                 ],
-                                onAnimationEnd: () {
-                                  // Show the reward in a dialog after the animation ends
-                                  showDialog(
-                                    barrierDismissible: true,
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Center(
-                                        child: AlertDialog(
-                                          scrollable: true,
-                                          title: const Text("Selamat! Anda Mendapatkan"),
-                                          content: Column(
-                                            children: [
-                                              const SizedBox(height: 10),
-                                              Text(
-                                                selectedReward,
-                                                style: const TextStyle(fontSize: 22),
-                                              ),
-                                              const SizedBox(height: 20),
-                                              selectedImg.isNotEmpty
-                                                  ? Image.network(selectedImg)
-                                                  : const SizedBox(),
-                                            ],
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: closeDialog, // Close dialog and refresh progress
-                                              child: const Text('OK'),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
+onAnimationEnd: () {
+  // Show the reward in a dialog after the animation ends
+  showDialog(
+    barrierDismissible: true,
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text("Selamat! Anda Mendapatkan"),
+        content: Column(
+          children: [
+            const SizedBox(height: 10),
+            Text(
+              selectedReward,
+              style: const TextStyle(fontSize: 22),
+            ),
+            const SizedBox(height: 20),
+            selectedImg.isNotEmpty
+                ? Image.network(selectedImg)
+                : const SizedBox(),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: closeDialog,
+            child: const Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+},
+
                                 onFocusItemChanged: (value) {
                                   setReward(value); // Set reward details when the slice is selected
                                 },
