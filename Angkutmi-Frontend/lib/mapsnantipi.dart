@@ -225,33 +225,42 @@ Widget build(BuildContext context) {
             const Spacer(),
             // Tombol Tetapkan
             Padding(
-  padding: const EdgeInsets.all(16.0),
+  padding: const EdgeInsets.all(16.0), // Padding around the button
   child: ElevatedButton(
     onPressed: () {
-      // Mengarahkan ke halaman Pemesanannantipidetail dengan data inputan pengguna
+      // Navigate to Pemesanannantipidetail with user input data
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => Pemesanannantipidetail(
-            paket: widget.paket, // Menggunakan data dari konstruktor Maps
+            paket: widget.paket, // Using data from the constructor Maps
             alamat: AlamatModel(
-              address: _searchController.text, // Ambil data alamat dari input user
-              date: _dateController.text,      // Ambil data tanggal dari input user
-              time: _timeController.text,      // Ambil data waktu dari input user
+              address: _searchController.text, // Address from user input
+              date: _dateController.text,      // Date from user input
+              time: _timeController.text,      // Time from user input
             ),
           ),
         ),
       );
     },
     style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.green,
+      backgroundColor: const Color(0xFF2C9E4B), // Green color for background
+      minimumSize: const Size(double.infinity, 50), // Full width with height of 50
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20), // Rounded corners
       ),
     ),
-    child: const Text('Tetapkan', style: TextStyle(fontSize: 18, color: Colors.white,fontFamily: 'Poppins',)),
+    child: const Text(
+      "Tetapkan", // Button text
+      style: TextStyle(
+        fontFamily: 'Poppins', // Font family
+        fontSize: 18, // Font size
+        color: Colors.white, // Text color
+      ),
+    ),
   ),
 ),
+
 
           ],
         ),
@@ -274,187 +283,173 @@ class _DateTimePickerPageState extends State<DateTimePickerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-  preferredSize: const Size.fromHeight(200), // Tinggi total AppBar
-  child: Stack(
-    children: [
-      // Background hijau (turun lebih bawah)
-      Container(
-        margin: const EdgeInsets.only(top: 0), // Turunkan header hijau
-        decoration: const BoxDecoration(
-          color: Color.fromARGB(255, 44, 158, 75), // Warna hijau
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(66.0),
-            bottomRight: Radius.circular(66.0),
-          ),
-        ),
-        height: 120, // Atur tinggi background hijau
-      ),
-      // Teks dan ikon tetap di atas
-      Positioned(
-        top: 0, // Atur posisi teks di atas
-        left: 0,
-        right: 0,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            IconButton(
-              icon: const Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-                size: 28,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            const SizedBox(width: 8), // Jarak ikon ke teks
-            const Text(
-              "Pilih Tanggal & Jam",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontFamily: 'Poppins',
-              ),
-            ),
-          ],
-        ),
-      ),
-    ],
-  ),
-),
-
-
-
-
-
-
-
-
-     body: Column(
+      backgroundColor: Colors.white,
+      body: Column(
         children: [
+          // Header hijau dengan lengkungan melengkung
           Stack(
             children: [
-              // Header bawah melengkung hijau
-              // Container(
-              //   height: 80, // Tinggi header
-              //   decoration: const BoxDecoration(
-              //     color: const Color.fromARGB(255, 44, 158, 75),
-              //     borderRadius: BorderRadius.only(
-              //       bottomLeft: Radius.circular(66.0),
-              //       bottomRight: Radius.circular(66.0),
-              //     ),
-              //   ),
-              // ),
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0),
-                child: TableCalendar(
-                  focusedDay: _selectedDate,
-                  firstDay: DateTime.now(), // Blokir tanggal yang sudah lewat
-                  lastDay: DateTime.utc(2030, 12, 31),
-                  selectedDayPredicate: (day) {
-                    return isSameDay(_selectedDate, day);
-                  },
-                  onDaySelected: (selectedDay, focusedDay) {
-                    setState(() {
-                      _selectedDate = selectedDay;
-                    });
-                  },
-                  calendarStyle: CalendarStyle(
-                    todayTextStyle: TextStyle(color: Colors.black),
-                    
-                    selectedDecoration: BoxDecoration(
-                      color: Colors.green,
-                      shape: BoxShape.circle,
+              Container(
+                height: 160,
+                color: const Color.fromARGB(255, 44, 158, 75),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16.0, top: 40.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          "Pilih Tanggal & Jam",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                      ],
                     ),
-                    selectedTextStyle: TextStyle(color: Colors.white),
-                    weekendTextStyle: TextStyle(color: Colors.red),
-                    defaultTextStyle: TextStyle(color: Colors.black),
                   ),
-                  headerStyle: HeaderStyle(
-                    titleCentered: true,
-                    formatButtonVisible: false,
-                    leftChevronIcon: Icon(
-                      Icons.chevron_left,
-                      color: Colors.black,
-                    ),
-                    rightChevronIcon: Icon(
-                      Icons.chevron_right,
-                      color: Colors.black,
+                ),
+              ),
+              // Bagian putih melengkung di bawah
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: 50,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(66.0),
+                      topRight: Radius.circular(66.0),
                     ),
                   ),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 35),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: List.generate(
-              12,
-              (index) {
-                String time = "${7 + index}:00";
-                return ChoiceChip(
-                  label: Text(
-                    time,
-                    style: TextStyle(
-                      color: _selectedTime == time ? Colors.white : Colors.green,
+          Expanded(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: TableCalendar(
+                    focusedDay: _selectedDate,
+                    firstDay: DateTime.now(),
+                    lastDay: DateTime.utc(2030, 12, 31),
+                    selectedDayPredicate: (day) {
+                      return isSameDay(_selectedDate, day);
+                    },
+                    onDaySelected: (selectedDay, focusedDay) {
+                      setState(() {
+                        _selectedDate = selectedDay;
+                      });
+                    },
+                    calendarStyle: CalendarStyle(
+                      todayTextStyle: TextStyle(color: Colors.black),
+                      selectedDecoration: BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                      ),
+                      selectedTextStyle: TextStyle(color: Colors.white),
+                      weekendTextStyle: TextStyle(color: Colors.red),
+                      defaultTextStyle: TextStyle(color: Colors.black),
+                    ),
+                    headerStyle: HeaderStyle(
+                      titleCentered: true,
+                      formatButtonVisible: false,
+                      leftChevronIcon: Icon(
+                        Icons.chevron_left,
+                        color: Colors.black,
+                      ),
+                      rightChevronIcon: Icon(
+                        Icons.chevron_right,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
-                  selected: _selectedTime == time,
-                  selectedColor: Colors.green,
-                  backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: Colors.green,
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(8.0),
+                ),
+                SizedBox(height: 35),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: List.generate(
+                    12,
+                    (index) {
+                      String time = "${7 + index}:00";
+                      return ChoiceChip(
+                        label: Text(
+                          time,
+                          style: TextStyle(
+                            color: _selectedTime == time ? Colors.white : Colors.green,
+                          ),
+                        ),
+                        selected: _selectedTime == time,
+                        selectedColor: Colors.green,
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: Colors.green,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        onSelected: (_) {
+                          setState(() {
+                            _selectedTime = time;
+                          });
+                        },
+                      );
+                    },
                   ),
-                  onSelected: (_) {
-                    setState(() {
-                      _selectedTime = time;
-                    });
-                  },
-                );
-              },
+                ),
+                Spacer(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(
+                        context,
+                        {
+                          'date': "${_selectedDate.toLocal()}".split(' ')[0],
+                          'time': _selectedTime,
+                        },
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      minimumSize: Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    child: const Text(
+                      "Pilih",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+              ],
             ),
           ),
-          Spacer(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(
-                  context,
-                  {
-                    'date': "${_selectedDate.toLocal()}".split(' ')[0],
-                    'time': _selectedTime,
-                  },
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                minimumSize: Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              child: const Text(
-                "Pilih",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 20),
         ],
       ),
     );
   }
 }
+
 
