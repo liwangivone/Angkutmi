@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'pemesanannantipi.dart';
 import 'package:http/http.dart' as http;
 import 'service/coupon_service.dart';
+import 'mapsinstan.dart';
 
 import 'gacha.dart';
 
@@ -262,7 +263,14 @@ class HomeContent extends StatelessWidget {
                         width: 120,
                         height: 120,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MapsInstan(),
+                              ),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             elevation: 3,
                             backgroundColor: const Color.fromARGB(255, 44, 158, 75),
