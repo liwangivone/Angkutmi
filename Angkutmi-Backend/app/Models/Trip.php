@@ -26,27 +26,30 @@ class Trip extends Model
         'destination_name',
         'driver_location',
         'reserve_datetime',
-        'price'
+        'price',
+        'vehicle_type' // New column added
     ];
 
     protected $casts = [
         'origin' => 'array',
         'destination' => 'array',
         'driver_location' => 'array',
-        'is_started'=>'boolean',
-        'is_completed'=>'boolean',
-
+        'is_started' => 'boolean',
+        'is_completed' => 'boolean',
     ];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
+
     public function driver()
     {
         return $this->belongsTo(Driver::class, 'driver_id', 'id');
     }
-    
-    public function subscription(){
+
+    public function subscription()
+    {
         return $this->belongsTo(Subscription::class);
     }
 }

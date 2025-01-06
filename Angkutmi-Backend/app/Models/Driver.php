@@ -23,8 +23,23 @@ class Driver extends Model
         'profile_picture'
     ];
 
-    public function trip(){
+    /**
+     * Get all trips associated with the driver.
+     */
+    public function trip()
+    {
         return $this->hasMany(Trip::class);
+    }
+
+    /**
+     * Get trips by a specific vehicle type.
+     *
+     * @param string $type
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function tripsByVehicleType(string $type)
+    {
+        return $this->trip()->where('vehicle_type', $type)->get();
     }
 
     /**
