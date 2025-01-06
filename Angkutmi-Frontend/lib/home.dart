@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'pemesanannantipi.dart';
-import 'package:http/http.dart' as http;
 import 'service/coupon_service.dart';
 import 'mapsinstan.dart';
 
@@ -85,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = const [
     HomeContent(userName: '',),
     VoucherPage(),
-    ProfileScreen(),
+    ProfileScreen(userName: '',),
   ];
 
 @override
@@ -108,7 +106,7 @@ Widget build(BuildContext context) {
       children: [
         HomeContent(userName: userName), // Home page
         const VoucherPage(), // Voucher page
-        const ProfileScreen(), // Profile page
+        ProfileScreen(userName: userName), // Profile page
       ],
     ),
     bottomNavigationBar: BottomNavigationBar(
@@ -122,7 +120,7 @@ Widget build(BuildContext context) {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.local_activity),
-          label: 'Voucher',
+          label: 'Rewards',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.account_circle),
@@ -349,7 +347,9 @@ class HomeContent extends StatelessWidget {
 }
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final String userName;
+
+  const ProfileScreen({super.key, required this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -384,14 +384,58 @@ class ProfileScreen extends StatelessWidget {
                   CircleAvatar(
                   radius: MediaQuery.of(context).size.width / 5,
                   backgroundColor: Colors.white,
-                  // backgroundImage: AssetImage('path/to/your/image'),       ],
+                  // backgroundImage: SvgPicture.asset('assets/home/user-circle.png'),       
+                child: SvgPicture.asset(
+                  'assets/home/user-circle.svg',
+                ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 30.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start, // Align left
+                    children: [
+                      Container(
+
+                        // decoration: BoxDecoration(
+                        //   border: Border.all(color: Colors.black),
+                        //   borderRadius: BorderRadius.circular(5),
+                        // ),
+                        padding: const EdgeInsets.only(right: 10.0,top: 10.0,bottom: 5.0),
+                        child: const Text(
+                          'Nama Lengkap',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          userName,
+                          style: const TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),
-      ]),
-    ));
+      ),
+    );
   }
 }
+
 class HeaderCurvedContainer extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
