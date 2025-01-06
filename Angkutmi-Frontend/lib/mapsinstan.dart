@@ -76,8 +76,10 @@ class _MapsInstanState extends State<MapsInstan> {
       ),
     );
   }
+  final TextEditingController _vehicleController = TextEditingController();
 
   void _showVehiclePicker() {
+    
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -238,23 +240,27 @@ class _MapsInstanState extends State<MapsInstan> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        ElevatedButton(
-                          onPressed: _showVehiclePicker,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                          ),
-                          child: const Text(
-                            "Pilih Kendaraan",
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 16,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
+                        TextField(
+  readOnly: true, // Membuat TextField hanya bisa dibaca
+  controller: _vehicleController, // Controller untuk menampilkan pilihan kendaraan
+  onTap: _showVehiclePicker, // Memanggil fungsi untuk menampilkan pilihan kendaraan
+  decoration: InputDecoration(
+    hintText: "Pilih jenis kendaraan",
+    hintStyle: const TextStyle(fontFamily: 'Poppins'),
+    prefixIcon: const Icon(Icons.directions_car, color: Colors.green),
+    filled: true,
+    fillColor: Colors.white,
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.0),
+      borderSide: const BorderSide(color: Colors.green, width: 2),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.0),
+      borderSide: const BorderSide(color: Colors.green, width: 2),
+    ),
+  ),
+),
+
                       ],
                     ),
                   ),

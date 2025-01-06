@@ -89,14 +89,16 @@ Widget build(BuildContext context) {
         FlutterMap(
           mapController: _mapController,
           options: MapOptions(
-            initialCenter: _selectedLocation,
-            initialZoom: 14.0,
-            onTap: (_, point) {
-              setState(() {
-                _selectedLocation = point;
-              });
-            },
-          ),
+    initialCenter: _selectedLocation,
+    initialZoom: 14.0,
+    onTap: (_, point) {
+      setState(() {
+        _selectedLocation = point;
+      });
+      // Cetak koordinat ke konsol
+      print("Latitude: ${point.latitude}, Longitude: ${point.longitude}");
+    },
+  ),
           children: [
             TileLayer(
               urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
