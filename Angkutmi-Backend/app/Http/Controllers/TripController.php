@@ -40,18 +40,21 @@ class TripController extends Controller
             'origin' => 'required|array',
             'destination' => 'required|array',
             'destination_name' => 'required|string',
+            'vehicle_type' => 'required|string|in:motor,pickup,truck', // Validate vehicle type
         ]);
-
+    
         $trip = $request->user()->trips()->create([
             'origin' => $request->origin,
             'destination' => $request->destination,
             'destination_name' => $request->destination_name,
+            'vehicle_type' => $request->vehicle_type, // Store vehicle type
         ]);
-
+    
         TripCreated::dispatch($trip, $request->user());
-
+    
         return response()->json($trip, 201);
     }
+    
 
     /**
      * @OA\Post(
