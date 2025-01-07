@@ -84,24 +84,36 @@ class TripController extends Controller
      */
     public function accept(Request $request, Trip $trip)
     {
+        $driver = $request->user()->driver;
+    
+        // Ensure the driver has a vehicle
+        if (!$driver || !$driver->vehicle) {
+            return response()->json(['message' => 'Driver does not have an assigned vehicle.'], 403);
+        }
+    
+        // Check if the trip matches the driver's vehicle type
+        if ($trip->vehicle_type !== $driver->vehicle->type) {
+            return response()->json(['message' => 'You cannot accept this trip. Vehicle type mismatch.'], 403);
+        }
+    
         $request->validate([
             'driver_location' => 'required'
         ]);
-
+    
         if ($trip->driver_id) {
             return response()->json(['message' => 'This trip has already been accepted by another driver.'], 400);
         }
-
+    
         try {
             $trip->update([
                 'driver_id' => $request->user()->id,
                 'driver_location' => $request->driver_location,
             ]);
-
+    
             $trip->load('driver.user');
-
+    
             TripAccepted::dispatch($trip, $trip->user);
-
+    
             return $trip;
         } catch (\Exception $e) {
             return response()->json([
@@ -110,7 +122,7 @@ class TripController extends Controller
             ], 500);
         }
     }
-
+    
     /**
      * @OA\Post(
      *     path="/api/trips/{trip}/start",
@@ -132,21 +144,33 @@ class TripController extends Controller
      */
     public function start(Request $request, Trip $trip)
     {
+        $driver = $request->user()->driver;
+    
+        // Ensure the driver has a vehicle
+        if (!$driver || !$driver->vehicle) {
+            return response()->json(['message' => 'Driver does not have an assigned vehicle.'], 403);
+        }
+    
+        // Check if the trip matches the driver's vehicle type
+        if ($trip->vehicle_type !== $driver->vehicle->type) {
+            return response()->json(['message' => 'You cannot start this trip. Vehicle type mismatch.'], 403);
+        }
+    
         if ($trip->is_started) {
             return response()->json(['message' => 'This trip has already started.'], 400);
         }
-
+    
         $trip->update([
             'is_started' => true,
         ]);
-
+    
         $trip->load('driver.user');
-
+    
         TripStarted::dispatch($trip, $request->user());
-
+    
         return response()->json($trip, 200);
     }
-
+    
     /**
      * @OA\Post(
      *     path="/api/trips/{trip}/end",
@@ -168,46 +192,57 @@ class TripController extends Controller
      */
     public function end(Request $request, Trip $trip)
     {
+        $driver = $request->user()->driver;
+    
+        // Ensure the driver has a vehicle
+        if (!$driver || !$driver->vehicle) {
+            return response()->json(['message' => 'Driver does not have an assigned vehicle.'], 403);
+        }
+    
+        // Check if the trip matches the driver's vehicle type
+        if ($trip->vehicle_type !== $driver->vehicle->type) {
+            return response()->json(['message' => 'You cannot end this trip. Vehicle type mismatch.'], 403);
+        }
+    
         if ($trip->is_completed) {
             return response()->json(['message' => 'Trip is already completed.'], 400);
         }
-
+    
         $origin = $trip->origin;
         $destination = $trip->destination;
-
+    
         if (!$origin || !$destination) {
             return response()->json(['message' => 'Origin or destination coordinates are missing'], 400);
         }
-
+    
         $originLat = $origin['lat'];
         $originLng = $origin['lng'];
         $destinationLat = $destination['lat'];
         $destinationLng = $destination['lng'];
-
+    
         $distance = $this->haversine($originLat, $originLng, $destinationLat, $destinationLng);
-
+    
         if ($distance <= 0) {
             return response()->json(['message' => 'Invalid distance calculated.'], 400);
         }
-
+    
         $price = $this->calculateTripPrice($originLat, $originLng, $destinationLat, $destinationLng);
-
+    
         $trip->update([
             'is_completed' => true,
             'price' => $price
         ]);
-
+    
         $trip->load('driver.user');
-
+    
         TripEnded::dispatch($trip, $request->user());
-
+    
         return response()->json([
             'message' => 'Trip has ended successfully.',
             'trip' => $trip
         ]);
     }
-
-    /**
+        /**
      * @OA\Post(
      *     path="/api/trips/{trip}/location",
      *     summary="Update driver location",
