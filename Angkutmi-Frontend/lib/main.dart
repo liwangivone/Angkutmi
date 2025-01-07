@@ -6,7 +6,7 @@ import 'package:intl/date_symbol_data_local.dart'; // Untuk inisialisasi data lo
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inisialisasi data format tanggal untuk locale Indonesia
+  // Inisialisasi data format tanggal untuk locale Indonesia di waktu tertentu
   await initializeDateFormatting('id_ID', null);
 
   // Check if onboarding has been completed
