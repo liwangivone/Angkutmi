@@ -238,7 +238,7 @@ class DriverController extends Controller
      *     )
      * )
      */
-    public function updateDriver(Request $request)
+    public function update(Request $request)
     {
         $validatedData = $request->validate([
             'type' => 'required|string|in:motor,pickup,truck',

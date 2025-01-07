@@ -19,7 +19,7 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/driver/create', [DriverController::class, 'createDriver']);
 Route::get('/driver/show', [DriverController::class, 'showDrivers']);
-Route::post('/driver/update', [DriverController::class, 'updateDriver']);
+Route::post('/driver/update', [DriverController::class, 'update']);
 
 
 
