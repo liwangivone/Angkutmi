@@ -7,7 +7,7 @@ import 'service/coupon_service.dart';
 import 'mapsinstan.dart';
 
 import 'gacha.dart';
-
+import 'driver_login.dart';
 // Main entry point for the app
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -377,17 +377,15 @@ class ProfileScreen extends StatelessWidget {
                       letterSpacing: 1.5,
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
-
                     ),
-                  ),       
                   ),
-                  CircleAvatar(
+                ),
+                CircleAvatar(
                   radius: MediaQuery.of(context).size.width / 5,
                   backgroundColor: Colors.white,
-                  // backgroundImage: SvgPicture.asset('assets/home/user-circle.png'),       
-                child: SvgPicture.asset(
-                  'assets/home/user-circle.svg',
-                ),
+                  child: SvgPicture.asset(
+                    'assets/home/user-circle.svg',
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 30.0),
@@ -395,12 +393,7 @@ class ProfileScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start, // Align left
                     children: [
                       Container(
-
-                        // decoration: BoxDecoration(
-                        //   border: Border.all(color: Colors.black),
-                        //   borderRadius: BorderRadius.circular(5),
-                        // ),
-                        padding: const EdgeInsets.only(right: 10.0,top: 10.0,bottom: 5.0),
+                        padding: const EdgeInsets.only(right: 10.0, top: 10.0, bottom: 5.0),
                         child: const Text(
                           'Nama Lengkap',
                           style: TextStyle(
@@ -430,6 +423,29 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
           ],
+        ),
+        floatingActionButton: SizedBox(
+          width: 200,
+          height: 60,
+          child: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DriverLogin()),
+              );
+            },
+            backgroundColor: const Color.fromARGB(255, 44, 158, 75),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+              child: Text(
+                'Interested in being a driver?',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
