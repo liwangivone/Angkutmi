@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'terms.dart';
 import 'package:intl/date_symbol_data_local.dart'; // Untuk inisialisasi data lokal
+import 'home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,9 @@ void main() async {
   final hasSeenOnboarding = prefs.getBool('hasSeenOnboarding') ?? false;
 
   runApp(MaterialApp(
+    routes: {
+  '/home': (context) => MyApp(),
+},
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
       fontFamily: 'Poppins', // Set default font to Poppins
