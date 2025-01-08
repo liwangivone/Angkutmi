@@ -131,8 +131,8 @@ Widget build(BuildContext context) {
                   decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 44, 158, 75),
                     borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(66.0),
-                      bottomRight: Radius.circular(66.0),
+                      bottomLeft: Radius.circular(40.0),
+                      bottomRight: Radius.circular(40.0),
                     ),
                   ),
                 ),
@@ -162,7 +162,7 @@ Widget build(BuildContext context) {
                 ),
                 // Form input
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
                   child: Column(
                     children: [
                       const SizedBox(height: 70),
@@ -344,7 +344,7 @@ class _DateTimePickerPageState extends State<DateTimePickerPage> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
+                  padding: const EdgeInsets.only(top: 0),
                   child: TableCalendar(
                     focusedDay: _selectedDate,
                     firstDay: DateTime.now(),
