@@ -7,6 +7,7 @@ import 'service/coupon_service.dart';
 import 'mapsinstan.dart';
 
 import 'gacha.dart';
+import 'track_order.dart';
 
 // Main entry point for the app
 class MyApp extends StatefulWidget {
@@ -337,6 +338,36 @@ class HomeContent extends StatelessWidget {
                     child: const Text(' '),
                   ),
                 ),
+
+              // THIS BUTTON IS TEMPORARY
+              // ==============================================================
+              Container(
+                margin: const EdgeInsets.only(top: 20),
+                height: 50,
+                width: 200,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OrderTrackingScreen(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 44, 158, 75),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: const Text(
+                    'Track Order',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ),
+              // ==============================================================
+
               ],
             ),
           ),
