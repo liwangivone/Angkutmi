@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Coupon extends Model
 {
-
     use HasFactory;
 
     /**
@@ -21,6 +20,7 @@ class Coupon extends Model
         'product_name',
         'start_date',
         'end_date',
+        'picture_path', // Added picture_path to fillable
     ];
 
     /**
@@ -67,11 +67,24 @@ class Coupon extends Model
             $this->decrement('limit');
         }
     }
-        public function redemptions()
+
+    /**
+     * Define a relationship with the Redemption model.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function redemptions()
     {
         return $this->hasMany(Redemption::class);
     }
 
+    /**
+     * Get the full URL of the picture if the path is stored.
+     *
+     * @return string|null
+     */
+    public function getPictureUrlAttribute()
+    {
+        return $this->picture_path ? asset('storage/' . $this->picture_path) : null;
+    }
 }
-
-
