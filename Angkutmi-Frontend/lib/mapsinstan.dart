@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
-import 'pemesanannantipidetail.dart';
-import 'modelsnantipi.dart';
+import 'pemesananinstandetail.dart';
+import 'modelsinstan.dart';
 
 class MapsInstan extends StatefulWidget {
-  
-
   const MapsInstan();
 
   @override
@@ -19,6 +17,7 @@ class _MapsInstanState extends State<MapsInstan> {
   LatLng _selectedLocation = LatLng(-5.147665, 119.432731); // Koordinat awal (Makassar)
   final MapController _mapController = MapController();
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _vehicleController = TextEditingController();
   String _selectedVehicle = "";
 
   Future<void> _searchLocation(String query) async {
@@ -62,7 +61,7 @@ class _MapsInstanState extends State<MapsInstan> {
         ),
         content: Text(
           message,
-          style: TextStyle(fontFamily: 'Poppins'),
+          style: const TextStyle(fontFamily: 'Poppins'),
         ),
         actions: [
           TextButton(
@@ -76,72 +75,12 @@ class _MapsInstanState extends State<MapsInstan> {
       ),
     );
   }
-  final TextEditingController _vehicleController = TextEditingController();
-
-  void _showVehiclePicker() {
-    
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-      ),
-      builder: (BuildContext context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                "Pilih jenis kendaraan",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.local_shipping, color: Colors.green),
-              title: const Text("Truck (30 - 50kg)", style: TextStyle(fontFamily: 'Poppins')),
-              onTap: () {
-                setState(() {
-                  _selectedVehicle = "Truck";
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.fire_truck, color: Colors.green),
-              title: const Text("Pickup (15 - 29kg)", style: TextStyle(fontFamily: 'Poppins')),
-              onTap: () {
-                setState(() {
-                  _selectedVehicle = "Pickup";
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.motorcycle, color: Colors.green),
-              title: const Text("Motor (10 - 14kg)", style: TextStyle(fontFamily: 'Poppins')),
-              onTap: () {
-                setState(() {
-                  _selectedVehicle = "Motor";
-                });
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // Peta Flutter
           FlutterMap(
             mapController: _mapController,
             options: MapOptions(
@@ -151,6 +90,7 @@ class _MapsInstanState extends State<MapsInstan> {
                 setState(() {
                   _selectedLocation = point;
                 });
+                print("Latitude: ${point.latitude}, Longitude: ${point.longitude}");
               },
             ),
             children: [
@@ -176,21 +116,18 @@ class _MapsInstanState extends State<MapsInstan> {
           ),
           Column(
             children: [
-              // Header dan input
               Stack(
                 children: [
-                  // Header hijau melengkung
                   Container(
                     height: 210,
                     decoration: const BoxDecoration(
                       color: Color.fromARGB(255, 44, 158, 75),
                       borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(66.0),
-                        bottomRight: Radius.circular(66.0),
+                        bottomLeft: Radius.circular(40.0),
+                        bottomRight: Radius.circular(40.0),
                       ),
                     ),
                   ),
-                  // Tombol back dan teks "Nantipi" di atas header
                   Positioned(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -214,9 +151,8 @@ class _MapsInstanState extends State<MapsInstan> {
                       ],
                     ),
                   ),
-                  // Form input
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
                     child: Column(
                       children: [
                         const SizedBox(height: 70),
@@ -241,33 +177,105 @@ class _MapsInstanState extends State<MapsInstan> {
                         ),
                         const SizedBox(height: 12),
                         TextField(
-  readOnly: true, // Membuat TextField hanya bisa dibaca
-  controller: _vehicleController, // Controller untuk menampilkan pilihan kendaraan
-  onTap: _showVehiclePicker, // Memanggil fungsi untuk menampilkan pilihan kendaraan
-  decoration: InputDecoration(
-    hintText: "Pilih jenis kendaraan",
-    hintStyle: const TextStyle(fontFamily: 'Poppins'),
-    prefixIcon: const Icon(Icons.directions_car, color: Colors.green),
-    filled: true,
-    fillColor: Colors.white,
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12.0),
-      borderSide: const BorderSide(color: Colors.green, width: 2),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12.0),
-      borderSide: const BorderSide(color: Colors.green, width: 2),
-    ),
-  ),
-),
-
+                          readOnly: true,
+                          controller: _vehicleController,
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+                              ),
+                              builder: (BuildContext context) {
+                                return DraggableScrollableSheet(
+                                  expand: false,
+                                  initialChildSize: 0.3,
+                                  minChildSize: 0.2,
+                                  maxChildSize: 0.4,
+                                  builder: (_, controller) {
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Padding(
+                                          padding: EdgeInsets.all(16.0),
+                                          child: Text(
+                                            "Pilih jenis kendaraan",
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'Poppins',
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: ListView(
+                                            controller: controller,
+                                            children: [
+                                              ListTile(
+                                                leading: const Icon(Icons.local_shipping, color: Colors.green),
+                                                title: const Text("Truck (30 - 50kg)", style: TextStyle(fontFamily: 'Poppins')),
+                                                onTap: () {
+                                                  setState(() {
+                                                    _selectedVehicle = "Truck";
+                                                    _vehicleController.text = "Truck (30 - 50kg)";
+                                                  });
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                              ListTile(
+                                                leading: const Icon(Icons.fire_truck, color: Colors.green),
+                                                title: const Text("Pickup (15 - 29kg)", style: TextStyle(fontFamily: 'Poppins')),
+                                                onTap: () {
+                                                  setState(() {
+                                                    _selectedVehicle = "Pickup";
+                                                    _vehicleController.text = "Pickup (15 - 29kg)";
+                                                  });
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                              ListTile(
+                                                leading: const Icon(Icons.motorcycle, color: Colors.green),
+                                                title: const Text("Motor (10 - 14kg)", style: TextStyle(fontFamily: 'Poppins')),
+                                                onTap: () {
+                                                  setState(() {
+                                                    _selectedVehicle = "Motor";
+                                                    _vehicleController.text = "Motor (10 - 14kg)";
+                                                  });
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          decoration: InputDecoration(
+                            hintText: "Pilih jenis kendaraan",
+                            hintStyle: const TextStyle(fontFamily: 'Poppins'),
+                            prefixIcon: const Icon(Icons.directions_car, color: Colors.green),
+                            filled: true,
+                            fillColor: Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                              borderSide: const BorderSide(color: Colors.green, width: 2),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                              borderSide: const BorderSide(color: Colors.green, width: 2),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ],
               ),
               const Spacer(),
-              // Tombol Tetapkan
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
@@ -276,19 +284,18 @@ class _MapsInstanState extends State<MapsInstan> {
                       _showErrorDialog("Pilih kendaraan terlebih dahulu!");
                       return;
                     }
-                    // Navigator.push( //belumpii saya buat untuk detail nya instan
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => Pemesanannantipidetail(
-                    //       paket: widget.paket,
-                    //       alamat: AlamatModel(
-                    //         address: _searchController.text,
-                    //         date: _selectedVehicle,
-                    //         time: "",
-                    //       ),
-                    //     ),
-                    //   ),
-                    // );
+
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Pemesananinstandetail(
+                          input: InputInstanModel(
+                          address: _searchController.text,
+                          vehicle: _selectedVehicle,
+                        ),
+                      ),
+                    ),
+                  );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2C9E4B),
