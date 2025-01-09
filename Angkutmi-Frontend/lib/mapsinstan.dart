@@ -280,23 +280,34 @@ class _MapsInstanState extends State<MapsInstan> {
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    if (_selectedVehicle.isEmpty) {
-                      _showErrorDialog("Pilih kendaraan terlebih dahulu!");
-                      return;
-                    }
+                  if (_selectedVehicle.isEmpty) {
+                    _showErrorDialog("Pilih kendaraan terlebih dahulu!");
+                    return;
+                  }
 
-                    Navigator.push(
+                  String weightEstimate = "";
+                  if (_selectedVehicle == "Truck") {
+                    weightEstimate = "30 - 50kg";
+                  } else if (_selectedVehicle == "Pickup") {
+                    weightEstimate = "15 - 29kg";
+                  } else if (_selectedVehicle == "Motor") {
+                    weightEstimate = "10 - 14kg";
+                  }
+
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => Pemesananinstandetail(
-                          input: InputInstanModel(
+                        input: InputInstanModel(
                           address: _searchController.text,
                           vehicle: _selectedVehicle,
+                          weightEstimate: weightEstimate,
                         ),
                       ),
                     ),
                   );
-                  },
+                },
+
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2C9E4B),
                     minimumSize: const Size(double.infinity, 50),
