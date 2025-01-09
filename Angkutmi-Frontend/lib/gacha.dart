@@ -70,11 +70,6 @@ void spinWheel() async {
       // Debug: Log the progress value
       print("Progress from API: ${response['progress']}");
 
-      // Update progress
-      setState(() {
-        progress = response['progress'] / 100.0; // Normalize progress (0-1)
-      });
-
       // Find the selected slice based on the backend response
       final selectedSlice = wheelSlices.firstWhere(
         (slice) => slice['label'] == response['slice']['label'],
@@ -176,7 +171,7 @@ void spinWheel() async {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 10),
           child: Column(
             children: [
               Center(
@@ -230,7 +225,16 @@ void spinWheel() async {
                                       ),
                                     ),
                                 ],
-onAnimationEnd: () {
+                                // Change the color of the wheel
+                                indicators: <FortuneIndicator>[
+                                  FortuneIndicator(
+                                    alignment: Alignment.topCenter,
+                                    child: TriangleIndicator(
+                                      color: Colors.red, // Change the color here
+                                    ),
+                                  ),
+                                ],
+onAnimationEnd: () async {
   // Show the reward in a dialog after the animation ends
   showDialog(
     barrierDismissible: true,
@@ -260,6 +264,14 @@ onAnimationEnd: () {
       );
     },
   );
+
+  // Fetch the backend response to update progress
+  final response = await gachaService.spinWheel();
+  // if (response != null) {
+    setState(() {
+      progress = response['progress'] / 100.0; // Normalize progress (0-1)
+    });
+  // }
 },
 
                                 onFocusItemChanged: (value) {
