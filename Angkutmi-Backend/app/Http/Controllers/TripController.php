@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\TpaLocation;
 use App\Models\Trip;
 use App\Events\TripStarted;
 use App\Events\TripAccepted;
@@ -38,24 +39,41 @@ class TripController extends Controller
     {
         $request->validate([
             'origin' => 'required|array',
-            'destination' => 'required|array',
-            'destination_name' => 'required|string',
-            'vehicle_type' => 'required|string|in:motor,pickup,truck', // Validate vehicle type
+            'vehicle_type' => 'required|string|in:motor,pickup,truck',
         ]);
-    
-        $trip = $request->user()->trips()->create([
-            'origin' => $request->origin,
-            'destination' => $request->destination,
-            'destination_name' => $request->destination_name,
-            'vehicle_type' => $request->vehicle_type, // Store vehicle type
+
+        $user = $request->user();
+        $origin = $request->origin;
+
+        // Find the nearest TPA
+        $nearestTpa = TpaLocation::all()->sortBy(function ($tpa) use ($origin) {
+            return $this->haversine(
+                $origin['lat'],
+                $origin['lng'],
+                $tpa->latitude,
+                $tpa->longitude
+            );
+        })->first();
+
+        if (!$nearestTpa) {
+            return response()->json(['message' => 'No TPA locations found.'], 400);
+        }
+
+        // Create the trip
+        $trip = $user->trips()->create([
+            'origin' => $origin,
+            'destination' => [
+                'lat' => $nearestTpa->latitude,
+                'lng' => $nearestTpa->longitude,
+            ],
+            'destination_name' => $nearestTpa->name,
+            'vehicle_type' => $request->vehicle_type,
         ]);
-    
-        TripCreated::dispatch($trip, $request->user());
-    
+
+        TripCreated::dispatch($trip, $user);
+
         return response()->json($trip, 201);
     }
-    
-
     /**
      * @OA\Post(
      *     path="/api/trips/{trip}/accept",
@@ -190,59 +208,56 @@ class TripController extends Controller
      *     @OA\Response(response=500, description="Internal server error")
      * )
      */
+    /**
+     * End a trip and calculate the price.
+     */
     public function end(Request $request, Trip $trip)
     {
         $driver = $request->user()->driver;
-    
-        // Ensure the driver has a vehicle
-        if (!$driver || !$driver->vehicle) {
-            return response()->json(['message' => 'Driver does not have an assigned vehicle.'], 403);
+
+        if (!$driver) {
+            return response()->json(['message' => 'Driver not found.'], 403);
         }
-    
-        // Check if the trip matches the driver's vehicle type
-        if ($trip->vehicle_type !== $driver->vehicle->type) {
-            return response()->json(['message' => 'You cannot end this trip. Vehicle type mismatch.'], 403);
-        }
-    
+
         if ($trip->is_completed) {
             return response()->json(['message' => 'Trip is already completed.'], 400);
         }
-    
+
         $origin = $trip->origin;
         $destination = $trip->destination;
-    
-        if (!$origin || !$destination) {
-            return response()->json(['message' => 'Origin or destination coordinates are missing'], 400);
+        $driverLocation = $trip->driver_location;
+
+        if (!$origin || !$destination || !$driverLocation) {
+            return response()->json(['message' => 'Required location data is missing.'], 400);
         }
-    
+
         $originLat = $origin['lat'];
         $originLng = $origin['lng'];
         $destinationLat = $destination['lat'];
         $destinationLng = $destination['lng'];
-    
-        $distance = $this->haversine($originLat, $originLng, $destinationLat, $destinationLng);
-    
-        if ($distance <= 0) {
-            return response()->json(['message' => 'Invalid distance calculated.'], 400);
-        }
-    
-        $price = $this->calculateTripPrice($originLat, $originLng, $destinationLat, $destinationLng);
-    
+        $driverLat = $driverLocation['lat'];
+        $driverLng = $driverLocation['lng'];
+
+        // Calculate distances
+        $distanceToTpa = $this->haversine($originLat, $originLng, $destinationLat, $destinationLng);
+        $distanceToOriginFromDriver = $this->haversine($driverLat, $driverLng, $originLat, $originLng);
+
+        // Calculate price
+        $price = $this->calculateTripPrice($distanceToTpa, $distanceToOriginFromDriver);
+
         $trip->update([
             'is_completed' => true,
-            'price' => $price
+            'price' => $price,
         ]);
-    
-        $trip->load('driver.user');
-    
+
         TripEnded::dispatch($trip, $request->user());
-    
+
         return response()->json([
             'message' => 'Trip has ended successfully.',
-            'trip' => $trip
+            'trip' => $trip,
+            'price' => $price,
         ]);
-    }
-        /**
+    }        /**
      * @OA\Post(
      *     path="/api/trips/{trip}/location",
      *     summary="Update driver location",
@@ -285,9 +300,12 @@ class TripController extends Controller
         return $trip;
     }
 
+    /**
+     * Calculate the distance between two coordinates using the haversine formula.
+     */
     private function haversine($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo)
     {
-        $radius = 6371;
+        $radius = 6371; // Earth's radius in kilometers
         $latFrom = deg2rad($latitudeFrom);
         $lonFrom = deg2rad($longitudeFrom);
         $latTo = deg2rad($latitudeTo);
@@ -305,13 +323,24 @@ class TripController extends Controller
         return $radius * $c;
     }
 
-    private function calculateTripPrice($originLat, $originLng, $destinationLat, $destinationLng)
+    /**
+     * Calculate the trip price based on distances.
+     */
+    public function calculateTripPrice($distance, $landfillType)
     {
-        $distance = $this->haversine($originLat, $originLng, $destinationLat, $destinationLng);
+        $baseFee = 5; // Fixed base fee
+        $perKmRate = 1; // Rate per kilometer
+        $landfillSurcharge = [
+            'standard' => 0,
+            'recyclable' => 2,
+            'hazardous' => 5,
+        ];
 
-        $basePrice = 10;
-        $pricePerKm = 2;
+        // Calculate price
+        $distanceCharge = $distance * $perKmRate;
+        $surcharge = $landfillSurcharge[$landfillType] ?? 0;
+        $totalPrice = $baseFee + $distanceCharge + $surcharge;
 
-        return $basePrice + ($distance * $pricePerKm);
+        return $totalPrice;
     }
 }
