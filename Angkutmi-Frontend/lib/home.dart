@@ -494,6 +494,7 @@ class HeaderCurvedContainer extends CustomPainter {
 
 // VoucherPage Widget
 
+
 class VoucherPage extends StatefulWidget {
   const VoucherPage({super.key});
 
@@ -502,9 +503,9 @@ class VoucherPage extends StatefulWidget {
 }
 
 class _VoucherPageState extends State<VoucherPage> {
-  final List<String> _vouchers = []; // List to store claimed vouchers
+  final List<Map<String, dynamic>> _vouchers = []; // List to store claimed vouchers with pictures
   bool _isLoading = true; // Loading indicator state
-  final CouponService couponService = CouponService(baseUrl: 'http://127.0.0.1:8000/api');
+  final CouponService couponService = CouponService();
 
   @override
   void initState() {
@@ -538,7 +539,10 @@ class _VoucherPageState extends State<VoucherPage> {
   // Method to add a test voucher manually (for testing)
   void _addVoucher() {
     setState(() {
-      _vouchers.add("Voucher #${_vouchers.length + 1}");
+      _vouchers.add({
+        'product_name': "Voucher #${_vouchers.length + 1}",
+        'picture_url': null,
+      });
     });
   }
 
@@ -586,18 +590,28 @@ class _VoucherPageState extends State<VoucherPage> {
                       : ListView.builder(
                           itemCount: _vouchers.length,
                           itemBuilder: (context, index) {
+                            final voucher = _vouchers[index];
                             return Card(
                               margin: const EdgeInsets.symmetric(
                                   vertical: 10, horizontal: 30),
                               color: Colors.white,
                               elevation: 3,
                               child: ListTile(
-                                leading: const Icon(
-                                  Icons.local_cafe,
-                                  color: Colors.grey,
-                                  size: 40,
-                                ),
-                                title: Text(_vouchers[index]),
+                                leading: voucher['picture_url'] != null
+                                    ? Image.network(
+                                        voucher['picture_url'],
+                                        width: 50,
+                                        height: 50,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stackTrace) => 
+                                            const Icon(Icons.image_not_supported, size: 50),
+                                      )
+                                    : const Icon(
+                                        Icons.local_cafe,
+                                        color: Colors.grey,
+                                        size: 40,
+                                      ),
+                                title: Text(voucher['product_name']),
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 20, horizontal: 25),
                               ),
@@ -621,3 +635,4 @@ class _VoucherPageState extends State<VoucherPage> {
     );
   }
 }
+

@@ -39,7 +39,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
     Route::post('/coupons', [CouponController::class, 'store']);
     Route::get('/coupons', [CouponController::class, 'get']);
-    Route::get('/coupons/inventory', [CouponController::class, 'getUserClaimedCoupons']);
+    Route::get('/coupons/{id}', [CouponController::class, 'show']);
+    Route::get('/coupons/inventory', [CouponController::class, 'storeClaimedCoupon']);
     Route::post('/coupons/{coupon}/redeem', [CouponController::class, 'redeem']);
     Route::get('/coupons/redeemed', [CouponController::class, 'redeemedProducts']);
 
