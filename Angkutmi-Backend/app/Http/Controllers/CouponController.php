@@ -121,31 +121,40 @@ class CouponController extends Controller
     
     public function show(Request $request): JsonResponse
     {
-        $user = $request->user();
+        try {
+            $user = $request->user();
     
-        // Get all claimed coupons for the user
-        $claimedCoupons = \DB::table('user_coupon_claims')
-            ->where('user_id', $user->id)
-            ->where('status', 'claimed')  // Only get 'claimed' coupons
-            ->join('coupons', 'user_coupon_claims.coupon_id', '=', 'coupons.id')
-            ->select('coupons.id', 'coupons.code', 'coupons.product_name', 'coupons.start_date', 'coupons.end_date', 'coupons.picture_path', 'user_coupon_claims.status')
-            ->get();
+            // Get all claimed coupons for the user
+            $claimedCoupons = \DB::table('user_coupon_claims')
+                ->where('user_id', $user->id)
+                ->where('status', 'claimed')  // Only get 'claimed' coupons
+                ->join('coupons', 'user_coupon_claims.coupon_id', '=', 'coupons.id')
+                ->select('coupons.id', 'coupons.code', 'coupons.product_name', 'coupons.start_date', 'coupons.end_date', 'coupons.picture_path', 'user_coupon_claims.status')
+                ->get();
     
-        // Map the results to include full picture URL
-        $data = $claimedCoupons->map(function ($coupon) {
-            return [
-                'id' => $coupon->id,
-                'code' => $coupon->code,
-                'product_name' => $coupon->product_name,
-                'start_date' => $coupon->start_date,
-                'end_date' => $coupon->end_date,
-                'picture_url' => $coupon->picture_path ? asset('storage/' . $coupon->picture_path) : null,
-            ];
-        });
+            // Map the results to include full picture URL
+            $data = $claimedCoupons->map(function ($coupon) {
+                return [
+                    'id' => $coupon->id,
+                    'code' => $coupon->code,
+                    'product_name' => $coupon->product_name,
+                    'start_date' => $coupon->start_date,
+                    'end_date' => $coupon->end_date,
+                    'picture_url' => $coupon->picture_path ? asset('storage/' . $coupon->picture_path) : null,
+                ];
+            });
     
-        return response()->json([
-            'message' => 'Coupons retrieved successfully.',
-            'data' => $data,
-        ], Response::HTTP_OK);
+            return response()->json([
+                'message' => 'Claimed coupons retrieved successfully.',
+                'data' => $data,
+            ], Response::HTTP_OK);
+        } catch (\Throwable $e) {
+            // Return a proper JSON error response
+            return response()->json([
+                'message' => 'An error occurred while retrieving coupons.',
+                'error' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
+    
     }
