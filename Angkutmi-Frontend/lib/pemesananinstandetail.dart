@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'modelsinstan.dart';
+import 'service/api_service.dart';
 
 class Pemesananinstandetail extends StatelessWidget {
   final InputInstanModel input;
@@ -8,6 +9,52 @@ class Pemesananinstandetail extends StatelessWidget {
     Key? key,
     required this.input,
   }) : super(key: key);
+
+ 
+  Future<void> createTrip(BuildContext context) async {
+    final tripData = {
+      "origin": {"lat": -5.135399, "lng": 119.412293},
+      "destination": {"lat": -5.135831, "lng": 119.422559},
+      "destination_name": "Mall Panakkukang",
+      "vehicle_type": "motor",
+    };
+
+    final tripService = TripService();
+
+    // Tampilkan indikator loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+
+    try {
+      final result = await tripService.createTrip(tripData);
+
+      // Tutup indikator loading
+      Navigator.pop(context);
+
+      if (result['success'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PinInputScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Gagal menyimpan data. Silakan coba lagi.")),
+        );
+      }
+    } catch (e) {
+      Navigator.pop(context); // Tutup indikator loading
+      print("Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Terjadi kesalahan. Silakan coba lagi.")),
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
