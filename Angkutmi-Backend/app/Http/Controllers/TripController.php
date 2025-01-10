@@ -41,10 +41,10 @@ class TripController extends Controller
             'origin' => 'required|array',
             'vehicle_type' => 'required|string|in:motor,pickup,truck',
         ]);
-
+    
         $user = $request->user();
         $origin = $request->origin;
-
+    
         // Find the nearest TPA
         $nearestTpa = TpaLocation::all()->sortBy(function ($tpa) use ($origin) {
             return $this->haversine(
@@ -54,11 +54,22 @@ class TripController extends Controller
                 $tpa->longitude
             );
         })->first();
-
+    
         if (!$nearestTpa) {
             return response()->json(['message' => 'No TPA locations found.'], 400);
         }
-
+    
+        // Calculate the distance to the nearest TPA
+        $distanceToTpa = $this->haversine(
+            $origin['lat'],
+            $origin['lng'],
+            $nearestTpa->latitude,
+            $nearestTpa->longitude
+        );
+    
+        // Calculate the price
+        $price = $this->calculateTripPrice($distanceToTpa, $request->vehicle_type);
+    
         // Create the trip
         $trip = $user->trips()->create([
             'origin' => $origin,
@@ -68,13 +79,18 @@ class TripController extends Controller
             ],
             'destination_name' => $nearestTpa->name,
             'vehicle_type' => $request->vehicle_type,
+            'price' => $price, // Save the price in the trip
         ]);
-
+    
         TripCreated::dispatch($trip, $user);
-
-        return response()->json($trip, 201);
+    
+        return response()->json([
+            'message' => 'Trip created successfully.',
+            'trip' => $trip->fresh(), // Include updated trip data
+            'price' => $price,
+        ], 201);
     }
-    /**
+        /**
      * @OA\Post(
      *     path="/api/trips/{trip}/accept",
      *     summary="Accept a trip",
@@ -343,4 +359,33 @@ class TripController extends Controller
 
         return $totalPrice;
     }
+
+    /**
+ * @OA\Get(
+ *     path="/api/trips/{trip}",
+ *     summary="Get a specific trip",
+ *     description="Retrieve details of a specific trip by ID",
+ *     tags={"Trips"},
+ *     security={{"sanctum": {}}},
+ *     @OA\Parameter(
+ *         name="trip",
+ *         in="path",
+ *         required=true,
+ *         description="ID of the trip",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(response=200, description="Trip details retrieved successfully"),
+ *     @OA\Response(response=404, description="Trip not found"),
+ *     @OA\Response(response=500, description="Internal server error")
+ * )
+ */
+
+    public function show(Trip $trip)
+{
+    return response()->json([
+        'message' => 'Trip details retrieved successfully.',
+        'trip' => $trip,
+    ], 200);
+}
+
 }
