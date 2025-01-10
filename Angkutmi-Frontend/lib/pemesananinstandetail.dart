@@ -72,7 +72,7 @@ class Pemesananinstandetail extends StatelessWidget {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.only(top: 8, left: 16, right: 16, bottom: 20),
+                  padding: const EdgeInsets.only(top: 2, left: 12, right: 12, bottom: 6),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -93,29 +93,35 @@ class Pemesananinstandetail extends StatelessWidget {
                             ),
                           ],
                         ),
+                        onEdit: () {
+                          // fungsi edit utk tomboll ubah
+                        },
                       ),
                       _buildSection(
-                        title: "Jenis kendaraan",
-                        content: Row(
-                          children: [
-                            Text(
-                              input.vehicle,
-                              style: const TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 14,
-                              ),
+                      title: "Jenis kendaraan",
+                      content: Row(
+                        children: [
+                          Text(
+                            input.vehicle,
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
                             ),
-                            const Spacer(),
-                            const Text(
-                              "Estimasi: 15-29 kg",
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 14,
-                              ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            "Estimasi: ${input.weightEstimate}",
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+                      onEdit: () {
+                        // fungsi edit utk tombol ubah
+                      },
+                    ),
                       _buildSection(
                         title: "Metode pembayaran",
                         content: Row(
@@ -138,6 +144,9 @@ class Pemesananinstandetail extends StatelessWidget {
                             ),
                           ],
                         ),
+                        onEdit: () {
+                          // fungsi edit utk tomboll ubah
+                        },
                       ),
                       const SizedBox(height: 16),
                       Row(
@@ -162,10 +171,12 @@ class Pemesananinstandetail extends StatelessWidget {
                           ),
                         ],
                       ),
+                      
                     ],
                   ),
                 ),
               ),
+              
             ],
           ),
           Positioned(
@@ -263,6 +274,7 @@ class Pemesananinstandetail extends StatelessWidget {
 }
 
 }
+
 
 class PinInputScreen extends StatefulWidget {
   @override
