@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 import 'pemesanannantipi.dart';
 import 'service/coupon_service.dart';
@@ -323,21 +324,36 @@ class HomeContent extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  margin: const EdgeInsets.only(top: 60),
-                  height: 150,
-                  width: 300,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 115, 115, 115),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+        Container(
+          margin: const EdgeInsets.only(top: 40.0), // Added margin top
+          child: CarouselSlider(
+            options: CarouselOptions(
+              height: 200.0,
+              autoPlay: true,
+              enlargeCenterPage: true,
+              aspectRatio: 16/9,
+              viewportFraction: 0.8,
+            ),
+            items: [1, 2, 3].map((i) {
+              return Builder(
+                builder: (BuildContext context) {
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 158, 215, 99),
+                      borderRadius: BorderRadius.circular(15.0), // Added border radius
                     ),
-                    child: const Text(' '),
-                  ),
-                ),
+                    child: Text(
+                      'carousel $i',
+                      style: const TextStyle(fontSize: 16.0),
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+          ),
+        ),
 
               // THIS BUTTON IS TEMPORARY
               // ==============================================================
@@ -408,17 +424,26 @@ class ProfileScreen extends StatelessWidget {
                       letterSpacing: 1.5,
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
-
                     ),
-                  ),       
                   ),
-                  CircleAvatar(
-                  radius: MediaQuery.of(context).size.width / 5,
-                  backgroundColor: Colors.white,
-                  // backgroundImage: SvgPicture.asset('assets/home/user-circle.png'),       
-                child: SvgPicture.asset(
-                  'assets/home/user-circle.svg',
                 ),
+                Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    CircleAvatar(
+                      radius: MediaQuery.of(context).size.width / 5,
+                      backgroundColor: Colors.white,
+                      child: SvgPicture.asset(
+                        'assets/home/user-circle.svg',
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.edit, color: Colors.white),
+                      onPressed: () {
+                        // Add functionality to change profile picture
+                      },
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 30.0),
@@ -426,12 +451,7 @@ class ProfileScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start, // Align left
                     children: [
                       Container(
-
-                        // decoration: BoxDecoration(
-                        //   border: Border.all(color: Colors.black),
-                        //   borderRadius: BorderRadius.circular(5),
-                        // ),
-                        padding: const EdgeInsets.only(right: 10.0,top: 10.0,bottom: 5.0),
+                        padding: const EdgeInsets.only(right: 10.0, top: 10.0, bottom: 5.0),
                         child: const Text(
                           'Nama Lengkap',
                           style: TextStyle(
@@ -461,6 +481,29 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
           ],
+        ),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 80.0, vertical: 30.0),
+          child: ElevatedButton(
+            onPressed: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => AnotherPage(), // Ensure AnotherPage is defined
+              //   ),
+              // );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 44, 158, 75),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: const Text(
+              'interested in becoming a driver?',
+              style: TextStyle(fontSize: 16, color: Colors.white),
+            ),
+          ),
         ),
       ),
     );
@@ -635,4 +678,3 @@ class _VoucherPageState extends State<VoucherPage> {
     );
   }
 }
-
