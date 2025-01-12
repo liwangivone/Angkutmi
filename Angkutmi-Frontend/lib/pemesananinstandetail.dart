@@ -14,7 +14,7 @@ class Pemesananinstandetail extends StatelessWidget {
 Future<bool> createTrip(BuildContext context) async {
   final tripData = {
     "origin": {"lat": input.lat, "lng": input.lng},
-    "vehicle_type": input.vehicle,
+    "vehicle_type": input.vehicle.toLowerCase(),
   };
 
   final tripService = TripService();
