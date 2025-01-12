@@ -11,6 +11,7 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\WheelOfFortuneController;
 use App\Http\Controllers\PaymentController;
 
+
 Route::get('/docs', [SwaggerController::class, 'api'])->name('l5-swagger.api');
 
 
@@ -39,7 +40,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
     Route::post('/coupons', [CouponController::class, 'store']);
     Route::get('/coupons', [CouponController::class, 'get']);
-    Route::get('/coupons/inventory', [CouponController::class, 'getUserClaimedCoupons']);
+    Route::get('/coupons/{id}', [CouponController::class, 'show']);
+    Route::get('/coupons/inventory', [CouponController::class, 'storeClaimedCoupon']);
     Route::post('/coupons/{coupon}/redeem', [CouponController::class, 'redeem']);
     Route::get('/coupons/redeemed', [CouponController::class, 'redeemedProducts']);
 
@@ -51,6 +53,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::put('/wheel/slices/{id}', [WheelOfFortuneController::class, 'updateWheelSlice']);
     Route::delete('/wheel/slices/{id}', [WheelOfFortuneController::class, 'deleteWheelSlice']);
 
+
+    Route::post('/subscriptions', [SubscriptionController::class, 'createSubscription']);
+    
 });
 
 Route::middleware('auth:sanctum')->group(function () {
