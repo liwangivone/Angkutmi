@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'modelsinstan.dart';
-import 'service/api_service.dart';
+import 'service/trip_service.dart';
 
 class Pemesananinstandetail extends StatelessWidget {
   final InputInstanModel input;
@@ -11,49 +11,58 @@ class Pemesananinstandetail extends StatelessWidget {
   }) : super(key: key);
 
  
-  Future<void> createTrip(BuildContext context) async {
-    final tripData = {
-      "origin": {"lat": -5.135399, "lng": 119.412293},
-      "destination": {"lat": -5.135831, "lng": 119.422559},
-      "destination_name": "Mall Panakkukang",
-      "vehicle_type": "motor",
-    };
+Future<bool> createTrip(BuildContext context) async {
+  final tripData = {
+    "origin": {"lat": input.lat, "lng": input.lng},
+    "vehicle_type": input.vehicle,
+  };
 
-    final tripService = TripService();
+  final tripService = TripService();
 
-    // Tampilkan indikator loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
+  // Tampilkan loading
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return const Center(child: CircularProgressIndicator());
+    },
+  );
 
-    try {
-      final result = await tripService.createTrip(tripData);
+  try {
+    final result = await tripService.createTrip(tripData);
 
-      // Tutup indikator loading
-      Navigator.pop(context);
+    Navigator.pop(context); // Tutup indikator loading
 
-      if (result['success'] == true) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => PinInputScreen()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Gagal menyimpan data. Silakan coba lagi.")),
-        );
-      }
-    } catch (e) {
-      Navigator.pop(context); // Tutup indikator loading
-      print("Error: $e");
+    if (result['success'] == true) {
+      final trip = result['data']['trip'];
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Terjadi kesalahan. Silakan coba lagi.")),
+        SnackBar(content: Text("Trip berhasil dibuat dengan ID: ${trip['id']}")),
       );
+
+      // Navigasi ke halaman berikutnya jika berhasil
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => PinInputScreen()),
+      );
+
+      return true; // Mengembalikan true jika trip berhasil
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result['message'] ?? "Gagal membuat trip.")),
+      );
+      return false; // Mengembalikan false jika trip gagal
     }
+  } catch (e) {
+    Navigator.pop(context); // Tutup indikator loading
+    print("Error: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Terjadi kesalahan. Silakan coba lagi.")),
+    );
+    return false; // Mengembalikan false jika terjadi error
   }
+}
+
+
 
 
   @override
@@ -231,12 +240,38 @@ class Pemesananinstandetail extends StatelessWidget {
             left: 16,
             right: 16,
             child: ElevatedButton(
-              onPressed: () {
+              onPressed: () async { //nantiubah ya ingat pleaseeeee soalnya sudah ada di create trip ini panggil saja createtrip cukup
+              // Tampilkan loading terlebih dahulu
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (BuildContext context) {
+                  return const Center(child: CircularProgressIndicator());
+                },
+              );
+
+              // Panggil createTrip untuk mengirim data ke backend
+              final result = await createTrip(context);
+
+              // Tutup dialog loading
+              Navigator.pop(context);
+
+              if (result == true) {
+                // Navigasi ke PinInputScreen jika berhasil membuat trip
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => PinInputScreen()),
                 );
-              },
+              } else {
+                // Jika gagal, tampilkan pesan kesalahan (SnackBar)
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Gagal membuat trip. Silakan coba lagi."),
+                  ),
+                );
+              }
+            },
+
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF2C9E4B),
                 minimumSize: const Size(double.infinity, 50),
