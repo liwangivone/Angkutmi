@@ -65,7 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-Route::post('payments', [PaymentController::class, 'store']);
+Route::post('payments', [PaymentController::class, 'paymentProcess']);
 Route::get('payments/{trip_id}', [PaymentController::class, 'show']);
 
 
