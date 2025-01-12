@@ -41,6 +41,8 @@ class _MapState extends State<Maps> {
           setState(() {
             _selectedLocation = LatLng(lat, lon);
           });
+           // Print lat dan lon di terminal untuk debugging
+          print("Latitude: $lat, Longitude: $lon");
 
           // Pindahkan peta ke lokasi hasil pencarian
           _mapController.move(_selectedLocation, 14.0);
@@ -227,9 +229,11 @@ Widget build(BuildContext context) {
             const Spacer(),
             // Tombol Tetapkan
             Padding(
+              
   padding: const EdgeInsets.all(16.0), // Padding around the button
   child: ElevatedButton(
     onPressed: () {
+      
       // Navigate to Pemesanannantipidetail with user input data
       Navigator.push(
         context,
@@ -240,6 +244,8 @@ Widget build(BuildContext context) {
               address: _searchController.text, // Address from user input
               date: _dateController.text,      // Date from user input
               time: _timeController.text,      // Time from user input
+              lat: _selectedLocation.latitude,
+              lon: _selectedLocation.longitude,
             ),
           ),
         ),

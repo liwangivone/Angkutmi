@@ -37,6 +37,8 @@ class _MapsInstanState extends State<MapsInstan> {
           setState(() {
             _selectedLocation = LatLng(lat, lon);
           });
+           // Print lat dan lon di terminal untuk debugging
+          print("Latitude: $lat, Longitude: $lon");
 
           // Pindahkan peta ke lokasi hasil pencarian
           _mapController.move(_selectedLocation, 14.0);
@@ -293,6 +295,9 @@ class _MapsInstanState extends State<MapsInstan> {
                   } else if (_selectedVehicle == "Motor") {
                     weightEstimate = "10 - 14kg";
                   }
+                   // Ambil lat dan lon dari _selectedLocation
+                  double lat = _selectedLocation.latitude;
+                  double lon = _selectedLocation.longitude;
 
                   Navigator.push(
                     context,
@@ -302,6 +307,9 @@ class _MapsInstanState extends State<MapsInstan> {
                           address: _searchController.text,
                           vehicle: _selectedVehicle,
                           weightEstimate: weightEstimate,
+                          lat: lat,  // Ambil nilai latitude
+                          lng: lon, // Ambil nilai longitude
+                          price: 0.0,  // Harga awal, bisa dihitung setelahnya
                         ),
                       ),
                     ),

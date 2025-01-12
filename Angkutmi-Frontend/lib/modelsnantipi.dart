@@ -31,15 +31,41 @@ class AlamatModel {
   final String address;
   final String date; // Date dalam format string
   final String time;
-
+  final double lat;  // Menambahkan lat
+  final double lon;  // Menambahkan lon
+  
   AlamatModel({
     required this.address,
     required this.date,
     required this.time,
+    required this.lat,
+    required this.lon,
   });
 
   // Fungsi untuk mendapatkan DateTime dari string date
   DateTime get parsedDate {
     return DateFormat('d MMMM yyyy').parse(date); // Format sesuai input
+  }
+
+   // Mengonversi model ke map untuk dikirim ke server
+  Map<String, dynamic> toMap() {
+    return {
+      'address': address,
+      'date': date,
+      'time': time,
+      'lat': lat,
+      'lon': lon,
+    };
+  }
+
+  // Mengonversi map ke dalam model
+  factory AlamatModel.fromMap(Map<String, dynamic> map) {
+    return AlamatModel(
+      address: map['address'],
+      date: map['date'],
+      time: map['time'],
+      lat: map['lat'],
+      lon: map['lon'],
+    );
   }
 }
