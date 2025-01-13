@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'modelsinstan.dart';
 import 'service/trip_service.dart';
 
-class Pemesananinstandetail extends StatelessWidget {
+class Pemesananinstandetail extends StatefulWidget {
   final InputInstanModel input;
 
   const Pemesananinstandetail({
@@ -10,60 +10,62 @@ class Pemesananinstandetail extends StatelessWidget {
     required this.input,
   }) : super(key: key);
 
- 
-Future<bool> createTrip(BuildContext context) async {
-  final tripData = {
-    "origin": {"lat": input.lat, "lng": input.lng},
-    "vehicle_type": input.vehicle.toLowerCase(),
-  };
-
-  final tripService = TripService();
-
-  // Tampilkan loading
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return const Center(child: CircularProgressIndicator());
-    },
-  );
-
-  try {
-    final result = await tripService.createTrip(tripData);
-
-    Navigator.pop(context); // Tutup indikator loading
-
-    if (result['success'] == true) {
-      final trip = result['data']['trip'];
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Trip berhasil dibuat dengan ID: ${trip['id']}")),
-      );
-
-      // Navigasi ke halaman berikutnya jika berhasil
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PinInputScreen()),
-      );
-
-      return true; // Mengembalikan true jika trip berhasil
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result['message'] ?? "Gagal membuat trip.")),
-      );
-      return false; // Mengembalikan false jika trip gagal
-    }
-  } catch (e) {
-    Navigator.pop(context); // Tutup indikator loading
-    print("Error: $e");
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Terjadi kesalahan. Silakan coba lagi.")),
-    );
-    return false; // Mengembalikan false jika terjadi error
-  }
+  @override
+  _PemesananinstandetailState createState() => _PemesananinstandetailState();
 }
 
+class _PemesananinstandetailState extends State<Pemesananinstandetail> {
+  double? price;  // Variabel untuk harga trip
+  bool isLoading = false;  // Menandakan jika sedang memuat harga
 
+  @override
+  void initState() {
+    super.initState();
+    _fetchTripPrice(); // Memanggil fungsi untuk mendapatkan harga
+  }
 
+  Future<void> _fetchTripPrice() async {
+    final tripService = TripService();
+    final tripData = {
+      "origin": {"lat": widget.input.lat, "lng": widget.input.lng},
+      "vehicle_type": widget.input.vehicle.toLowerCase(),
+      
+    };
+    print(tripData);
+
+    setState(() {
+      isLoading = true;
+    });
+
+    // Panggil createTrip untuk membuat trip dan mendapatkan tripid
+    final result = await tripService.createTrip(tripData);
+
+    if (result['success'] == true) {
+      final tripid = result['data']['id'];  // Ambil tripid dari hasil createTrip
+
+      // Panggil getTripPrice untuk mendapatkan harga berdasarkan tripid
+      final priceResult = await tripService.getTripPrice(tripid);
+
+      setState(() {
+        isLoading = false;
+        if (priceResult['success'] == true) {
+          price = priceResult['price'];  // Set harga jika berhasil
+        } else {
+          // Tangani jika gagal mengambil harga
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(priceResult['message'] ?? 'Gagal mengambil harga.')),
+          );
+        }
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result['message'] ?? 'Gagal membuat trip.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,8 +80,7 @@ Future<bool> createTrip(BuildContext context) async {
                 children: [
                   Container(
                     height: 160,
-                   color: const Color.fromARGB(255, 44, 158, 75),
-
+                    color: const Color.fromARGB(255, 44, 158, 75),
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: Padding(
@@ -108,7 +109,7 @@ Future<bool> createTrip(BuildContext context) async {
                       ),
                     ),
                   ),
-                  // Bagian putih melengkung di bawah
+                  // Bagian putih melengkung di bawah ygy
                   Positioned(
                     bottom: 0,
                     left: 0,
@@ -140,7 +141,7 @@ Future<bool> createTrip(BuildContext context) async {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                input.address,
+                                widget.input.address,
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 14,
@@ -150,34 +151,34 @@ Future<bool> createTrip(BuildContext context) async {
                           ],
                         ),
                         onEdit: () {
-                          // fungsi edit utk tomboll ubah
+                          // fungsi edit utk tombol ubah
                         },
                       ),
                       _buildSection(
-                      title: "Jenis kendaraan",
-                      content: Row(
-                        children: [
-                          Text(
-                            input.vehicle,
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 14,
+                        title: "Jenis kendaraan",
+                        content: Row(
+                          children: [
+                            Text(
+                              widget.input.vehicle,
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
-                          const Spacer(),
-                          Text(
-                            "Estimasi: ${input.weightEstimate}",
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 14,
+                            const Spacer(),
+                            Text(
+                              "Estimasi: ${widget.input.weightEstimate}",
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                        onEdit: () {
+                          // fungsi edit utk tombol ubah
+                        },
                       ),
-                      onEdit: () {
-                        // fungsi edit utk tombol ubah
-                      },
-                    ),
                       _buildSection(
                         title: "Metode pembayaran",
                         content: Row(
@@ -191,7 +192,7 @@ Future<bool> createTrip(BuildContext context) async {
                             ),
                             const Spacer(),
                             const Text(
-                              "Rp165.000",
+                              "Rp165.000", // Ini bisa diubah jika ingin ditampilkan harga awal sebelum update
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 14,
@@ -201,14 +202,14 @@ Future<bool> createTrip(BuildContext context) async {
                           ],
                         ),
                         onEdit: () {
-                          // fungsi edit utk tomboll ubah
+                          // fungsi edit utk tombol ubah
                         },
                       ),
                       const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text(
+                        children: [
+                          const Text(
                             "Total harga",
                             style: TextStyle(
                               fontFamily: 'Poppins',
@@ -216,23 +217,26 @@ Future<bool> createTrip(BuildContext context) async {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text(
-                            "Rp165.000",
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
+                          // Menampilkan harga yang sudah diterima dari API (jika harga tersedia)
+                          isLoading
+                              ? const CircularProgressIndicator()  // Tampilkan loading jika harga sedang dimuat
+                              : Text(
+                                  price != null
+                                      ? "Rp${price!.toStringAsFixed(0)}"  // Tampilkan harga dari server
+                                      : "Menunggu harga...",
+                                  style: const TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
                         ],
                       ),
-                      
                     ],
                   ),
                 ),
               ),
-              
             ],
           ),
           Positioned(
@@ -240,38 +244,13 @@ Future<bool> createTrip(BuildContext context) async {
             left: 16,
             right: 16,
             child: ElevatedButton(
-              onPressed: () async { //nantiubah ya ingat pleaseeeee soalnya sudah ada di create trip ini panggil saja createtrip cukup
-              // Tampilkan loading terlebih dahulu
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (BuildContext context) {
-                  return const Center(child: CircularProgressIndicator());
-                },
-              );
-
-              // Panggil createTrip untuk mengirim data ke backend
-              final result = await createTrip(context);
-
-              // Tutup dialog loading
-              Navigator.pop(context);
-
-              if (result == true) {
-                // Navigasi ke PinInputScreen jika berhasil membuat trip
+              onPressed: () async {
+                // Navigasi ke PinInputScreen
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => PinInputScreen()),
                 );
-              } else {
-                // Jika gagal, tampilkan pesan kesalahan (SnackBar)
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Gagal membuat trip. Silakan coba lagi."),
-                  ),
-                );
-              }
-            },
-
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF2C9E4B),
                 minimumSize: const Size(double.infinity, 50),

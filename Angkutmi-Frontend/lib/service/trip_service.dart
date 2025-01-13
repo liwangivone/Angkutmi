@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 class TripService {
   final String apiUrl = "http://127.0.0.1:8000/api/trip";
 
-  // Instance penyimpanan lokal
+   // Instance penyimpanan lokal
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   Future<Map<String, dynamic>> createTrip(Map<String, dynamic> tripData) async {
@@ -46,4 +46,45 @@ class TripService {
       };
     }
   }
+
+ // Fungsi untuk mendapatkan harga trip berdasarkan tripid
+Future<Map<String, dynamic>> getTripPrice(String tripid) async {
+    final url = Uri.parse("http://127.0.0.1:8000/api/trip/$tripid"); // Corrected URL
+    
+    try {
+      final token = await storage.read(key: 'auth_token');
+      if (token == null) {
+        throw Exception('No token found. Silakan login kembali.');
+      }
+
+      final response = await http.get(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+
+        return {
+          "success": true,
+          "price": responseData['trip']['price'], // Extract price from the trip data
+        };
+      } else {
+        final error = json.decode(response.body);
+        return {
+          "success": false,
+          "message": error['message'] ?? 'Terjadi kesalahan.',
+        };
+      }
+    } catch (e) {
+      return {
+        "success": false,
+        "message": 'Gagal terhubung ke server: $e',
+      };
+    }
+}
+
 }
