@@ -125,17 +125,17 @@ class PaketTab extends StatelessWidget {
         padding: EdgeInsets.only(top: 5, bottom: 16.0, left: 16.0, right: 16.0),
         children: const [
           SubscriptionCard(
-            title: 'Cobami dulu satu bulan',
+            title: 'Paket 1 Bulan',
             duration: 'Durasi: 30 hari',
             price: 'Rp45.000',
           ),
           SubscriptionCard(
-            title: 'Langsungmi tiga bulan',
+            title: 'Paket 3 Bulan',
             duration: 'Durasi: 90 hari',
             price: 'Rp80.000',
           ),
           SubscriptionCard(
-            title: 'Paling hematmi enam bulan',
+            title: 'Paket 6 Bulan',
             duration: 'Durasi: 180 hari',
             price: 'Rp125.000',
           ),
@@ -200,6 +200,7 @@ ElevatedButton(
       MaterialPageRoute(
         builder: (context) => Maps(
           paket: PaketModel(
+            name: title,
             price: price,
             duration: duration,
           ),

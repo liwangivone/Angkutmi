@@ -1,13 +1,16 @@
 import 'package:intl/intl.dart';
 
 class PaketModel {
+  final String name; // Nama paket
   final int price; // Harga sekarang dalam bentuk integer
-  final int duration; // Durasi tetap dalam bentuk integer
+  final int duration; // Durasi tetap dalam bentuk integer (opsional)
 
   PaketModel({
+    required String name,
     required String price,
     required String duration,
-  })  : price = _parsePrice(price),
+  })  : name = name,
+        price = _parsePrice(price),
         duration = _parseDuration(duration);
 
   // Fungsi untuk memproses string harga (misalnya, "Rp45.000" -> 45000)
@@ -31,41 +34,37 @@ class AlamatModel {
   final String address;
   final String date; // Date dalam format string
   final String time;
-  final double lat;  // Menambahkan lat
-  final double lon;  // Menambahkan lon
+  final double lat;  // Tetap sebagai `lat`
+  final double lng;  // Ubah dari `lon` menjadi `lng`
   
   AlamatModel({
     required this.address,
     required this.date,
     required this.time,
     required this.lat,
-    required this.lon,
+    required this.lng, // Perbaikan di sini
   });
 
-  // Fungsi untuk mendapatkan DateTime dari string date
-  DateTime get parsedDate {
-    return DateFormat('d MMMM yyyy').parse(date); // Format sesuai input
-  }
-
-   // Mengonversi model ke map untuk dikirim ke server
+  // Fungsi untuk mengonversi model ke Map
   Map<String, dynamic> toMap() {
     return {
       'address': address,
       'date': date,
       'time': time,
       'lat': lat,
-      'lon': lon,
+      'lng': lng, // Gunakan `lng` di sini
     };
   }
 
-  // Mengonversi map ke dalam model
+  // Fungsi untuk membuat model dari Map
   factory AlamatModel.fromMap(Map<String, dynamic> map) {
     return AlamatModel(
       address: map['address'],
       date: map['date'],
       time: map['time'],
       lat: map['lat'],
-      lon: map['lon'],
+      lng: map['lng'], // Gunakan `lng` di sini
     );
   }
 }
+

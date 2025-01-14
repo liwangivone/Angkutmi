@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Untuk memformat dan menghitung tanggal
 import 'modelsnantipi.dart'; // Pastikan untuk mengimpor model-model yang dibutuhkan
+import 'service/api_langganan.dart'; // Pastikan path API benar
 
 class Pemesanannantipidetail extends StatelessWidget {
   final PaketModel paket; // Menyimpan data harga paket dan durasi
@@ -32,208 +33,210 @@ class Pemesanannantipidetail extends StatelessWidget {
     final startDateFormatted = dateFormat.format(DateFormat('yyyy-MM-dd').parse(alamat.date));
     final endDate = _calculateEndDate(alamat.date, paket.duration);
 
-return Scaffold(
-  backgroundColor: Colors.white,
-  body: Stack(
-    children: [
-      Column(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Stack(
         children: [
-          // Header hijau dengan lengkungan melengkung
-          Stack(
+          Column(
             children: [
-              Container(
-                height: 160,
-                color: const Color.fromARGB(255, 44, 158, 75),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0, top: 40.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
+              // Header hijau dengan lengkungan melengkung
+              Stack(
+                children: [
+                  Container(
+                    height: 160,
+                    color: const Color.fromARGB(255, 44, 158, 75),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16.0, top: 40.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              "Detail Pemesanan",
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          "Detail Pemesanan",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontFamily: 'Poppins',
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-              // Bagian putih melengkung di bawah
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  height: 50,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(66.0),
-                      topRight: Radius.circular(66.0),
+                  // Bagian putih melengkung di bawah
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 50,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(66.0),
+                          topRight: Radius.circular(66.0),
+                        ),
+                      ),
                     ),
+                  ),
+                ],
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.only(top: 2, left: 12, right: 12, bottom: 6),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSection(
+                        title: "Lokasi pengangkutan",
+                        content: Row(
+                          children: [
+                            const Icon(Icons.location_on, color: Colors.black),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                alamat.address,
+                                style: const TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      _buildSection(
+                        title: "Tanggal dan Jam",
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Mulai dari tanggal: $startDateFormatted",
+                              style: const TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                            ),
+                            Text(
+                              "Hingga tanggal: $endDate",
+                              style: const TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                            ),
+                            Text(
+                              "Setiap Jam: ${alamat.time}",
+                              style: const TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      _buildSection(
+                        title: "Informasi Paket",
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Harga Paket: Rp${paket.price}",
+                              style: const TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                            ),
+                            Text(
+                              "Masa Berlaku Paket: ${paket.duration} hari",
+                              style: const TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      _buildSection(
+                        title: "Metode pembayaran",
+                        content: Row(
+                          children: [
+                            const Text(
+                              "OVO",
+                              style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                            ),
+                            const Spacer(),
+                            const Text(
+                              "Rp165.000",
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Total harga",
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "Rp${paket.price}",
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final apiLangganan = ApiLangganan();
+                          final response = await apiLangganan.createSubscription(paket, alamat);
+
+                          if (response.containsKey('error')) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(response['error'])),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => PinInputScreen()),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2C9E4B),
+                          minimumSize: const Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        child: const Text(
+                          "Lanjutkan ke pembayaran",
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                   ),
                 ),
               ),
             ],
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.only(top: 2, left: 12, right: 12, bottom: 6),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSection(
-                    title: "Lokasi pengangkutan",
-                    content: Row(
-                      children: [
-                        const Icon(Icons.location_on, color: Colors.black),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            alamat.address,
-                            style: const TextStyle(fontFamily: 'Poppins', fontSize: 14),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  _buildSection(
-                    title: "Tanggal dan Jam",
-                    content: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Mulai dari tanggal: $startDateFormatted",
-                          style: const TextStyle(fontFamily: 'Poppins', fontSize: 14),
-                        ),
-                        Text(
-                          "Hingga tanggal: $endDate",
-                          style: const TextStyle(fontFamily: 'Poppins', fontSize: 14),
-                        ),
-                        Text(
-                          "Setiap Jam: ${alamat.time}",
-                          style: const TextStyle(fontFamily: 'Poppins', fontSize: 14),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  _buildSection(
-                    title: "Informasi Paket",
-                    content: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Harga Paket: Rp${paket.price}",
-                          style: const TextStyle(fontFamily: 'Poppins', fontSize: 14),
-                        ),
-                        Text(
-                          "Masa Berlaku Paket: ${paket.duration} hari",
-                          style: const TextStyle(fontFamily: 'Poppins', fontSize: 14),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  _buildSection(
-                    title: "Metode pembayaran",
-                    content: Row(
-                      children: [
-                        const Text(
-                          "OVO",
-                          style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
-                        ),
-                        const Spacer(),
-                        const Text(
-                          "Rp165.000",
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Total harga",
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        "Rp${paket.price}",
-                        style: const TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Positioned(
-                  bottom: 20,
-                  left: 16,
-                  right: 16,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => PinInputScreen()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2C9E4B),
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    child: const Text(
-                      "Lanjutkan ke pembayaran",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-
-                  const SizedBox(height: 12),
-                ],
-              ),
-            ),
-          ),
         ],
       ),
-    ],
-  ),
-);
-
+    );
   }
 
   Widget _buildSection({required String title, required Widget content}) {
