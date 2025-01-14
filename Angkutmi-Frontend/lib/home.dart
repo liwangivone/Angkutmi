@@ -354,36 +354,6 @@ class HomeContent extends StatelessWidget {
             }).toList(),
           ),
         ),
-
-              // THIS BUTTON IS TEMPORARY
-              // ==============================================================
-              Container(
-                margin: const EdgeInsets.only(top: 20),
-                height: 50,
-                width: 200,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => OrderTrackingScreen(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 44, 158, 75),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: const Text(
-                    'Track Order',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
-              ),
-              // ==============================================================
-
               ],
             ),
           ),
@@ -415,11 +385,12 @@ class ProfileScreen extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 40.0, bottom: 30),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0, bottom: 30),
                   child: Text(
-                    'Profile anda',
-                    style: TextStyle(
+                    // 'Profile anda',
+                    userName,
+                    style: const TextStyle(
                       fontSize: 30.0,
                       letterSpacing: 1.5,
                       color: Colors.white,
@@ -437,59 +408,54 @@ class ProfileScreen extends StatelessWidget {
                         'assets/home/user-circle.svg',
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.white),
-                      onPressed: () {
-                        // Add functionality to change profile picture
-                      },
-                    ),
+
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 30.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start, // Align left
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.only(right: 10.0, top: 10.0, bottom: 5.0),
-                        child: const Text(
-                          'Nama Lengkap',
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        padding: const EdgeInsets.all(10),
-                        child: Text(
-                          userName,
-                          style: const TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.only(top: 30.0),
+                //   child: Column(
+                //     crossAxisAlignment: CrossAxisAlignment.start, // Align left
+                //     children: [
+                //       Container(
+                //         padding: const EdgeInsets.only(right: 10.0, top: 10.0, bottom: 5.0),
+                //         child: const Text(
+                //           'Nama Lengkap',
+                //           style: TextStyle(
+                //             fontSize: 20.0,
+                //             color: Colors.black,
+                //           ),
+                //         ),
+                //       ),
+                //       const SizedBox(height: 10),
+                //       Container(
+                //         decoration: BoxDecoration(
+                //           border: Border.all(color: Colors.black),
+                //           borderRadius: BorderRadius.circular(5),
+                //         ),
+                //         padding: const EdgeInsets.all(10),
+                //         child: Text(
+                //           userName,
+                //           style: const TextStyle(
+                //             fontSize: 20.0,
+                //             color: Colors.black,
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           ],
         ),
         bottomNavigationBar: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 80.0, vertical: 30.0),
+          padding: const EdgeInsets.symmetric(horizontal: 90.0, vertical: 30.0),
           child: ElevatedButton(
             onPressed: () {
               // Navigator.push(
               //   context,
               //   MaterialPageRoute(
-              //     builder: (context) => AnotherPage(), // Ensure AnotherPage is defined
+              //     builder: (context) => AnotherPage(),
               //   ),
               // );
             },
@@ -500,7 +466,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             child: const Text(
-              'interested in becoming a driver?',
+              'ingin menjadi driver?',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
           ),
@@ -521,7 +487,7 @@ class HeaderCurvedContainer extends CustomPainter {
       ..lineTo(0, 0)
       ..lineTo(0, size.height * 0.35)
       ..quadraticBezierTo(
-          size.width * 0.5, size.height * 0.50, size.width, size.height * 0.35)
+          size.width * 0.5, size.height * 0.20, size.width, size.height * 0.35)
       ..lineTo(size.width, 0)
       ..close();
 
@@ -608,9 +574,14 @@ class _VoucherPageState extends State<VoucherPage> {
               child: ElevatedButton(
                 onPressed: _navigateToFortuneWheelPage,
                 style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color.fromARGB(255, 44, 158, 75),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
                   textStyle: const TextStyle(fontSize: 16),
                 ),
-                child: const Text("Go to Fortune Wheel"),
+                child: const Text("Ke Fortune Wheel",
+                style: TextStyle(color: Colors.white),),
               ),
             ),
             const Padding(
@@ -661,16 +632,6 @@ class _VoucherPageState extends State<VoucherPage> {
                             );
                           },
                         ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: ElevatedButton(
-                onPressed: _addVoucher, // Add test voucher manually for testing
-                style: ElevatedButton.styleFrom(
-                  textStyle: const TextStyle(fontSize: 16),
-                ),
-                child: const Text("tes tambah"),
-              ),
             ),
           ],
         ),
