@@ -15,7 +15,15 @@ class Payment extends Model
      * @var array
      */
     protected $fillable = [
+        'trip_id',
         'payment_id',
         'payment_type'
     ];
+
+    // In Payment model
+public function trip()
+{
+    return $this->belongsTo(Trip::class);
+}
+
 }

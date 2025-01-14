@@ -55,7 +55,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 
     Route::post('/subscriptions', [SubscriptionController::class, 'createSubscription']);
-    
+    Route::post('payments', [PaymentController::class, 'store']);
+    Route::get('payments/{trip_id}', [PaymentController::class, 'show']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -65,8 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-Route::post('payments', [PaymentController::class, 'store']);
-Route::get('payments/{trip_id}', [PaymentController::class, 'show']);
+
 
 
     
