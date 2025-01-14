@@ -24,34 +24,36 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
     _fetchTripPrice(); // Memanggil fungsi untuk mendapatkan harga
   }
 
-  Future<void> _fetchTripPrice() async {
-    final tripService = TripService();
-    final tripData = {
-      "origin": {"lat": widget.input.lat, "lng": widget.input.lng},
-      "vehicle_type": widget.input.vehicle.toLowerCase(),
-      
-    };
-    print(tripData);
+Future<void> _fetchTripPrice() async {
+  final tripService = TripService();
+  final tripData = {
+    "origin": {"lat": widget.input.lat, "lng": widget.input.lng},
+    "vehicle_type": widget.input.vehicle.toLowerCase(),
+  };
+  print('Trip data dikirim: $tripData');
 
-    setState(() {
-      isLoading = true;
-    });
+  setState(() {
+    isLoading = true;
+  });
 
-    // Panggil createTrip untuk membuat trip dan mendapatkan tripid
+  try {
+    // Panggil createTrip untuk mendapatkan tripid
     final result = await tripService.createTrip(tripData);
+    print('Create trip result: $result');
 
     if (result['success'] == true) {
-      final tripid = result['data']['id'];  // Ambil tripid dari hasil createTrip
+      final tripid = result['data']['id'];
+      print('Trip ID: $tripid');
 
-      // Panggil getTripPrice untuk mendapatkan harga berdasarkan tripid
+      // Panggil getTripPrice untuk mendapatkan harga
       final priceResult = await tripService.getTripPrice(tripid);
+      print('Price result: $priceResult');
 
       setState(() {
         isLoading = false;
         if (priceResult['success'] == true) {
-          price = priceResult['price'];  // Set harga jika berhasil
+          price = priceResult['price'];
         } else {
-          // Tangani jika gagal mengambil harga
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(priceResult['message'] ?? 'Gagal mengambil harga.')),
           );
@@ -65,7 +67,17 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
         SnackBar(content: Text(result['message'] ?? 'Gagal membuat trip.')),
       );
     }
+  } catch (e) {
+    setState(() {
+      isLoading = false;
+    });
+    print('Error saat mengambil trip: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Terjadi kesalahan: $e')),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
