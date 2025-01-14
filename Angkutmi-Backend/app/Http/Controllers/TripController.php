@@ -342,23 +342,22 @@ class TripController extends Controller
     /**
      * Calculate the trip price based on distances.
      */
-    public function calculateTripPrice($distance, $landfillType)
-    {
-        $baseFee = 5; // Fixed base fee
-        $perKmRate = 1; // Rate per kilometer
-        $landfillSurcharge = [
-            'standard' => 0,
-            'recyclable' => 2,
-            'hazardous' => 5,
-        ];
+/**
+ * Calculate the trip price based on distances.
+ */
+public function calculateTripPrice($distance, $landfillType)
+{
+    $baseFee = 5000; // Fixed base fee in Rupiah (adjusted to Rupiah)
+    $perKmRate = 1000; // Rate per kilometer in Rupiah
+    // Remove landfill surcharge by not adding it to the total price
 
-        // Calculate price
-        $distanceCharge = $distance * $perKmRate;
-        $surcharge = $landfillSurcharge[$landfillType] ?? 0;
-        $totalPrice = $baseFee + $distanceCharge + $surcharge;
+    // Calculate price
+    $distanceCharge = $distance * $perKmRate;
+    $totalPrice = $baseFee + $distanceCharge;
 
-        return $totalPrice;
-    }
+    return $totalPrice;
+}
+
 
     /**
  * @OA\Get(
@@ -383,9 +382,11 @@ class TripController extends Controller
     public function show(Trip $trip)
 {
     return response()->json([
-        'message' => 'Trip details retrieved successfully.',
-        'trip' => $trip,
-    ], 200);
+        'success' => true,
+        'trip_id' => $trip->id,
+        'price' => $trip->price,
+    ]);
+    
 }
 
 }

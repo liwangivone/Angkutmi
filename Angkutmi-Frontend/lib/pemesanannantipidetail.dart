@@ -194,7 +194,11 @@ return Scaffold(
                     ],
                   ),
                   const SizedBox(height: 20),
-                  ElevatedButton(
+                  Positioned(
+                  bottom: 20,
+                  left: 16,
+                  right: 16,
+                  child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -217,6 +221,8 @@ return Scaffold(
                       ),
                     ),
                   ),
+                ),
+
                   const SizedBox(height: 12),
                 ],
               ),
