@@ -245,7 +245,7 @@ Widget build(BuildContext context) {
               date: _dateController.text,      // Date from user input
               time: _timeController.text,      // Time from user input
               lat: _selectedLocation.latitude,
-              lon: _selectedLocation.longitude,
+              lng: _selectedLocation.longitude,
             ),
           ),
         ),
