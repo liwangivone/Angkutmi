@@ -42,11 +42,12 @@ Future<void> _fetchTripPrice() async {
     print('Create trip result: $result');
 
     if (result['success'] == true) {
-      final tripid = result['data']['id'];
+      // Ensure tripid is treated as an int
+      final int tripid = result['data']['trip']['id']; // This should be an int
       print('Trip ID: $tripid');
 
       // Panggil getTripPrice untuk mendapatkan harga
-      final priceResult = await tripService.getTripPrice(tripid);
+      final Map<String, dynamic> priceResult = await tripService.getTripPrice(tripid);
       print('Price result: $priceResult');
 
       setState(() {
