@@ -47,7 +47,7 @@ class Subscription extends Model
 
             // Here, you can trigger the scheduling logic (e.g., saving trip data, notifications, etc.)
             // For now, just outputting the scheduled dates for testing
-            echo "Scheduled trip for: " . $scheduledDate->toDateString() . "\n";
+            // echo "Scheduled trip for: " . $scheduledDate->toDateString() . "\n";
         }
     }
 }

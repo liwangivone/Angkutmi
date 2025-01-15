@@ -6,6 +6,7 @@ use App\Models\Subscription;
 use App\Models\TpaLocation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class SubscriptionController extends Controller
 {
@@ -61,10 +62,10 @@ class SubscriptionController extends Controller
 
         // Automatically schedule the daily trips for this subscription
         $subscription->scheduleSubscriptionTrips();
-
+        // Log::info('Subscription created successfully', ['subscription' => $subscription]);
         return response()->json([
             'message' => 'Subscription created and daily trips scheduled successfully',
-            'subscription' => $subscription,
+            'subscription' => $subscription->only(['id', 'package_name', 'price', 'schedule_date', 'schedule_time', 'tpa_id']),
         ]);
     }
 
