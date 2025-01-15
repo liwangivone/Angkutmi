@@ -129,7 +129,7 @@ Widget build(BuildContext context) {
               children: [
                 // Header hijau melengkung
                 Container(
-                  height: 210,
+                  height: 240,
                   decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 44, 158, 75),
                     borderRadius: BorderRadius.only(
@@ -139,35 +139,31 @@ Widget build(BuildContext context) {
                   ),
                 ),
                 // Tombol back dan teks "Nantipi" di atas header
-                Positioned(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        "Nantipi",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                    ],
+                AppBar(
+                  title: const Text(
+                    "Nantipi",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontFamily: 'Poppins',
+                    ),
                   ),
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  backgroundColor: const Color.fromARGB(255, 44, 158, 75),
+                  elevation: 0, // Remove shadow
                 ),
                 // Form input
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30.0),
                   child: Column(
                     children: [
-                      const SizedBox(height: 70),
+                      const SizedBox(height: 100),
                       TextField(
                         controller: _searchController,
                         onSubmitted: _searchLocation,
