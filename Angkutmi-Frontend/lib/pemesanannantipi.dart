@@ -40,6 +40,7 @@ class PemesananNantipi extends StatelessWidget {
               borderSide: BorderSide(width: 2, color: Colors.black),
               insets: EdgeInsets.symmetric(horizontal: 60.0),
             ),
+             overlayColor: MaterialStateProperty.all(Colors.transparent),
             tabs: const [
               Tab(child: Text('Paket', style: TextStyle(fontSize: 16))),
               Tab(child: Text('Lagi aktif', style: TextStyle(fontSize: 16))),
