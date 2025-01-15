@@ -9,7 +9,7 @@ import 'package:angkutmi/home.dart';
 final storage = FlutterSecureStorage();
 
 // API endpoint URL
-const String apiUrl = 'http://192.168.251.1:8000/api/login';
+const String apiUrl = 'http://192.168.212.176:8000/api/login';
 
 class AuthService {
   // Login function
@@ -71,7 +71,7 @@ class AuthService {
   // Register function
   Future<Map<String, dynamic>> register(
       String name, String phone, String password) async {
-    final url = Uri.parse('http://192.168.251.1:8000/api/register');
+    final url = Uri.parse('http://192.168.212.176:8000/api/register');
 
     try {
       print("Attempting to register with name: $name, phone: $phone");

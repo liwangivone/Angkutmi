@@ -390,7 +390,7 @@ class _DateTimePickerPageState extends State<DateTimePickerPage> {
                   children: List.generate(
                     12,
                     (index) {
-                      String time = "${7 + index}:00";
+                      String time = "0${7 + index}:00";
                       return ChoiceChip(
                         label: Text(
                           time,
