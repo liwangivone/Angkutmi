@@ -385,38 +385,39 @@ class _DateTimePickerPageState extends State<DateTimePickerPage> {
                 ),
                 SizedBox(height: 35),
                 Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: List.generate(
-                    12,
-                    (index) {
-                      String time = "0${7 + index}:00";
-                      return ChoiceChip(
-                        label: Text(
-                          time,
-                          style: TextStyle(
-                            color: _selectedTime == time ? Colors.white : Colors.green,
-                          ),
+                spacing: 12,
+                runSpacing: 12,
+                children: List.generate(
+                  12,
+                  (index) {
+                    String time = "${(7 + index).toString().padLeft(2, '0')}:00";
+                    return ChoiceChip(
+                      label: Text(
+                        time,
+                        style: TextStyle(
+                          color: _selectedTime == time ? Colors.white : Colors.green,
                         ),
-                        selected: _selectedTime == time,
-                        selectedColor: Colors.green,
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                            color: Colors.green,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      selected: _selectedTime == time,
+                      selectedColor: Colors.green,
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Colors.green,
+                          width: 1,
                         ),
-                        onSelected: (_) {
-                          setState(() {
-                            _selectedTime = time;
-                          });
-                        },
-                      );
-                    },
-                  ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      onSelected: (_) {
+                        setState(() {
+                          _selectedTime = time;
+                        });
+                      },
+                    );
+                  },
                 ),
+              ),
+
                 Spacer(),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),

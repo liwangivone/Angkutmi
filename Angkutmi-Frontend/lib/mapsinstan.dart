@@ -23,40 +23,41 @@ Future<bool> createTrip(BuildContext context, InputInstanModel input) async {
   final tripService = TripService();
 
   // Tampilkan loading
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return const Center(child: CircularProgressIndicator());
-    },
-  );
+showDialog(
+  context: context,
+  barrierDismissible: false,
+  builder: (BuildContext context) {
+    return const Center(child: CircularProgressIndicator());
+  },
+);
 
-  try {
-    final result = await tripService.createTrip(tripData);
+try {
+  // Memanggil API untuk membuat trip
+  final result = await tripService.createTrip(tripData);
 
-    Navigator.pop(context); // Tutup indikator loading
+  Navigator.pop(context); // Tutup indikator loading jika berhasil menerima respons
 
-    if (result['success'] == true) {
-      final trip = result['data']['trip'];
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Trip berhasil dibuat dengan ID: ${trip['id']}")),
-      );
-
-      return true; // Mengembalikan true jika trip berhasil
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result['message'] ?? "Gagal membuat trip.")),
-      );
-      return false; // Mengembalikan false jika trip gagal
-    }
-  } catch (e) {
-    Navigator.pop(context); // Tutup indikator loading
-    print("Error: $e");
+  if (result['success'] == true) {
+    final trip = result['data']['trip'] ?? {};
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Terjadi kesalahan. Silakan coba lagi.")),
+      SnackBar(content: Text("Trip berhasil dibuat dengan ID: ${trip['id']}")),
     );
-    return false; // Mengembalikan false jika terjadi error
+    return true; // Mengembalikan true jika trip berhasil
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(result['message'] ?? "Gagal membuat trip.")),
+    );
+    return false; // Mengembalikan false jika trip gagal
   }
+} catch (e) {
+  Navigator.pop(context); // Tutup indikator loading jika terjadi error
+  print("Error: $e");
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text("Terjadi kesalahan. Silakan coba lagi.")),
+  );
+  return false; // Mengembalikan false jika terjadi error
+}
+
 }
 
 
@@ -356,6 +357,10 @@ class _MapsInstanState extends State<MapsInstan> {
 
       // Panggil createTrip
       final tripCreated = await createTrip(context, inputModel);
+      if (Navigator.canPop(context)) {
+      Navigator.pop(context); // Tutup dialog loading jika masih terbuka
+    }
+
 
       if (tripCreated) {
         // Jika berhasil, navigasi ke halaman berikutnya
