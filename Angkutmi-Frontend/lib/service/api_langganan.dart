@@ -34,6 +34,9 @@ Future<Map<String, dynamic>> createSubscription(
       },
       'schedule_date': alamat.date, // Format tanggal harus benar
     });
+    // Tambahkan debug print di sini
+    print("Body yang dikirim ke API:");
+    print(body);
 
     final response = await http.post(url, headers: headers, body: body);
 
