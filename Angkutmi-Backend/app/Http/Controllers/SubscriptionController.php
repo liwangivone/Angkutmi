@@ -53,7 +53,7 @@ class SubscriptionController extends Controller
             'user_id' => Auth::id(),
             'package_name' => $validated['package_name'],
             'price' => $package['price'],
-            'address' => json_encode(['lat' => $validated['lat'], 'lng' => $validated['lng']]), // Store lat/lng as JSON
+            'address' => json_encode(['lat' => $validated['lat'], 'lng' => $validated['lng']]),
             'schedule_date' => $validated['schedule_date'],
             'schedule_time' => $validated['schedule_time'], // Store the schedule time
             'tpa_id' => $nearestTpa->id, // Nearest TPA location

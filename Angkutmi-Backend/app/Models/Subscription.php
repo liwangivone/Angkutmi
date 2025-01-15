@@ -13,7 +13,7 @@ class Subscription extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'package_name', 'price', 'address', 'schedule_date',
+        'user_id', 'package_name', 'price', 'address', 'schedule_date','schedule_time'
     ];
 
     // Function to handle subscription duration and automatic daily trip scheduling
