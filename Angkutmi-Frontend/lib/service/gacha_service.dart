@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class GachaService {
-  final String baseUrl = "http://127.0.0.1:8000/api/";
+  final String baseUrl = "http://192.168.212.176:8000/api/";
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   // Retrieve token
@@ -25,7 +25,7 @@ class GachaService {
     try {
       final token = await getToken();
       final response = await http.get(
-        Uri.parse("http://127.0.0.1:8000/api/wheel/slices"),
+        Uri.parse("http://192.168.212.176:8000/api/wheel/slices"),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -55,7 +55,7 @@ class GachaService {
     try {
       final token = await getToken();
       final response = await http.post(
-        Uri.parse("http://127.0.0.1:8000/api/wheel/spin"),
+        Uri.parse("http://192.168.212.176:8000/api/wheel/spin"),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -77,7 +77,7 @@ class GachaService {
     try {
       final token = await getToken();
       final response = await http.post(
-        Uri.parse("http://127.0.0.1:8000/api/reward/claim"),
+        Uri.parse("http://192.168.212.176:8000/api/reward/claim"),
         headers: {
           'Authorization': 'Bearer $token',
         },
