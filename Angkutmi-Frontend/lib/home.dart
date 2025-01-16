@@ -408,42 +408,141 @@ class ProfileScreen extends StatelessWidget {
                         'assets/home/user-circle.svg',
                       ),
                     ),
-
                   ],
                 ),
-                // Padding(
-                //   padding: const EdgeInsets.only(top: 30.0),
-                //   child: Column(
-                //     crossAxisAlignment: CrossAxisAlignment.start, // Align left
-                //     children: [
-                //       Container(
-                //         padding: const EdgeInsets.only(right: 10.0, top: 10.0, bottom: 5.0),
-                //         child: const Text(
-                //           'Nama Lengkap',
-                //           style: TextStyle(
-                //             fontSize: 20.0,
-                //             color: Colors.black,
-                //           ),
-                //         ),
-                //       ),
-                //       const SizedBox(height: 10),
-                //       Container(
-                //         decoration: BoxDecoration(
-                //           border: Border.all(color: Colors.black),
-                //           borderRadius: BorderRadius.circular(5),
-                //         ),
-                //         padding: const EdgeInsets.all(10),
-                //         child: Text(
-                //           userName,
-                //           style: const TextStyle(
-                //             fontSize: 20.0,
-                //             color: Colors.black,
-                //           ),
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
+                const SizedBox(height: 30),
+                const Divider(), // Space between profile and buttons
+                SizedBox(
+                  width: double.infinity, // Make button span full width
+                  child: TextButton(
+                    onPressed: () {
+                      // Action for button 1
+                    },
+                    style: TextButton.styleFrom(
+                      // side: const BorderSide(color: Colors.grey), // Add grey border
+                      padding: const EdgeInsets.symmetric(vertical: 16.0), // Increase padding for bigger button
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0), // Change button border radius
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.edit_notifications, color: Colors.grey), // Add icon before text
+                        SizedBox(width: 8), // Add space between icon and text
+                        Text(
+                          'Notifikasi',
+                          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(), // Horizontal line after button 1
+                SizedBox(
+                  width: double.infinity, // Make button span full width
+                  child: TextButton(
+                    onPressed: () {
+                      // Action for button 2
+                    },
+                    style: TextButton.styleFrom(
+                      // side: const BorderSide(color: Colors.grey), // Add grey border
+                      padding: const EdgeInsets.symmetric(vertical: 16.0), // Increase padding for bigger button
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0), // Change button border radius
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.settings, color: Colors.grey), // Add icon before text
+                        SizedBox(width: 8), // Add space between icon and text
+                        Text(
+                          'Pengaturan',
+                          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.grey), // Make font bigger and bold
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(), // Horizontal line after button 2
+                SizedBox(
+                  width: double.infinity, // Make button span full width
+                  child: TextButton(
+                    onPressed: () {
+                      // Action for button 3
+                    },
+                    style: TextButton.styleFrom(
+                      // side: const BorderSide(color: Colors.grey), // Add grey border
+                      padding: const EdgeInsets.symmetric(vertical: 16.0), // Increase padding for bigger button
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0), // Change button border radius
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.help, color: Colors.grey), // Add icon before text
+                        SizedBox(width: 8), // Add space between icon and text
+                        Text(
+                          'Bantuan',
+                          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.grey), // Make font bigger and bold
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(), // Horizontal line after button 3
+                SizedBox(
+                  width: double.infinity, // Make button span full width
+                  child: TextButton(
+                    onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Konfirmasi'),
+                          content: const Text('Apakah anda yakin ingin log out?'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close the dialog
+                              },
+                              child: const Text('Batalkan'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                // Add your logout logic here
+                                Navigator.of(context).pop(); // Close the dialog
+                              },
+                              child: const Text('Log out'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    },
+                    style: TextButton.styleFrom(
+                      // side: const BorderSide(color: Colors.grey), // Add grey border
+                      padding: const EdgeInsets.symmetric(vertical: 16.0), // Increase padding for bigger button
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0), // Change button border radius
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.logout, color: Color.fromARGB(255, 221, 87, 84)), // Add icon before text
+                        SizedBox(width: 8), // Add space between icon and text
+                        Text(
+                          'Log out',
+                          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 221, 87, 84)), // Make font bigger and bold
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(), // Horizontal line after button 4
               ],
             ),
           ],
@@ -452,15 +551,9 @@ class ProfileScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 90.0, vertical: 30.0),
           child: ElevatedButton(
             onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => AnotherPage(),
-              //   ),
-              // );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 44, 158, 75),
+              backgroundColor: const Color.fromARGB(200, 44, 158, 75), // Change opacity to 200
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
