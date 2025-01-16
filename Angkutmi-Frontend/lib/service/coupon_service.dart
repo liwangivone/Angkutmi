@@ -16,7 +16,7 @@ class CouponService {
       }
 
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/api/coupons/'),
+        Uri.parse('http://localhost:8000/api/coupons/'),
         headers: {
           'Authorization': 'Bearer $token',
         },
