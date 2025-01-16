@@ -6,17 +6,19 @@ use App\Models\Subscription;
 use App\Models\TpaLocation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class SubscriptionController extends Controller
 {
     public function createSubscription(Request $request)
     {
-        // Validate the input, expecting latitude and longitude for the address
+        // Validate the input, including time
         $validated = $request->validate([
             'package_name' => 'required|string',
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
             'schedule_date' => 'required|date',
+            'schedule_time' => 'required|date_format:H:i', // Validate time in HH:MM format
         ]);
 
         // Define available packages and their prices
@@ -52,17 +54,18 @@ class SubscriptionController extends Controller
             'user_id' => Auth::id(),
             'package_name' => $validated['package_name'],
             'price' => $package['price'],
-            'address' => json_encode(['lat' => $validated['lat'], 'lng' => $validated['lng']]), // Store lat/lng as a JSON string
+            'address' => json_encode(['lat' => $validated['lat'], 'lng' => $validated['lng']]),
             'schedule_date' => $validated['schedule_date'],
-            'tpa_id' => $nearestTpa->id, // Store the nearest TPA location
+            'schedule_time' => $validated['schedule_time'], // Store the schedule time
+            'tpa_id' => $nearestTpa->id, // Nearest TPA location
         ]);
 
         // Automatically schedule the daily trips for this subscription
         $subscription->scheduleSubscriptionTrips();
-
+        // Log::info('Subscription created successfully', ['subscription' => $subscription]);
         return response()->json([
             'message' => 'Subscription created and daily trips scheduled successfully',
-            'subscription' => $subscription,
+            'subscription' => $subscription->only(['id', 'package_name', 'price', 'schedule_date', 'schedule_time', 'tpa_id']),
         ]);
     }
 

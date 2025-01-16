@@ -10,38 +10,43 @@ class PemesananNantipi extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-  backgroundColor: Color.fromARGB(255, 44, 158, 75),
-  elevation: 0,
-  automaticallyImplyLeading: false, // Menonaktifkan leading default
-  flexibleSpace: Padding(
-    padding: const EdgeInsets.only(top: 0, left: 0, right: 0), // Sesuaikan padding atas untuk menurunkan header
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.center, // Menyelaraskan ikon dan teks di tengah secara vertikal
-      children: [
-        IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-            size: 28,
+          backgroundColor: Color.fromARGB(255, 44, 158, 75),
+          elevation: 0,
+          title: const Text(
+            "Nantipi",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontFamily: 'Poppins',
+            ),
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        const SizedBox(width: 8), // Jarak antara ikon dan teks
-        const Text(
-          "Nantipi",
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontFamily: 'Poppins',
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+              size: 28,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          bottom: TabBar(
+            labelColor: Colors.black,
+            unselectedLabelColor: Colors.white70,
+            indicatorSize: TabBarIndicatorSize.tab,
+            indicatorColor: Colors.green,
+            indicator: const UnderlineTabIndicator(
+              borderSide: BorderSide(width: 2, color: Colors.black),
+              insets: EdgeInsets.symmetric(horizontal: 60.0),
+            ),
+             overlayColor: MaterialStateProperty.all(Colors.transparent),
+            tabs: const [
+              Tab(child: Text('Paket', style: TextStyle(fontSize: 16))),
+              Tab(child: Text('Lagi aktif', style: TextStyle(fontSize: 16))),
+            ],
           ),
         ),
-      ],
-    ),
-  ),
-),
 
         body: Column(
           children: [
@@ -49,7 +54,7 @@ class PemesananNantipi extends StatelessWidget {
             Stack(
               children: [
                 Container(
-                  height: 140,
+                  height: 90,
                   color: const Color.fromARGB(255, 44, 158, 75),
                   
                 ),
@@ -58,22 +63,22 @@ class PemesananNantipi extends StatelessWidget {
                   top: 10,
                   child: Align(
                     alignment: Alignment.topCenter,
-                    child: TabBar(
-                      labelColor: Colors.black,
-                      unselectedLabelColor: Colors.white70,
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      indicatorColor: Colors.green,
-                      indicator: const UnderlineTabIndicator(
-                        borderSide: BorderSide(width: 2, color: Colors.black),
-                        insets: EdgeInsets.symmetric(horizontal: 60.0),
-                      ),
-                      tabs: const [
-                        Tab(child: Text('Paket',style: TextStyle(fontSize: 16),),),
+                    // child: TabBar(
+                    //   labelColor: Colors.black,
+                    //   unselectedLabelColor: Colors.white70,
+                    //   indicatorSize: TabBarIndicatorSize.tab,
+                    //   indicatorColor: Colors.green,
+                    //   indicator: const UnderlineTabIndicator(
+                    //     borderSide: BorderSide(width: 2, color: Colors.black),
+                    //     insets: EdgeInsets.symmetric(horizontal: 60.0),
+                    //   ),
+                    //   tabs: const [
+                    //     Tab(child: Text('Paket',style: TextStyle(fontSize: 16),),),
                         
-                        Tab(child: Text('Lagi aktif',style: TextStyle(fontSize: 16),),),
-                      ],
-                      onTap: (index) {},
-                    ),
+                    //     Tab(child: Text('Lagi aktif',style: TextStyle(fontSize: 16),),),
+                    //   ],
+                    //   onTap: (index) {},
+                    // ),
                   ),
                 ),
                 // Bagian putih melengkung di bawah
@@ -116,6 +121,9 @@ class PemesananNantipi extends StatelessWidget {
     );
   }
 }
+
+
+
 class PaketTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -125,17 +133,17 @@ class PaketTab extends StatelessWidget {
         padding: EdgeInsets.only(top: 5, bottom: 16.0, left: 16.0, right: 16.0),
         children: const [
           SubscriptionCard(
-            title: 'Cobami dulu satu bulan',
+            title: 'Paket 1 Bulan',
             duration: 'Durasi: 30 hari',
             price: 'Rp45.000',
           ),
           SubscriptionCard(
-            title: 'Langsungmi tiga bulan',
+            title: 'Paket 3 Bulan',
             duration: 'Durasi: 90 hari',
             price: 'Rp80.000',
           ),
           SubscriptionCard(
-            title: 'Paling hematmi enam bulan',
+            title: 'Paket 6 Bulan',
             duration: 'Durasi: 180 hari',
             price: 'Rp125.000',
           ),
@@ -200,6 +208,7 @@ ElevatedButton(
       MaterialPageRoute(
         builder: (context) => Maps(
           paket: PaketModel(
+            name: title,
             price: price,
             duration: duration,
           ),

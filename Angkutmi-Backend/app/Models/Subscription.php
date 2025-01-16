@@ -13,7 +13,7 @@ class Subscription extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'package_name', 'price', 'address', 'schedule_date',
+        'user_id', 'package_name', 'price', 'address', 'schedule_date','schedule_time'
     ];
 
     // Function to handle subscription duration and automatic daily trip scheduling
@@ -47,7 +47,7 @@ class Subscription extends Model
 
             // Here, you can trigger the scheduling logic (e.g., saving trip data, notifications, etc.)
             // For now, just outputting the scheduled dates for testing
-            echo "Scheduled trip for: " . $scheduledDate->toDateString() . "\n";
+            // echo "Scheduled trip for: " . $scheduledDate->toDateString() . "\n";
         }
     }
 }

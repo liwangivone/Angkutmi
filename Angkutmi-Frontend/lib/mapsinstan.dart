@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'pemesananinstandetail.dart';
 import 'modelsinstan.dart';
+import 'service/trip_service.dart';
 
 class MapsInstan extends StatefulWidget {
   const MapsInstan();
@@ -13,12 +14,55 @@ class MapsInstan extends StatefulWidget {
   State<MapsInstan> createState() => _MapsInstanState();
 }
 
+Future<bool> createTrip(BuildContext context, InputInstanModel input) async {
+  final tripData = {
+    "origin": {"lat": input.lat, "lng": input.lng},
+    "vehicle_type": input.vehicle.toLowerCase(),
+  };
+
+  final tripService = TripService();
+
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return const Center(child: CircularProgressIndicator());
+    },
+  );
+
+  try {
+    final result = await tripService.createTrip(tripData);
+
+    if (result['success'] == true) {
+      final trip = result['data']['trip'] ?? {};
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Trip berhasil dibuat dengan ID: ${trip['id']}")),
+      );
+      return true;
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result['message'] ?? "Gagal membuat trip.")),
+      );
+      return false;
+    }
+  } catch (e) {
+    print("Error: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Terjadi kesalahan. Silakan coba lagi.")),
+    );
+    return false;
+  } finally {
+    Navigator.pop(context);
+  }
+}
+
 class _MapsInstanState extends State<MapsInstan> {
-  LatLng _selectedLocation = LatLng(-5.147665, 119.432731); // Koordinat awal (Makassar)
+  LatLng _selectedLocation = LatLng(-5.147665, 119.432731);
   final MapController _mapController = MapController();
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _vehicleController = TextEditingController();
   String _selectedVehicle = "";
+  bool _locationValid = false;
 
   Future<void> _searchLocation(String query) async {
     if (query.isEmpty) return;
@@ -36,19 +80,25 @@ class _MapsInstanState extends State<MapsInstan> {
 
           setState(() {
             _selectedLocation = LatLng(lat, lon);
+            _locationValid = true;
           });
-           // Print lat dan lon di terminal untuk debugging
-          print("Latitude: $lat, Longitude: $lon");
-
-          // Pindahkan peta ke lokasi hasil pencarian
           _mapController.move(_selectedLocation, 14.0);
         } else {
+          setState(() {
+            _locationValid = false;
+          });
           _showErrorDialog("Alamat tidak ditemukan");
         }
       } else {
+        setState(() {
+          _locationValid = false;
+        });
         _showErrorDialog("Gagal mencari lokasi");
       }
     } catch (e) {
+      setState(() {
+        _locationValid = false;
+      });
       _showErrorDialog("Terjadi kesalahan: $e");
     }
   }
@@ -91,8 +141,8 @@ class _MapsInstanState extends State<MapsInstan> {
               onTap: (_, point) {
                 setState(() {
                   _selectedLocation = point;
+                  _locationValid = true;
                 });
-                print("Latitude: ${point.latitude}, Longitude: ${point.longitude}");
               },
             ),
             children: [
@@ -121,7 +171,7 @@ class _MapsInstanState extends State<MapsInstan> {
               Stack(
                 children: [
                   Container(
-                    height: 210,
+                    height: 240,
                     decoration: const BoxDecoration(
                       color: Color.fromARGB(255, 44, 158, 75),
                       borderRadius: BorderRadius.only(
@@ -130,34 +180,30 @@ class _MapsInstanState extends State<MapsInstan> {
                       ),
                     ),
                   ),
-                  Positioned(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          "Angkutmi",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontFamily: 'Poppins',
-                          ),
-                        ),
-                      ],
+                  AppBar(
+                    title: const Text(
+                      "Angkutmi",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontFamily: 'Poppins',
+                      ),
                     ),
+                    leading: IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    backgroundColor: const Color.fromARGB(255, 44, 158, 75),
+                    elevation: 0,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30.0),
                     child: Column(
                       children: [
-                        const SizedBox(height: 70),
+                        const SizedBox(height: 100),
                         TextField(
                           controller: _searchController,
                           onSubmitted: _searchLocation,
@@ -281,58 +327,73 @@ class _MapsInstanState extends State<MapsInstan> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
-                  onPressed: () {
-                  if (_selectedVehicle.isEmpty) {
-                    _showErrorDialog("Pilih kendaraan terlebih dahulu!");
-                    return;
-                  }
+                  onPressed: _locationValid
+                      ? () async {
+                          if (_selectedVehicle.isEmpty) {
+                            _showErrorDialog("Pilih kendaraan terlebih dahulu!");
+                            return;
+                          }
+                          if (_searchController.text.trim().isEmpty) {
+                            _showErrorDialog("Masukkan alamat Anda terlebih dahulu!");
+                            return;
+                          }
 
-                  String weightEstimate = "";
-                  if (_selectedVehicle == "Truck") {
-                    weightEstimate = "30 - 50kg";
-                  } else if (_selectedVehicle == "Pickup") {
-                    weightEstimate = "15 - 29kg";
-                  } else if (_selectedVehicle == "Motor") {
-                    weightEstimate = "10 - 14kg";
-                  }
-                   // Ambil lat dan lon dari _selectedLocation
-                  double lat = _selectedLocation.latitude;
-                  double lon = _selectedLocation.longitude;
+                          String weightEstimate = "";
+                          if (_selectedVehicle == "Truck") {
+                            weightEstimate = "30 - 50kg";
+                          } else if (_selectedVehicle == "Pickup") {
+                            weightEstimate = "15 - 29kg";
+                          } else if (_selectedVehicle == "Motor") {
+                            weightEstimate = "10 - 14kg";
+                          }
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Pemesananinstandetail(
-                        input: InputInstanModel(
-                          address: _searchController.text,
-                          vehicle: _selectedVehicle,
-                          weightEstimate: weightEstimate,
-                          lat: lat,  // Ambil nilai latitude
-                          lng: lon, // Ambil nilai longitude
-                          price: 0.0,  // Harga awal, bisa dihitung setelahnya
-                        ),
-                      ),
-                    ),
-                  );
-                },
+                          double lat = _selectedLocation.latitude;
+                          double lon = _selectedLocation.longitude;
 
+                          final inputModel = InputInstanModel(
+                            address: _searchController.text,
+                            vehicle: _selectedVehicle,
+                            weightEstimate: weightEstimate,
+                            lat: lat,
+                            lng: lon,
+                            price: 0.0,
+                          );
+
+                          final tripCreated = await createTrip(context, inputModel);
+                          if (tripCreated) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Pemesananinstandetail(input: inputModel),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Trip gagal dibuat, coba lagi.")),
+                            );
+                          }
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2C9E4B),
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: const Text(
-                    "Tetapkan",
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 18,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
+  backgroundColor: const Color(0xFF2C9E4B), // Warna tombol aktif
+  disabledBackgroundColor: const Color.fromARGB(130, 139, 139, 139), // Warna tombol nonaktif
+  minimumSize: const Size(double.infinity, 50),
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(20),
+  ),
+),
+
+    child: const Text(
+      "Tetapkan",
+      style: TextStyle(
+        fontFamily: 'Poppins',
+        fontSize: 18,
+        color: Colors.white,
+      ),
+    ),
+  ),
+),
+
             ],
           ),
         ],
