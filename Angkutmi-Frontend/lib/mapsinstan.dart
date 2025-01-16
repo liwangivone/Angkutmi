@@ -22,7 +22,6 @@ Future<bool> createTrip(BuildContext context, InputInstanModel input) async {
 
   final tripService = TripService();
 
-  // Tampilkan loading
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -34,38 +33,36 @@ Future<bool> createTrip(BuildContext context, InputInstanModel input) async {
   try {
     final result = await tripService.createTrip(tripData);
 
-    Navigator.pop(context); // Tutup indikator loading
-
     if (result['success'] == true) {
-      final trip = result['data']['trip'];
+      final trip = result['data']['trip'] ?? {};
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Trip berhasil dibuat dengan ID: ${trip['id']}")),
       );
-
-      return true; // Mengembalikan true jika trip berhasil
+      return true;
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(result['message'] ?? "Gagal membuat trip.")),
       );
-      return false; // Mengembalikan false jika trip gagal
+      return false;
     }
   } catch (e) {
-    Navigator.pop(context); // Tutup indikator loading
     print("Error: $e");
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Terjadi kesalahan. Silakan coba lagi.")),
     );
-    return false; // Mengembalikan false jika terjadi error
+    return false;
+  } finally {
+    Navigator.pop(context);
   }
 }
 
-
 class _MapsInstanState extends State<MapsInstan> {
-  LatLng _selectedLocation = LatLng(-5.147665, 119.432731); // Koordinat awal (Makassar)
+  LatLng _selectedLocation = LatLng(-5.147665, 119.432731);
   final MapController _mapController = MapController();
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _vehicleController = TextEditingController();
   String _selectedVehicle = "";
+  bool _locationValid = false;
 
   Future<void> _searchLocation(String query) async {
     if (query.isEmpty) return;
@@ -83,19 +80,25 @@ class _MapsInstanState extends State<MapsInstan> {
 
           setState(() {
             _selectedLocation = LatLng(lat, lon);
+            _locationValid = true;
           });
-           // Print lat dan lon di terminal untuk debugging
-          print("Latitude: $lat, Longitude: $lon");
-
-          // Pindahkan peta ke lokasi hasil pencarian
           _mapController.move(_selectedLocation, 14.0);
         } else {
+          setState(() {
+            _locationValid = false;
+          });
           _showErrorDialog("Alamat tidak ditemukan");
         }
       } else {
+        setState(() {
+          _locationValid = false;
+        });
         _showErrorDialog("Gagal mencari lokasi");
       }
     } catch (e) {
+      setState(() {
+        _locationValid = false;
+      });
       _showErrorDialog("Terjadi kesalahan: $e");
     }
   }
@@ -138,8 +141,8 @@ class _MapsInstanState extends State<MapsInstan> {
               onTap: (_, point) {
                 setState(() {
                   _selectedLocation = point;
+                  _locationValid = true;
                 });
-                print("Latitude: ${point.latitude}, Longitude: ${point.longitude}");
               },
             ),
             children: [
@@ -194,7 +197,7 @@ class _MapsInstanState extends State<MapsInstan> {
                       },
                     ),
                     backgroundColor: const Color.fromARGB(255, 44, 158, 75),
-                    elevation: 0, // Remove shadow
+                    elevation: 0,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30.0),
@@ -322,63 +325,64 @@ class _MapsInstanState extends State<MapsInstan> {
               ),
               const Spacer(),
               Padding(
-  padding: const EdgeInsets.all(16.0),
-  child: ElevatedButton(
-    onPressed: () async {
-      if (_selectedVehicle.isEmpty) {
-        _showErrorDialog("Pilih kendaraan terlebih dahulu!");
-        return;
-      }
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton(
+                  onPressed: _locationValid
+                      ? () async {
+                          if (_selectedVehicle.isEmpty) {
+                            _showErrorDialog("Pilih kendaraan terlebih dahulu!");
+                            return;
+                          }
+                          if (_searchController.text.trim().isEmpty) {
+                            _showErrorDialog("Masukkan alamat Anda terlebih dahulu!");
+                            return;
+                          }
 
-      // Tentukan estimasi berat berdasarkan kendaraan yang dipilih
-      String weightEstimate = "";
-      if (_selectedVehicle == "Truck") {
-        weightEstimate = "30 - 50kg";
-      } else if (_selectedVehicle == "Pickup") {
-        weightEstimate = "15 - 29kg";
-      } else if (_selectedVehicle == "Motor") {
-        weightEstimate = "10 - 14kg";
-      }
+                          String weightEstimate = "";
+                          if (_selectedVehicle == "Truck") {
+                            weightEstimate = "30 - 50kg";
+                          } else if (_selectedVehicle == "Pickup") {
+                            weightEstimate = "15 - 29kg";
+                          } else if (_selectedVehicle == "Motor") {
+                            weightEstimate = "10 - 14kg";
+                          }
 
-      // Ambil lat dan lon dari _selectedLocation
-      double lat = _selectedLocation.latitude;
-      double lon = _selectedLocation.longitude;
+                          double lat = _selectedLocation.latitude;
+                          double lon = _selectedLocation.longitude;
 
-      // Buat instance InputInstanModel
-      final inputModel = InputInstanModel(
-        address: _searchController.text,
-        vehicle: _selectedVehicle,
-        weightEstimate: weightEstimate,
-        lat: lat,
-        lng: lon,
-        price: 0.0, // Harga awal, bisa dihitung setelahnya
-      );
+                          final inputModel = InputInstanModel(
+                            address: _searchController.text,
+                            vehicle: _selectedVehicle,
+                            weightEstimate: weightEstimate,
+                            lat: lat,
+                            lng: lon,
+                            price: 0.0,
+                          );
 
-      // Panggil createTrip
-      final tripCreated = await createTrip(context, inputModel);
+                          final tripCreated = await createTrip(context, inputModel);
+                          if (tripCreated) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Pemesananinstandetail(input: inputModel),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Trip gagal dibuat, coba lagi.")),
+                            );
+                          }
+                        }
+                      : null,
+                  style: ElevatedButton.styleFrom(
+  backgroundColor: const Color(0xFF2C9E4B), // Warna tombol aktif
+  disabledBackgroundColor: const Color.fromARGB(130, 139, 139, 139), // Warna tombol nonaktif
+  minimumSize: const Size(double.infinity, 50),
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(20),
+  ),
+),
 
-      if (tripCreated) {
-        // Jika berhasil, navigasi ke halaman berikutnya
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Pemesananinstandetail(input: inputModel),
-          ),
-        );
-      } else {
-        // Jika gagal, tampilkan pesan
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Trip gagal dibuat, coba lagi.")),
-        );
-      }
-    },
-    style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFF2C9E4B),
-      minimumSize: const Size(double.infinity, 50),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-    ),
     child: const Text(
       "Tetapkan",
       style: TextStyle(
