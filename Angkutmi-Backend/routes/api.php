@@ -56,6 +56,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/subscriptions', [SubscriptionController::class, 'createSubscription']);
     Route::post('payments', [PaymentController::class, 'store']);
     Route::get('payments/{trip_id}', [PaymentController::class, 'show']);
+
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
