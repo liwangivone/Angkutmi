@@ -84,11 +84,22 @@ class AuthController extends Controller
         }
     }
             
-    // Logout
-    public function logout()
-    {
-        session()->forget('user');
 
-        return redirect()->route('login')->with('success', 'You have been logged out.');
+// Logout function
+public function logout(Request $request)
+{
+    try {
+        // Revoke the token for the authenticated user
+        $request->user()->tokens->each(function ($token) {
+            $token->delete();
+        });
+
+        // Return a successful response
+        return response()->json(['success' => true, 'message' => 'Logged out successfully'], 200);
+    } catch (\Exception $e) {
+        // Return error response
+        return response()->json(['error' => 'An error occurred during logout.'], 500);
     }
+}
+
 }
