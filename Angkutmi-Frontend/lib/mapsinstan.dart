@@ -32,10 +32,9 @@ class _MapsInstanState extends State<MapsInstan> {
     "vehicle_type": input.vehicle.toLowerCase(),
   };
 
-  final tripService = TripService();
-
   // Avoid duplicate requests
   if (_isRequestInProgress) return false;
+
   setState(() {
     _isRequestInProgress = true; // Set flag to true when request starts
   });
@@ -49,10 +48,13 @@ class _MapsInstanState extends State<MapsInstan> {
   );
 
   try {
+    final tripService = TripService(); 
     final result = await tripService.createTrip(tripData);
-
+    
     if (result['success'] == true) {
       final tripId = result['trip_id'];
+      print(result);  // Log the full response to check the structure
+
       if (tripId == null) {
         throw Exception('Trip ID tidak ditemukan.');
       }
@@ -80,6 +82,7 @@ class _MapsInstanState extends State<MapsInstan> {
     if (Navigator.canPop(context)) {
       Navigator.pop(context); // Close dialog
     }
+    
   }
 }
 
@@ -350,7 +353,7 @@ class _MapsInstanState extends State<MapsInstan> {
                 
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
-  onPressed: _locationValid && !_isButtonDisabled
+    onPressed: _locationValid && !_isButtonDisabled
       ? () async {
           setState(() {
             _isButtonDisabled = true; // Disable the button temporarily
@@ -394,8 +397,9 @@ class _MapsInstanState extends State<MapsInstan> {
             lng: lon,
             price: 0.0,
           );
-
+          print("Before creating trip");
           final tripCreated = await createTrip(context, inputModel);
+          print("After creating trip");
           setState(() {
             _isButtonDisabled = false; // Enable the button again
           });

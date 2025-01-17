@@ -9,6 +9,9 @@ class TripService {
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   Future<Map<String, dynamic>> createTrip(Map<String, dynamic> tripData) async {
+    print("createTrip dipanggil ini tai sih cok kalau 2x");
+    print("Creating trip with data: $tripData");
+    
   final url = Uri.parse(apiUrl);
 
   try {
@@ -116,25 +119,25 @@ class TripService {
     }
   }
 
-  void handleTripCreation(Map<String, dynamic> tripData) async {
-    final tripResponse = await createTrip(tripData);
+  // void handleTripCreation(Map<String, dynamic> tripData) async {
+  //   final tripResponse = await createTrip(tripData);
 
-    if (tripResponse['success']) {
-      final tripId = tripResponse['trip_id'];
+  //   if (tripResponse['success']) {
+  //     final tripId = tripResponse['trip_id'];
 
-      if (tripId == null) {
-        print('Trip ID is null. Cannot fetch trip price.');
-        return;
-      }
+  //     if (tripId == null) {
+  //       print('Trip ID is null. Cannot fetch trip price.');
+  //       return;
+  //     }
 
-      final priceResponse = await getTripPrice(tripId); // Ensure tripId is a String
-      if (priceResponse['success']) {
-        print('Trip Price: ${priceResponse['price']}');
-      } else {
-        print('Error fetching trip price: ${priceResponse['message']}');
-      }
-    } else {
-      print('Error creating trip: ${tripResponse['message']}');
-    }
-  }
+  //     final priceResponse = await getTripPrice(tripId); // Ensure tripId is a String
+  //     if (priceResponse['success']) {
+  //       print('Trip Price: ${priceResponse['price']}');
+  //     } else {
+  //       print('Error fetching trip price: ${priceResponse['message']}');
+  //     }
+  //   } else {
+  //     print('Error creating trip: ${tripResponse['message']}');
+  //   }
+  // }
 }
