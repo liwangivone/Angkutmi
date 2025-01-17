@@ -39,91 +39,82 @@ class _ExamplePageState extends State<ExamplePage> {
   }
 
   // Fetch the wheel slices from the backend
-Future<void> fetchWheelSlices() async {
-  try {
-    final slices = await gachaService.fetchWheelSlices();
+  Future<void> fetchWheelSlices() async {
+    try {
+      final slices = await gachaService.fetchWheelSlices();
 
-    // Debug: Print fetched slices
-    print('Fetched slices from API: $slices');
+      // Debug: Print fetched slices
+      print('Fetched slices from API: $slices');
 
-    if (slices != null && slices is List<Map<String, dynamic>>) {
-      setState(() {
-        wheelSlices = slices; // Assign fetched slices to the UI
-      });
-    } else {
-      throw Exception('Unexpected response format: $slices');
-    }
-  } catch (e) {
-    print("Error fetching wheel slices: $e");
-  }
-}
-
-void spinWheel() async {
-  try {
-    // Fetch the backend response
-    final response = await gachaService.spinWheel();
-
-    if (response != null) {
-      // Debug: Log the backend response
-      print("Full JSON Response: $response");
-
-      // Debug: Log the progress value
-      print("Progress from API: ${response['progress']}");
-
-      // Find the selected slice based on the backend response
-      final selectedSlice = wheelSlices.firstWhere(
-        (slice) => slice['label'] == response['slice']['label'],
-        orElse: () => {}, // Return an empty map instead of null
-      );
-
-      if (selectedSlice.isNotEmpty) {
-        final selectedIndex = wheelSlices.indexOf(selectedSlice);
-
-        // Debug: Log selected slice and index
-        print("Selected Slice Index: $selectedIndex");
-        print("Selected Slice Details: $selectedSlice");
-
+      if (slices != null && slices is List<Map<String, dynamic>>) {
         setState(() {
-          // Update the reward details
-          setReward(selectedIndex);
-
-          // Spin the wheel to the selected index
-          selected.add(selectedIndex);
+          wheelSlices = slices; // Assign fetched slices to the UI
         });
       } else {
-        print("Error: No matching slice found for ${response['slice']['label']}");
+        throw Exception('Unexpected response format: $slices');
       }
-
-      // Show progress bar full dialog if progress reaches 100%
-      if (progress == 1.0) {
-        showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Roda Penuh!"),
-              content: const Text("Bar Anda sudah penuh. Silakan klaim hadiah Anda!"),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Close the dialog
-                    // Optionally trigger any additional actions to claim the reward
-                  },
-                  child: const Text("Klaim Hadiah"),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    } else {
-      print("Error: Response is null");
+    } catch (e) {
+      print("Error fetching wheel slices: $e");
     }
-  } catch (e) {
-    print("Error spinning the wheel: $e");
   }
-}
 
+  // Fetch current progress from the backend
+  Future<void> fetchProgress() async {
+    try {
+      final progressData = await gachaService.fetchProgress();
+
+      if (progressData != null) {
+        setState(() {
+          progress = progressData['progress'] / 100.0;  // Normalize progress (0-1)
+        });
+      } else {
+        print("Error: No progress data received");
+      }
+    } catch (e) {
+      print("Error fetching progress: $e");
+    }
+  }
+
+  void spinWheel() async {
+    try {
+      // Fetch the backend response
+      final response = await gachaService.spinWheel();
+
+      if (response != null) {
+        // Debug: Log the backend response
+        print("Full JSON Response: $response");
+
+        // Find the selected slice based on the backend response
+        final selectedSlice = wheelSlices.firstWhere(
+          (slice) => slice['label'] == response['slice']['label'],
+          orElse: () => {}, // Return an empty map instead of null
+        );
+
+        if (selectedSlice.isNotEmpty) {
+          final selectedIndex = wheelSlices.indexOf(selectedSlice);
+
+          // Debug: Log selected slice and index
+          print("Selected Slice Index: $selectedIndex");
+          print("Selected Slice Details: $selectedSlice");
+
+          setState(() {
+            // Update the reward details
+            setReward(selectedIndex);
+
+            // Spin the wheel to the selected index
+            selected.add(selectedIndex);
+          });
+
+          // Fetch and update progress after the spin completes
+          await fetchProgress(); // Fetch the updated progress
+        }
+      } else {
+        print("Error: Response is null");
+      }
+    } catch (e) {
+      print("Error spinning the wheel: $e");
+    }
+  }
 
   // Set reward details when a slice is selected
   void setReward(int index) {
@@ -143,8 +134,9 @@ void spinWheel() async {
   @override
   void initState() {
     super.initState();
-    getToken(); // Retrieve token when the page loads
-    fetchWheelSlices(); // Fetch wheel slices when the page loads
+    getToken();  // Retrieve token when the page loads
+    fetchWheelSlices();  // Fetch wheel slices when the page loads
+    fetchProgress();  // Fetch the user's progress when the page loads
   }
 
   @override
@@ -234,46 +226,40 @@ void spinWheel() async {
                                     ),
                                   ),
                                 ],
-onAnimationEnd: () async {
-  // Show the reward in a dialog after the animation ends
-  showDialog(
-    barrierDismissible: true,
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text("Selamat! Anda Mendapatkan"),
-        content: Column(
-          children: [
-            const SizedBox(height: 10),
-            Text(
-              selectedReward,
-              style: const TextStyle(fontSize: 22),
-            ),
-            const SizedBox(height: 20),
-            selectedImg.isNotEmpty
-                ? Image.network(selectedImg)
-                : const SizedBox(),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: closeDialog,
-            child: const Text('OK'),
-          ),
-        ],
-      );
-    },
-  );
+                                onAnimationEnd: () async {
+                                  // Show the reward in a dialog after the animation ends
+                                  showDialog(
+                                    barrierDismissible: true,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Selamat! Anda Mendapatkan"),
+                                        content: Column(
+                                          children: [
+                                            const SizedBox(height: 10),
+                                            Text(
+                                              selectedReward,
+                                              style: const TextStyle(fontSize: 22),
+                                            ),
+                                            const SizedBox(height: 20),
+                                            selectedImg.isNotEmpty
+                                                ? Image.network(selectedImg)
+                                                : const SizedBox(),
+                                          ],
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: closeDialog,
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
 
-  // Fetch the backend response to update progress
-  final response = await gachaService.spinWheel();
-  // if (response != null) {
-    setState(() {
-      progress = response['progress'] / 100.0; // Normalize progress (0-1)
-    });
-  // }
-},
-
+                                  // Fetch and update progress after the animation ends
+                                  await fetchProgress(); // Fetch the updated progress
+                                },
                                 onFocusItemChanged: (value) {
                                   setReward(value); // Set reward details when the slice is selected
                                 },

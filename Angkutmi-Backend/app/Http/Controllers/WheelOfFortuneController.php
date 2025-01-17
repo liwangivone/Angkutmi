@@ -205,4 +205,28 @@ class WheelOfFortuneController extends Controller
             'message' => 'Wheel slice deleted successfully.'
         ]);
     }
+
+    // Get user's progression bar progress
+// Get user's progression bar progress
+public function getProgress()
+{
+    // Ensure the user is authenticated
+    if (!Auth::check()) {
+        return response()->json(['message' => 'User not authenticated.'], 401);
+    }
+
+    // Fetch the user's progression bar
+    $progressionBar = ProgressionBar::where('user_id', Auth::id())->first();
+
+    // If the progression bar doesn't exist, return an error message
+    if (!$progressionBar) {
+        return response()->json(['message' => 'Progression bar not found.'], 404);
+    }
+
+    // Return the current progress value
+    return response()->json([
+        'progress' => $progressionBar->progress,
+    ]);
+}
+
 }
