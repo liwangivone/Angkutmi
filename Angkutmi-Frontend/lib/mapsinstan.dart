@@ -9,18 +9,36 @@ import 'service/trip_service.dart';
 
 class MapsInstan extends StatefulWidget {
   const MapsInstan();
+  
 
   @override
   State<MapsInstan> createState() => _MapsInstanState();
 }
 
-Future<bool> createTrip(BuildContext context, InputInstanModel input) async {
+
+class _MapsInstanState extends State<MapsInstan> {
+  LatLng _selectedLocation = LatLng(-5.147665, 119.432731);
+  final MapController _mapController = MapController();
+  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _vehicleController = TextEditingController();
+  String _selectedVehicle = "";
+  bool _locationValid = false;
+  bool _isButtonDisabled = false;
+  bool _isRequestInProgress = false;
+
+  Future<bool> createTrip(BuildContext context, InputInstanModel input) async {
   final tripData = {
     "origin": {"lat": input.lat, "lng": input.lng},
     "vehicle_type": input.vehicle.toLowerCase(),
   };
 
   final tripService = TripService();
+
+  // Avoid duplicate requests
+  if (_isRequestInProgress) return false;
+  setState(() {
+    _isRequestInProgress = true; // Set flag to true when request starts
+  });
 
   showDialog(
     context: context,
@@ -34,9 +52,13 @@ Future<bool> createTrip(BuildContext context, InputInstanModel input) async {
     final result = await tripService.createTrip(tripData);
 
     if (result['success'] == true) {
-      final trip = result['data']['trip'] ?? {};
+      final tripId = result['trip_id'];
+      if (tripId == null) {
+        throw Exception('Trip ID tidak ditemukan.');
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Trip berhasil dibuat dengan ID: ${trip['id']}")),
+        SnackBar(content: Text("Trip berhasil dibuat dengan ID: $tripId")),
       );
       return true;
     } else {
@@ -52,17 +74,16 @@ Future<bool> createTrip(BuildContext context, InputInstanModel input) async {
     );
     return false;
   } finally {
-    Navigator.pop(context);
+    setState(() {
+      _isRequestInProgress = false; // Reset flag to false after request finishes
+    });
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context); // Close dialog
+    }
   }
 }
 
-class _MapsInstanState extends State<MapsInstan> {
-  LatLng _selectedLocation = LatLng(-5.147665, 119.432731);
-  final MapController _mapController = MapController();
-  final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _vehicleController = TextEditingController();
-  String _selectedVehicle = "";
-  bool _locationValid = false;
+
 
   Future<void> _searchLocation(String query) async {
     if (query.isEmpty) return;
@@ -324,74 +345,89 @@ class _MapsInstanState extends State<MapsInstan> {
                 ],
               ),
               const Spacer(),
+              
               Padding(
+                
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
-                  onPressed: _locationValid
-                      ? () async {
-                          if (_selectedVehicle.isEmpty) {
-                            _showErrorDialog("Pilih kendaraan terlebih dahulu!");
-                            return;
-                          }
-                          if (_searchController.text.trim().isEmpty) {
-                            _showErrorDialog("Masukkan alamat Anda terlebih dahulu!");
-                            return;
-                          }
+  onPressed: _locationValid && !_isButtonDisabled
+      ? () async {
+          setState(() {
+            _isButtonDisabled = true; // Disable the button temporarily
+          });
 
-                          String weightEstimate = "";
-                          if (_selectedVehicle == "Truck") {
-                            weightEstimate = "30 - 50kg";
-                          } else if (_selectedVehicle == "Pickup") {
-                            weightEstimate = "15 - 29kg";
-                          } else if (_selectedVehicle == "Motor") {
-                            weightEstimate = "10 - 14kg";
-                          }
+          if (_selectedVehicle.isEmpty) {
+            _showErrorDialog("Pilih kendaraan terlebih dahulu!");
+            setState(() {
+              _isButtonDisabled = false;
+            });
+            return;
+          }
 
-                          double lat = _selectedLocation.latitude;
-                          double lon = _selectedLocation.longitude;
+          if (_searchController.text.trim().isEmpty) {
+            _showErrorDialog("Masukkan alamat Anda terlebih dahulu!");
+            setState(() {
+              _isButtonDisabled = false;
+            });
+            return;
+          }
 
-                          final inputModel = InputInstanModel(
-                            address: _searchController.text,
-                            vehicle: _selectedVehicle,
-                            weightEstimate: weightEstimate,
-                            lat: lat,
-                            lng: lon,
-                            price: 0.0,
-                          );
+          // Determine weightEstimate based on selected vehicle
+          String weightEstimate = "";
+          if (_selectedVehicle == "Truck") {
+            weightEstimate = "30 - 50kg";
+          } else if (_selectedVehicle == "Pickup") {
+            weightEstimate = "15 - 29kg";
+          } else if (_selectedVehicle == "Motor") {
+            weightEstimate = "10 - 14kg";
+          }
 
-                          final tripCreated = await createTrip(context, inputModel);
-                          if (tripCreated) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Pemesananinstandetail(input: inputModel),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Trip gagal dibuat, coba lagi.")),
-                            );
-                          }
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-  backgroundColor: const Color(0xFF2C9E4B), // Warna tombol aktif
-  disabledBackgroundColor: const Color.fromARGB(130, 139, 139, 139), // Warna tombol nonaktif
-  minimumSize: const Size(double.infinity, 50),
-  shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(20),
-  ),
-),
+          // Process input and create the trip
+          double lat = _selectedLocation.latitude;
+          double lon = _selectedLocation.longitude;
 
-    child: const Text(
-      "Tetapkan",
-      style: TextStyle(
-        fontFamily: 'Poppins',
-        fontSize: 18,
-        color: Colors.white,
-      ),
+          final inputModel = InputInstanModel(
+            address: _searchController.text,
+            vehicle: _selectedVehicle,
+            weightEstimate: weightEstimate,
+            lat: lat,
+            lng: lon,
+            price: 0.0,
+          );
+
+          final tripCreated = await createTrip(context, inputModel);
+          setState(() {
+            _isButtonDisabled = false; // Enable the button again
+          });
+
+          if (tripCreated) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Pemesananinstandetail(input: inputModel),
+              ),
+            );
+          }
+        }
+      : null,
+  style: ElevatedButton.styleFrom(
+    backgroundColor: const Color(0xFF2C9E4B), // Active button color
+    disabledBackgroundColor: const Color.fromARGB(130, 139, 139, 139), // Disabled button color
+    minimumSize: const Size(double.infinity, 50),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
     ),
   ),
+  child: const Text(
+    "Tetapkan",
+    style: TextStyle(
+      fontFamily: 'Poppins',
+      fontSize: 18,
+      color: Colors.white,
+    ),
+  ),
+)
+
 ),
 
             ],

@@ -9,47 +9,50 @@ class TripService {
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   Future<Map<String, dynamic>> createTrip(Map<String, dynamic> tripData) async {
-    final url = Uri.parse(apiUrl);
+  final url = Uri.parse(apiUrl);
 
-    try {
-      final token = await storage.read(key: 'auth_token');
-      if (token == null) {
-        throw Exception('No token found. Silakan login kembali.');
-      }
+  try {
+    final token = await storage.read(key: 'auth_token');
+    if (token == null) {
+      throw Exception('No token found. Silakan login kembali.');
+    }
 
-      final response = await http.post(
-        url,
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-          "Authorization": "Bearer $token",
-        },
-        body: json.encode(tripData),
-      );
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
+      },
+      body: json.encode(tripData),
+    );
 
-      if (response.statusCode == 201) {
-        final responseData = json.decode(response.body);
-        final trip = responseData['trip'];
+    if (response.statusCode == 201) {
+      final responseData = json.decode(response.body);
+      final trip = responseData['trip'];
 
-        return {
-          "success": true,
-          "trip_id": trip?['trip_id'], // Extract the trip ID
-          "data": responseData,
-        };
-      } else {
-        final error = json.decode(response.body);
-        return {
-          "success": false,
-          "message": error['message'] ?? 'Terjadi kesalahan.',
-        };
-      }
-    } catch (e) {
+      return {
+        "success": true,
+        "trip_id": trip?['trip_id'] ?? trip?['id'], // Periksa semua kemungkinan key
+        "data": responseData,
+      };
+    } else {
+      final error = json.decode(response.body);
+      print("Error Response: $error");
       return {
         "success": false,
-        "message": 'Gagal terhubung ke server: $e',
+        "message": error['message'] ?? 'Terjadi kesalahan.',
       };
     }
+  } catch (e) {
+    print("Exception: $e");
+    return {
+      "success": false,
+      "message": 'Gagal terhubung ke server: $e',
+    };
   }
+}
+
 
   Future<Map<String, dynamic>> getTripPrice(int tripid) async {
     final url = Uri.parse("http://127.0.0.1:8000/api/trip/$tripid");

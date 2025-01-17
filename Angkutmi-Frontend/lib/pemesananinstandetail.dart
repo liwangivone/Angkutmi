@@ -15,9 +15,8 @@ class Pemesananinstandetail extends StatefulWidget {
 }
 
 class _PemesananinstandetailState extends State<Pemesananinstandetail> {
-  double? price; // Variabel untuk harga trip
-  double userBalance = 500000; // Saldo pengguna (contoh awal: Rp500.000)
-  bool isLoading = false; // Menandakan jika sedang memuat harga
+  double? price;  // Variabel untuk harga trip
+  bool isLoading = false;  // Menandakan jika sedang memuat harga
 
   @override
   void initState() {
@@ -25,92 +24,61 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
     _fetchTripPrice(); // Memanggil fungsi untuk mendapatkan harga
   }
 
-  Future<void> _fetchTripPrice() async {
-    final tripService = TripService();
-    final tripData = {
-      "origin": {"lat": widget.input.lat, "lng": widget.input.lng},
-      "vehicle_type": widget.input.vehicle.toLowerCase(),
-    };
-    print('Trip data dikirim: $tripData');
+Future<void> _fetchTripPrice() async {
+  final tripService = TripService();
+  final tripData = {
+    "origin": {"lat": widget.input.lat, "lng": widget.input.lng},
+    "vehicle_type": widget.input.vehicle.toLowerCase(),
+  };
+  print('Trip data dikirim: $tripData');
 
-    setState(() {
-      isLoading = true;
-    });
+  setState(() {
+    isLoading = true;
+  });
 
-    try {
-      // Panggil createTrip untuk mendapatkan tripid
-      final result = await tripService.createTrip(tripData);
-      print('Create trip result: $result');
+  try {
+    // Panggil createTrip untuk mendapatkan tripid
+    final result = await tripService.createTrip(tripData);
+    print('Create trip result: $result');
 
-      if (result['success'] == true) {
-        // Ensure tripid is treated as an int
-        final int tripid = result['data']['trip']['id'];
-        print('Trip ID: $tripid');
+    if (result['success'] == true) {
+      // Ensure tripid is treated as an int
+      final int tripid = result['data']['trip']['id']; // This should be an int
+      print('Trip ID: $tripid');
 
-        // Panggil getTripPrice untuk mendapatkan harga
-        final Map<String, dynamic> priceResult =
-            await tripService.getTripPrice(tripid);
-        print('Price result: $priceResult');
+      // Panggil getTripPrice untuk mendapatkan harga
+      final Map<String, dynamic> priceResult = await tripService.getTripPrice(tripid);
+      print('Price result: $priceResult');
 
-        setState(() {
-          isLoading = false;
-          if (priceResult['success'] == true) {
-            price = priceResult['price'];
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(priceResult['message'] ?? 'Gagal mengambil harga.')),
-            );
-          }
-        });
-      } else {
-        setState(() {
-          isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['message'] ?? 'Gagal membuat trip.')),
-        );
-      }
-    } catch (e) {
+      setState(() {
+        isLoading = false;
+        if (priceResult['success'] == true) {
+          price = priceResult['price'];
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(priceResult['message'] ?? 'Gagal mengambil harga.')),
+          );
+        }
+      });
+    } else {
       setState(() {
         isLoading = false;
       });
-      print('Error saat mengambil trip: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Terjadi kesalahan: $e')),
+        SnackBar(content: Text(result['message'] ?? 'Gagal membuat trip.')),
       );
     }
+  } catch (e) {
+    setState(() {
+      isLoading = false;
+    });
+    print('Error saat mengambil trip: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Terjadi kesalahan: $e')),
+    );
   }
+}
 
-  void _processPayment() {
-    if (price == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Harga belum tersedia")),
-      );
-      return;
-    }
-
-    if (userBalance >= price!) {
-      setState(() {
-        userBalance -= price!;
-      });
-
-      print("Saldo setelah pembayaran: Rp$userBalance");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Pembayaran berhasil. Sisa saldo: Rp$userBalance")),
-      );
-
-      // Navigasi ke layar berikutnya
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PinInputScreen()),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Saldo tidak mencukupi untuk pembayaran")),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,8 +102,7 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.arrow_back,
-                                  color: Colors.white, size: 28),
+                              icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
                               onPressed: () {
                                 Navigator.pop(context);
                               },
@@ -155,7 +122,7 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
                       ),
                     ),
                   ),
-                  // Bagian putih melengkung di bawah
+                  // Bagian putih melengkung di bawah ygy
                   Positioned(
                     bottom: 0,
                     left: 0,
@@ -175,8 +142,7 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.only(
-                      top: 2, left: 12, right: 12, bottom: 6),
+                  padding: const EdgeInsets.only(top: 2, left: 12, right: 12, bottom: 6),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -197,7 +163,9 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
                             ),
                           ],
                         ),
-                        onEdit: () {},
+                        onEdit: () {
+                          // fungsi edit utk tombol ubah
+                        },
                       ),
                       _buildSection(
                         title: "Jenis kendaraan",
@@ -220,7 +188,9 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
                             ),
                           ],
                         ),
-                        onEdit: () {},
+                        onEdit: () {
+                          // fungsi edit utk tombol ubah
+                        },
                       ),
                       _buildSection(
                         title: "Metode pembayaran",
@@ -234,11 +204,9 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
                               ),
                             ),
                             const Spacer(),
-                            Text(
-                              price != null
-                                  ? "Rp${price!.toStringAsFixed(0)}"
-                                  : "Menunggu harga...",
-                              style: const TextStyle(
+                            const Text(
+                              "Rp165.000", // Ini bisa diubah jika ingin ditampilkan harga awal sebelum update
+                              style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -246,7 +214,9 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
                             ),
                           ],
                         ),
-                        onEdit: () {},
+                        onEdit: () {
+                          // fungsi edit utk tombol ubah
+                        },
                       ),
                       const SizedBox(height: 16),
                       Row(
@@ -260,11 +230,12 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+                          // Menampilkan harga yang sudah diterima dari API (jika harga tersedia)
                           isLoading
-                              ? const CircularProgressIndicator()
+                              ? const CircularProgressIndicator()  // Tampilkan loading jika harga sedang dimuat
                               : Text(
                                   price != null
-                                      ? "Rp${price!.toStringAsFixed(0)}"
+                                      ? "Rp${price!.toStringAsFixed(0)}"  // Tampilkan harga dari server
                                       : "Menunggu harga...",
                                   style: const TextStyle(
                                     fontFamily: 'Poppins',
@@ -286,7 +257,13 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
             left: 16,
             right: 16,
             child: ElevatedButton(
-              onPressed: _processPayment,
+              onPressed: () async {
+                // Navigasi ke PinInputScreen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PinInputScreen()),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF2C9E4B),
                 minimumSize: const Size(double.infinity, 50),
@@ -309,7 +286,7 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
     );
   }
 
-   Widget _buildSection({
+  Widget _buildSection({
   required String title,
   required Widget content,
   VoidCallback? onEdit,
@@ -371,11 +348,6 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
 }
 
 }
-
-
-
-
-
 
 
 class PinInputScreen extends StatefulWidget {

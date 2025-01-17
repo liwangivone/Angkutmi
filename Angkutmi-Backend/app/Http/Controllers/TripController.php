@@ -54,7 +54,7 @@ class TripController extends Controller
                 $tpa->longitude
             );
         })->first();
-    
+      
         if (!$nearestTpa) {
             return response()->json(['message' => 'No TPA locations found.'], 400);
         }
