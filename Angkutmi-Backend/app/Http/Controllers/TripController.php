@@ -230,50 +230,59 @@ class TripController extends Controller
     public function end(Request $request, Trip $trip)
     {
         $driver = $request->user()->driver;
-
+    
         if (!$driver) {
             return response()->json(['message' => 'Driver not found.'], 403);
         }
-
+    
         if ($trip->is_completed) {
             return response()->json(['message' => 'Trip is already completed.'], 400);
         }
-
+    
         $origin = $trip->origin;
         $destination = $trip->destination;
         $driverLocation = $trip->driver_location;
-
+    
         if (!$origin || !$destination || !$driverLocation) {
             return response()->json(['message' => 'Required location data is missing.'], 400);
         }
-
+    
         $originLat = $origin['lat'];
         $originLng = $origin['lng'];
         $destinationLat = $destination['lat'];
         $destinationLng = $destination['lng'];
         $driverLat = $driverLocation['lat'];
         $driverLng = $driverLocation['lng'];
-
+    
         // Calculate distances
         $distanceToTpa = $this->haversine($originLat, $originLng, $destinationLat, $destinationLng);
         $distanceToOriginFromDriver = $this->haversine($driverLat, $driverLng, $originLat, $originLng);
-
+    
         // Calculate price
         $price = $this->calculateTripPrice($distanceToTpa, $distanceToOriginFromDriver);
-
+    
+        // Update trip as completed and set the price
         $trip->update([
             'is_completed' => true,
             'price' => $price,
         ]);
-
-        TripEnded::dispatch($trip, $request->user());
-
+    
+        // Increment the trip count for the user who created the trip
+        $tripCreator = $trip->user; // Assuming a `user` relationship exists on the Trip model
+        $tripCount = $tripCreator->trip_count ?? 0; // Default to 0 if not set
+        $tripCreator->update(['trip_count' => $tripCount + 1]);
+    
+        TripEnded::dispatch($trip, $tripCreator);
+    
         return response()->json([
             'message' => 'Trip has ended successfully.',
             'trip' => $trip,
             'price' => $price,
+            'trip_count' => $tripCreator->trip_count,
         ]);
-    }        /**
+    }
+    
+          /**
      * @OA\Post(
      *     path="/api/trips/{trip}/location",
      *     summary="Update driver location",
