@@ -27,7 +27,7 @@ class Trip extends Model
         'driver_location',
         'reserve_datetime',
         'price',
-        'vehicle_type' // New column added
+        'vehicle_type'
     ];
 
     protected $casts = [
