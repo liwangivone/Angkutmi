@@ -45,6 +45,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::post('/wheel/spin', [WheelOfFortuneController::class, 'spin']);
     Route::post('/reward/claim', [WheelOfFortuneController::class, 'claimReward']);
+    Route::get('/wheel/progress', [WheelOfFortuneController::class, 'getProgress']);
 
     Route::get('/wheel/slices', [WheelOfFortuneController::class, 'getWheelSlices']);
     Route::post('/wheel/slices', [WheelOfFortuneController::class, 'createWheelSlice']);
