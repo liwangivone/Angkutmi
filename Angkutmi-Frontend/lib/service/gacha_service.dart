@@ -20,6 +20,29 @@ class GachaService {
     }
   }
 
+
+    // Fetch current progress
+  Future<Map<String, dynamic>> fetchProgress() async {
+    try {
+      final token = await getToken();
+      final response = await http.get(
+        Uri.parse("http://127.0.0.1:8000/api/wheel/progress"),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception("Failed to fetch progress: ${response.body}");
+      }
+    } catch (e) {
+      print("Error fetching progress: $e");
+      throw Exception("Error fetching progress: $e");
+    }
+  }
+
   // Fetch wheel slices
   Future<List<Map<String, dynamic>>> fetchWheelSlices() async {
     try {
