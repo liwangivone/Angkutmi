@@ -129,6 +129,7 @@ class TripController extends Controller
         if ($trip->vehicle_type !== $driver->vehicle->type) {
             return response()->json(['message' => 'You cannot accept this trip. Vehicle type mismatch.'], 403);
         }
+        return response()->json($request->driver_location);
     
         $request->validate([
             'driver_location' => 'required'
