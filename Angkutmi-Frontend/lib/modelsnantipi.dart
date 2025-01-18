@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 
 class PaketModel {
   final String name; // Nama paket
-  final int price; // Harga sekarang dalam bentuk integer
+  final double price; // Harga sekarang dalam bentuk double
   final int duration; // Durasi tetap dalam bentuk integer (opsional)
 
   PaketModel({
@@ -13,10 +13,10 @@ class PaketModel {
         price = _parsePrice(price),
         duration = _parseDuration(duration);
 
-  // Fungsi untuk memproses string harga (misalnya, "Rp45.000" -> 45000)
-  static int _parsePrice(String priceString) {
+  // Fungsi untuk memproses string harga (misalnya, "Rp45.000" -> 45000.0)
+  static double _parsePrice(String priceString) {
     final cleanedString = priceString.replaceAll(RegExp(r'[^\d]'), ''); // Hapus karakter non-angka
-    return int.tryParse(cleanedString) ?? 0; // Parsing ke integer atau 0 jika gagal
+    return double.tryParse(cleanedString) ?? 0.0; // Parsing ke double atau 0.0 jika gagal
   }
 
   // Fungsi untuk memproses string durasi (misalnya, "30 hari" -> 30)
@@ -26,6 +26,8 @@ class PaketModel {
     return match != null ? int.parse(match.group(0)!) : 0; // Kembalikan angka atau 0 jika tidak ada
   }
 }
+
+
 
 
 
