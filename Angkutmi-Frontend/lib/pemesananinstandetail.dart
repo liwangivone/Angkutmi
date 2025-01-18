@@ -88,57 +88,42 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
 }
 
 
-  void _lanjutkanPembayaran() async {
-  final danaProvider = Provider.of<DanaProvider>(context, listen: false); // Ambil instance dari DanaProvider
+  Future<void> _lanjutkanPembayaran() async {
+  final danaProvider = Provider.of<DanaProvider>(context, listen: false);
 
   try {
-    // Validasi harga
-    if (price == null || price! <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Harga tidak valid!")),
-      );
-      return;
+    if (price <= 0) {
+      throw Exception("Harga tidak valid!");
     }
 
-    // Kurangi dana
-    danaProvider.kurangiDana(price!); // Mengurangi saldo sesuai dengan harga yang telah diterima
-
-    // Tampilkan notifikasi keberhasilan
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "Pembayaran berhasil! Sisa saldo: Rp${danaProvider.jumlahDana.toStringAsFixed(0)}",
-        ),
-      ),
-    );
-
-    // Kirim data ke server
-    final paymentData = {
-      'trip_id': tripid, // tripid yang didapat setelah createTrip
-      'price': price,   // Harga trip yang diambil
-      'payment_type': danaProvider.metodePembayaran, // Metode pembayaran
-    };
-
-    // Panggil fungsi createPayment dari PaymentService
+    // Kirim data ke server terlebih dahulu
     final paymentService = PaymentService();
     final response = await paymentService.createPayment(
       tripId: tripid,
       price: price,
       paymentMethod: danaProvider.metodePembayaran,
     );
-    print(paymentData);
+    print("$tripid , ${danaProvider.metodePembayaran}, $price");
+    print(response);
 
     if (response['success']) {
-      // Data berhasil dikirim, lanjutkan ke layar berikutnya
+      // Jika pembayaran di backend berhasil, baru kurangi dana
+      danaProvider.kurangiDana(price);
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Pembayaran berhasil! Sisa saldo: Rp${danaProvider.jumlahDana.toStringAsFixed(0)}",
+          ),
+        ),
+      );
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => PinInputScreen()),
       );
     } else {
-      // Menampilkan error dari server
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(response['message'] ?? 'Gagal mengirim data pembayaran.')),
-      );
+      throw Exception(response['message'] ?? 'Gagal mengirim data pembayaran.');
     }
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(
