@@ -3,6 +3,7 @@ import 'modelsinstan.dart';
 import 'service/trip_service.dart';
 import 'package:provider/provider.dart'; // Import Provider
 import 'dana_provider.dart'; // Import DanaProvider
+import 'service/payment_service.dart';
 
 class Pemesananinstandetail extends StatefulWidget {
   final InputInstanModel input;
@@ -17,8 +18,9 @@ class Pemesananinstandetail extends StatefulWidget {
 }
 
 class _PemesananinstandetailState extends State<Pemesananinstandetail> {
-  double? price;  // Variabel untuk harga trip
+  double price = 0;  // Variabel untuk harga trip
   bool isLoading = false;  // Menandakan jika sedang memuat harga
+  int tripid = 0;
 
   @override
   void initState() {
@@ -26,7 +28,7 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
     _fetchTripPrice(); // Memanggil fungsi untuk mendapatkan harga
   }
 
-Future<void> _fetchTripPrice() async {
+  Future<void> _fetchTripPrice() async {
   final tripService = TripService();
   final tripData = {
     "origin": {"lat": widget.input.lat, "lng": widget.input.lng},
@@ -44,18 +46,22 @@ Future<void> _fetchTripPrice() async {
     print('Create trip result: $result');
 
     if (result['success'] == true) {
-      // Ensure tripid is treated as an int
-      final int tripid = result['data']['trip']['id']; // This should be an int
-      print('Trip ID: $tripid');
+      // Pastikan tripid disimpan dalam state
+      final int fetchedTripId = result['trip_id'];
+      print('Trip ID: $fetchedTripId');
+
+      setState(() {
+        tripid = fetchedTripId; // Simpan ke state
+      });
 
       // Panggil getTripPrice untuk mendapatkan harga
-      final Map<String, dynamic> priceResult = await tripService.getTripPrice(tripid);
+      final priceResult = await tripService.getTripPrice(tripid);
       print('Price result: $priceResult');
 
       setState(() {
         isLoading = false;
         if (priceResult['success'] == true) {
-          price = priceResult['price'];
+          price = double.parse(priceResult['price'].toString());
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(priceResult['message'] ?? 'Gagal mengambil harga.')),
@@ -81,9 +87,12 @@ Future<void> _fetchTripPrice() async {
   }
 }
 
-void _lanjutkanPembayaran() {
+
+  void _lanjutkanPembayaran() async {
   final danaProvider = Provider.of<DanaProvider>(context, listen: false); // Ambil instance dari DanaProvider
+
   try {
+    // Validasi harga
     if (price == null || price! <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Harga tidak valid!")),
@@ -103,11 +112,34 @@ void _lanjutkanPembayaran() {
       ),
     );
 
-    // Navigasi ke layar berikutnya
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => PinInputScreen()),
+    // Kirim data ke server
+    final paymentData = {
+      'trip_id': tripid, // tripid yang didapat setelah createTrip
+      'price': price,   // Harga trip yang diambil
+      'payment_type': danaProvider.metodePembayaran, // Metode pembayaran
+    };
+
+    // Panggil fungsi createPayment dari PaymentService
+    final paymentService = PaymentService();
+    final response = await paymentService.createPayment(
+      tripId: tripid,
+      price: price,
+      paymentMethod: danaProvider.metodePembayaran,
     );
+    print(paymentData);
+
+    if (response['success']) {
+      // Data berhasil dikirim, lanjutkan ke layar berikutnya
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => PinInputScreen()),
+      );
+    } else {
+      // Menampilkan error dari server
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response['message'] ?? 'Gagal mengirim data pembayaran.')),
+      );
+    }
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Kesalahan: ${e.toString()}")),
@@ -116,41 +148,7 @@ void _lanjutkanPembayaran() {
 }
 
 
-// void _lanjutkanPembayaran() {
-//   try {
-//     if (price == null || price! <= 0) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(content: Text("Harga tidak valid!")),
-//       );
-//       return;
-//     }
 
-//     // Kurangi dana dan perbarui tampilan
-//     setState(() {
-//       Dana.kurangiDana(price!); 
-//     });
-
-//     // Tampilkan notifikasi keberhasilan
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       SnackBar(
-//         content: Text(
-//           "Pembayaran berhasil! Sisa saldo: Rp${Dana.jumlah.toStringAsFixed(0)}",
-//         ),
-//       ),
-//     );
-
-//     // Navigasi ke layar berikutnya (contoh ke `PinInputScreen`)
-//     Navigator.pushReplacement(
-//       context,
-//       MaterialPageRoute(builder: (context) => PinInputScreen()),
-//     );
-//   } catch (e) {
-//     // Tangani jika terjadi kesalahan
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       SnackBar(content: Text("Kesalahan: ${e.toString()}")),
-//     );
-//   }
-// }
 
   @override
   Widget build(BuildContext context) {
@@ -358,67 +356,66 @@ void _lanjutkanPembayaran() {
   }
 
   Widget _buildSection({
-  required String title,
-  required Widget content,
-  VoidCallback? onEdit,
-}) {
-  return Container(
-    
-    margin: const EdgeInsets.only(bottom: 12.0),
-    padding: const EdgeInsets.symmetric(vertical: 16.0),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(8.0),
-      border: Border.all(color: Colors.grey.shade300),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-              ElevatedButton(
-                onPressed: onEdit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  minimumSize: const Size(50, 30),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                ),
-                child: const Text(
-                  "Ubah",
-                  style: TextStyle(
+    required String title,
+    required Widget content,
+    VoidCallback? onEdit,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12.0),
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
                     fontFamily: 'Poppins',
-                    fontSize: 12,
-                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
-              ),
-            ],
+                ElevatedButton(
+                  onPressed: onEdit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    minimumSize: const Size(50, 30),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                  ),
+                  child: const Text(
+                    "Ubah",
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 12,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: content,
-        ),
-      ],
-    ),
-  );
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: content,
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-}
 
 
 class PinInputScreen extends StatefulWidget {
