@@ -150,7 +150,8 @@ class _ExamplePageState extends State<ExamplePage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Roda Keberuntungan'),
+        title: const Text('Roda Keberuntungan' , style: TextStyle(color: Colors.white),),
+        
         backgroundColor: const Color.fromARGB(255, 44, 158, 75),
       ),
       backgroundColor: const Color.fromARGB(255, 44, 158, 75),

@@ -11,7 +11,8 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\WheelOfFortuneController;
 use App\Http\Controllers\PaymentController;
 
-// Route::get('/docs', [SwaggerController::class, 'api'])->name('l5-swagger.api');
+
+
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
