@@ -3,13 +3,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class TripService {
-  final String apiUrl = "http://127.0.0.1:8000/api/trip";
+  final String apiUrl = "http://192.168.212.176:8000/api/trip";
 
   // Instance penyimpanan lokal
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   Future<Map<String, dynamic>> createTrip(Map<String, dynamic> tripData) async {
-    print("createTrip dipanggil ini tai sih cok kalau 2x");
+    // print("createTrip dipanggil ini tai sih cok kalau 2x");
     print("Creating trip with data: $tripData");
     
   final url = Uri.parse(apiUrl);
@@ -58,7 +58,7 @@ class TripService {
 
 
   Future<Map<String, dynamic>> getTripPrice(int tripid) async {
-    final url = Uri.parse("http://127.0.0.1:8000/api/trip/$tripid");
+    final url = Uri.parse("http://192.168.212.176:8000/api/trip/$tripid");
 
     try {
       // Ambil token dari penyimpanan lokal

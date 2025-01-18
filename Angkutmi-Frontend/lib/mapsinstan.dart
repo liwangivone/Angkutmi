@@ -27,18 +27,22 @@ class _MapsInstanState extends State<MapsInstan> {
   bool _isRequestInProgress = false;
 
   Future<bool> createTrip(BuildContext context, InputInstanModel input) async {
+  // Data untuk permintaan trip
   final tripData = {
     "origin": {"lat": input.lat, "lng": input.lng},
     "vehicle_type": input.vehicle.toLowerCase(),
   };
 
-  // Avoid duplicate requests
-  if (_isRequestInProgress) return false;
+  // Hindari permintaan berulang
+  if (_isRequestInProgress) {
+    return false; // Jika sudah ada permintaan yang berjalan, abaikan
+  }
 
   setState(() {
-    _isRequestInProgress = true; // Set flag to true when request starts
+    _isRequestInProgress = true; // Tandai bahwa permintaan sedang berlangsung
   });
 
+  // Tampilkan indikator loading
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -48,12 +52,12 @@ class _MapsInstanState extends State<MapsInstan> {
   );
 
   try {
-    final tripService = TripService(); 
+    final tripService = TripService();
     final result = await tripService.createTrip(tripData);
-    
+
     if (result['success'] == true) {
       final tripId = result['trip_id'];
-      print(result);  // Log the full response to check the structure
+      print(result);
 
       if (tripId == null) {
         throw Exception('Trip ID tidak ditemukan.');
@@ -77,12 +81,11 @@ class _MapsInstanState extends State<MapsInstan> {
     return false;
   } finally {
     setState(() {
-      _isRequestInProgress = false; // Reset flag to false after request finishes
+      _isRequestInProgress = false; // Reset status permintaan
     });
     if (Navigator.canPop(context)) {
-      Navigator.pop(context); // Close dialog
+      Navigator.pop(context); // Tutup dialog loading
     }
-    
   }
 }
 
@@ -353,67 +356,65 @@ class _MapsInstanState extends State<MapsInstan> {
                 
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
-    onPressed: _locationValid && !_isButtonDisabled
-      ? () async {
-          setState(() {
-            _isButtonDisabled = true; // Disable the button temporarily
-          });
+    onPressed: (_locationValid && !_isButtonDisabled && !_isRequestInProgress)
+                    ? () async {
+                        setState(() {
+                          _isButtonDisabled = true; // Nonaktifkan tombol
+                        });
 
-          if (_selectedVehicle.isEmpty) {
-            _showErrorDialog("Pilih kendaraan terlebih dahulu!");
-            setState(() {
-              _isButtonDisabled = false;
-            });
-            return;
-          }
+                        if (_selectedVehicle.isEmpty) {
+                          _showErrorDialog("Pilih kendaraan terlebih dahulu!");
+                          setState(() {
+                            _isButtonDisabled = false;
+                          });
+                          return;
+                        }
 
-          if (_searchController.text.trim().isEmpty) {
-            _showErrorDialog("Masukkan alamat Anda terlebih dahulu!");
-            setState(() {
-              _isButtonDisabled = false;
-            });
-            return;
-          }
+                        if (_searchController.text.trim().isEmpty) {
+                          _showErrorDialog("Masukkan alamat Anda terlebih dahulu!");
+                          setState(() {
+                            _isButtonDisabled = false;
+                          });
+                          return;
+                        }
 
-          // Determine weightEstimate based on selected vehicle
-          String weightEstimate = "";
-          if (_selectedVehicle == "Truck") {
-            weightEstimate = "30 - 50kg";
-          } else if (_selectedVehicle == "Pickup") {
-            weightEstimate = "15 - 29kg";
-          } else if (_selectedVehicle == "Motor") {
-            weightEstimate = "10 - 14kg";
-          }
+                        // Tentukan berat berdasarkan kendaraan
+                        String weightEstimate = "";
+                        if (_selectedVehicle == "Truck") {
+                          weightEstimate = "30 - 50kg";
+                        } else if (_selectedVehicle == "Pickup") {
+                          weightEstimate = "15 - 29kg";
+                        } else if (_selectedVehicle == "Motor") {
+                          weightEstimate = "10 - 14kg";
+                        }
 
-          // Process input and create the trip
-          double lat = _selectedLocation.latitude;
-          double lon = _selectedLocation.longitude;
+                        // Input model untuk permintaan
+                        final inputModel = InputInstanModel(
+                          address: _searchController.text,
+                          vehicle: _selectedVehicle,
+                          weightEstimate: weightEstimate,
+                          lat: _selectedLocation.latitude,
+                          lng: _selectedLocation.longitude,
+                          price: 0.0,
+                        );
 
-          final inputModel = InputInstanModel(
-            address: _searchController.text,
-            vehicle: _selectedVehicle,
-            weightEstimate: weightEstimate,
-            lat: lat,
-            lng: lon,
-            price: 0.0,
-          );
-          print("Before creating trip");
-          final tripCreated = await createTrip(context, inputModel);
-          print("After creating trip");
-          setState(() {
-            _isButtonDisabled = false; // Enable the button again
-          });
+                        print("Before creating trip");
+                        bool tripCreated = true;
+                        print("After creating trip");
+                        setState(() {
+                          _isButtonDisabled = false; // Aktifkan kembali tombol
+                        });
 
-          if (tripCreated) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Pemesananinstandetail(input: inputModel),
-              ),
-            );
-          }
-        }
-      : null,
+                        if (tripCreated) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Pemesananinstandetail(input: inputModel),
+                            ),
+                          );
+                        }
+                      }
+                    : null,
   style: ElevatedButton.styleFrom(
     backgroundColor: const Color(0xFF2C9E4B), // Active button color
     disabledBackgroundColor: const Color.fromARGB(130, 139, 139, 139), // Disabled button color

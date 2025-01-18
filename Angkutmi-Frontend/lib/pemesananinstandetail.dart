@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'modelsinstan.dart';
 import 'service/trip_service.dart';
+import 'package:provider/provider.dart'; // Import Provider
+import 'dana_provider.dart'; // Import DanaProvider
 
 class Pemesananinstandetail extends StatefulWidget {
   final InputInstanModel input;
@@ -79,6 +81,76 @@ Future<void> _fetchTripPrice() async {
   }
 }
 
+void _lanjutkanPembayaran() {
+  final danaProvider = Provider.of<DanaProvider>(context, listen: false); // Ambil instance dari DanaProvider
+  try {
+    if (price == null || price! <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Harga tidak valid!")),
+      );
+      return;
+    }
+
+    // Kurangi dana
+    danaProvider.kurangiDana(price!); // Mengurangi saldo sesuai dengan harga yang telah diterima
+
+    // Tampilkan notifikasi keberhasilan
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          "Pembayaran berhasil! Sisa saldo: Rp${danaProvider.jumlahDana.toStringAsFixed(0)}",
+        ),
+      ),
+    );
+
+    // Navigasi ke layar berikutnya
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => PinInputScreen()),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Kesalahan: ${e.toString()}")),
+    );
+  }
+}
+
+
+// void _lanjutkanPembayaran() {
+//   try {
+//     if (price == null || price! <= 0) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(content: Text("Harga tidak valid!")),
+//       );
+//       return;
+//     }
+
+//     // Kurangi dana dan perbarui tampilan
+//     setState(() {
+//       Dana.kurangiDana(price!); 
+//     });
+
+//     // Tampilkan notifikasi keberhasilan
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(
+//         content: Text(
+//           "Pembayaran berhasil! Sisa saldo: Rp${Dana.jumlah.toStringAsFixed(0)}",
+//         ),
+//       ),
+//     );
+
+//     // Navigasi ke layar berikutnya (contoh ke `PinInputScreen`)
+//     Navigator.pushReplacement(
+//       context,
+//       MaterialPageRoute(builder: (context) => PinInputScreen()),
+//     );
+//   } catch (e) {
+//     // Tangani jika terjadi kesalahan
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(content: Text("Kesalahan: ${e.toString()}")),
+//     );
+//   }
+// }
 
   @override
   Widget build(BuildContext context) {
@@ -196,21 +268,26 @@ Future<void> _fetchTripPrice() async {
                         title: "Metode pembayaran",
                         content: Row(
                           children: [
-                            const Text(
-                              "OVO",
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 14,
-                              ),
+                            Consumer<DanaProvider>(
+                              builder: (context, danaProvider, child) {
+                                return Text(
+                                  danaProvider.metodePembayaran,
+                                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                                );
+                              },
                             ),
                             const Spacer(),
-                            const Text(
-                              "Rp165.000", // Ini bisa diubah jika ingin ditampilkan harga awal sebelum update
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            Consumer<DanaProvider>(
+                              builder: (context, danaProvider, child) {
+                                return Text(
+                                  "Rp${danaProvider.jumlahDana.toStringAsFixed(0)}",
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),
@@ -257,13 +334,7 @@ Future<void> _fetchTripPrice() async {
             left: 16,
             right: 16,
             child: ElevatedButton(
-              onPressed: () async {
-                // Navigasi ke PinInputScreen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PinInputScreen()),
-                );
-              },
+              onPressed: _lanjutkanPembayaran,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF2C9E4B),
                 minimumSize: const Size(double.infinity, 50),

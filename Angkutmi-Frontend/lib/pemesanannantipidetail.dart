@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Untuk memformat dan menghitung tanggal
 import 'modelsnantipi.dart'; // Pastikan untuk mengimpor model-model yang dibutuhkan
 import 'service/api_langganan.dart'; // Pastikan path API benar
+import 'dana_provider.dart';
 
 class Pemesanannantipidetail extends StatelessWidget {
   final PaketModel paket; // Menyimpan data harga paket dan durasi
