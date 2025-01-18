@@ -175,7 +175,7 @@ class _ExamplePageState extends State<ExamplePage> {
                   child: const Text("Spin the Wheel"),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
 
               // Progress bar below the spin button
               ClipRRect(
@@ -196,6 +196,18 @@ class _ExamplePageState extends State<ExamplePage> {
                   ],
                 ),
               ),
+              // Claim button when progress reaches 100%
+              if (progress >= 1.0) // Check if progress is 100%
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: ElevatedButton(
+                    onPressed: claimReward,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                    ),
+                    child: const Text("Claim Reward"),
+                  ),
+                ),
               Expanded(
                 child: Stack(
                   children: [
@@ -278,4 +290,96 @@ class _ExamplePageState extends State<ExamplePage> {
       ),
     );
   }
+
+    Future<void> claimReward() async {
+    try {
+      final response = await gachaService.claimReward();
+
+      // Check if the reward claim was successful
+      if (response != null && response['status'] == 'success') {
+        // Show a dialog with the reward details
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Reward Claimed!"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    response['message'] ?? "You have successfully claimed your reward!",
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                  if (response['reward'] != null)
+                    Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        Text(
+                          "Reward: ${response['reward']['label']}",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 10),
+                        response['reward']['img'] != null
+                            ? Image.network(response['reward']['img'])
+                            : const SizedBox(),
+                      ],
+                    ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    fetchProgress(); // Refresh progress after claiming the reward
+                  },
+                  child: const Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        // Handle failure case
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Error"),
+              content: Text(response['message'] ?? "Failed to claim the reward."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } catch (e) {
+      print("Error claiming the reward: $e");
+
+      // Show an error dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Error"),
+            content: const Text("An error occurred while claiming the reward."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
 }
+
