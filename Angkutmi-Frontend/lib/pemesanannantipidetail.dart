@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Untuk memformat dan menghitung tanggal
 import 'modelsnantipi.dart'; // Pastikan untuk mengimpor model-model yang dibutuhkan
 import 'service/api_langganan.dart'; // Pastikan path API benar
+import 'dana_provider.dart';
+import 'package:provider/provider.dart';
 
 class Pemesanannantipidetail extends StatelessWidget {
   final PaketModel paket; // Menyimpan data harga paket dan durasi
@@ -111,6 +113,9 @@ class Pemesanannantipidetail extends StatelessWidget {
                             ),
                           ],
                         ),
+                        onEdit: () {
+                          // fungsi edit untuk tombol ubah jika diperlukan
+                        },
                       ),
                       const SizedBox(height: 10),
                       _buildSection(
@@ -132,6 +137,9 @@ class Pemesanannantipidetail extends StatelessWidget {
                             ),
                           ],
                         ),
+                        onEdit: () {
+                          // fungsi edit untuk tombol ubah jika diperlukan
+                        },
                       ),
                       const SizedBox(height: 10),
                       _buildSection(
@@ -149,28 +157,43 @@ class Pemesanannantipidetail extends StatelessWidget {
                             ),
                           ],
                         ),
+                        onEdit: () {
+                          // fungsi edit untuk tombol ubah jika diperlukan
+                        },
                       ),
                       const SizedBox(height: 10),
                       _buildSection(
                         title: "Metode pembayaran",
                         content: Row(
                           children: [
-                            const Text(
-                              "OVO",
-                              style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                            Consumer<DanaProvider>(
+                              builder: (context, danaProvider, child) {
+                                return Text(
+                                  danaProvider.metodePembayaran, // Ini akan menampilkan metode pembayaran yang ada di provider
+                                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                                );
+                              },
                             ),
                             const Spacer(),
-                            const Text(
-                              "Rp165.000",
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            Consumer<DanaProvider>(
+                              builder: (context, danaProvider, child) {
+                                return Text(
+                                  "Rp${danaProvider.jumlahDana.toStringAsFixed(0)}", // Ini menampilkan jumlah dana yang sudah dikurangi
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),
+                        onEdit: () {
+                          // fungsi edit untuk tombol ubah jika diperlukan
+                        },
                       ),
+
                       const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -196,37 +219,52 @@ class Pemesanannantipidetail extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () async {
-                          final apiLangganan = ApiLangganan();
-                          final response = await apiLangganan.createSubscription(paket, alamat);
+  onPressed: () async {
+    final totalHarga = paket.price;  // Mengambil harga dari paket
 
-                          if (response.containsKey('error')) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(response['error'])),
-                            );
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => PinInputScreen()),
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2C9E4B),
-                          minimumSize: const Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ),
-                        child: const Text(
-                          "Lanjutkan ke pembayaran",
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+    // Periksa apakah jumlah dana cukup
+    if (totalHarga <= context.read<DanaProvider>().jumlahDana) {
+      // Mengurangi jumlah dana dengan harga total
+      context.read<DanaProvider>().kurangiDana(totalHarga);
+
+      // Setelah dana dikurangi, lanjutkan ke pembayaran
+      final apiLangganan = ApiLangganan();
+      final response = await apiLangganan.createSubscription(paket, alamat);
+
+      if (response.containsKey('error')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['error'])),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PinInputScreen()),
+        );
+      }
+    } else {
+      // Jika saldo tidak cukup
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Saldo tidak cukup untuk melanjutkan pembayaran")),
+      );
+    }
+  },
+  style: ElevatedButton.styleFrom(
+    backgroundColor: const Color(0xFF2C9E4B),
+    minimumSize: const Size(double.infinity, 50),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+  ),
+  child: const Text(
+    "Lanjutkan ke pembayaran",
+    style: TextStyle(
+      fontFamily: 'Poppins',
+      fontSize: 16,
+      color: Colors.white,
+    ),
+  ),
+),
+
                       const SizedBox(height: 12),
                     ],
                   ),
@@ -239,61 +277,67 @@ class Pemesanannantipidetail extends StatelessWidget {
     );
   }
 
-  Widget _buildSection({required String title, required Widget content}) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12.0),
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
+   Widget _buildSection({
+  required String title,
+  required Widget content,
+  VoidCallback? onEdit,
+}) {
+  return Container(
+    
+    margin: const EdgeInsets.only(bottom: 12.0),
+    padding: const EdgeInsets.symmetric(vertical: 16.0),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(8.0),
+      border: Border.all(color: Colors.grey.shade300),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: onEdit,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  minimumSize: const Size(50, 30),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                ),
+                child: const Text(
+                  "Ubah",
+                  style: TextStyle(
                     fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 12,
+                    color: Colors.white,
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2C9E4B),
-                    minimumSize: const Size(50, 30),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                  ),
-                  child: const Text(
-                    "Ubah",
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 12,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: content,
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: content,
+        ),
+      ],
+    ),
+  );
+}
+
 }
 
 
