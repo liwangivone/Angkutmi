@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'modelsinstan.dart';
 import 'service/trip_service.dart';
+import 'package:provider/provider.dart'; // Import Provider
+import 'dana_provider.dart'; // Import DanaProvider
+import 'service/payment_service.dart';
 
 class Pemesananinstandetail extends StatefulWidget {
   final InputInstanModel input;
@@ -15,8 +18,9 @@ class Pemesananinstandetail extends StatefulWidget {
 }
 
 class _PemesananinstandetailState extends State<Pemesananinstandetail> {
-  double? price;  // Variabel untuk harga trip
+  double price = 0;  // Variabel untuk harga trip
   bool isLoading = false;  // Menandakan jika sedang memuat harga
+  int tripid = 0;
 
   @override
   void initState() {
@@ -24,7 +28,7 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
     _fetchTripPrice(); // Memanggil fungsi untuk mendapatkan harga
   }
 
-Future<void> _fetchTripPrice() async {
+  Future<void> _fetchTripPrice() async {
   final tripService = TripService();
   final tripData = {
     "origin": {"lat": widget.input.lat, "lng": widget.input.lng},
@@ -42,18 +46,22 @@ Future<void> _fetchTripPrice() async {
     print('Create trip result: $result');
 
     if (result['success'] == true) {
-      // Ensure tripid is treated as an int
-      final int tripid = result['data']['trip']['id']; // This should be an int
-      print('Trip ID: $tripid');
+      // Pastikan tripid disimpan dalam state
+      final int fetchedTripId = result['trip_id'];
+      print('Trip ID: $fetchedTripId');
+
+      setState(() {
+        tripid = fetchedTripId; // Simpan ke state
+      });
 
       // Panggil getTripPrice untuk mendapatkan harga
-      final Map<String, dynamic> priceResult = await tripService.getTripPrice(tripid);
+      final priceResult = await tripService.getTripPrice(tripid);
       print('Price result: $priceResult');
 
       setState(() {
         isLoading = false;
         if (priceResult['success'] == true) {
-          price = priceResult['price'];
+          price = double.parse(priceResult['price'].toString());
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(priceResult['message'] ?? 'Gagal mengambil harga.')),
@@ -78,6 +86,53 @@ Future<void> _fetchTripPrice() async {
     );
   }
 }
+
+
+  Future<void> _lanjutkanPembayaran() async {
+  final danaProvider = Provider.of<DanaProvider>(context, listen: false);
+
+  try {
+    if (price <= 0) {
+      throw Exception("Harga tidak valid!");
+    }
+
+    // Kirim data ke server terlebih dahulu
+    final paymentService = PaymentService();
+    final response = await paymentService.createPayment(
+      tripId: tripid,
+      price: price,
+      paymentMethod: danaProvider.metodePembayaran,
+    );
+    print("$tripid , ${danaProvider.metodePembayaran}, $price");
+    print(response);
+
+    if (response['success']) {
+      // Jika pembayaran di backend berhasil, baru kurangi dana
+      danaProvider.kurangiDana(price);
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Pembayaran berhasil! Sisa saldo: Rp${danaProvider.jumlahDana.toStringAsFixed(0)}",
+          ),
+        ),
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => PinInputScreen()),
+      );
+    } else {
+      throw Exception(response['message'] ?? 'Gagal mengirim data pembayaran.');
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Kesalahan: ${e.toString()}")),
+    );
+  }
+}
+
+
 
 
   @override
@@ -196,21 +251,26 @@ Future<void> _fetchTripPrice() async {
                         title: "Metode pembayaran",
                         content: Row(
                           children: [
-                            const Text(
-                              "OVO",
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 14,
-                              ),
+                            Consumer<DanaProvider>(
+                              builder: (context, danaProvider, child) {
+                                return Text(
+                                  danaProvider.metodePembayaran,
+                                  style: TextStyle(fontFamily: 'Poppins', fontSize: 14),
+                                );
+                              },
                             ),
                             const Spacer(),
-                            const Text(
-                              "Rp165.000", // Ini bisa diubah jika ingin ditampilkan harga awal sebelum update
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            Consumer<DanaProvider>(
+                              builder: (context, danaProvider, child) {
+                                return Text(
+                                  "Rp${danaProvider.jumlahDana.toStringAsFixed(0)}",
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),
@@ -257,13 +317,7 @@ Future<void> _fetchTripPrice() async {
             left: 16,
             right: 16,
             child: ElevatedButton(
-              onPressed: () async {
-                // Navigasi ke PinInputScreen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PinInputScreen()),
-                );
-              },
+              onPressed: _lanjutkanPembayaran,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF2C9E4B),
                 minimumSize: const Size(double.infinity, 50),
@@ -287,67 +341,66 @@ Future<void> _fetchTripPrice() async {
   }
 
   Widget _buildSection({
-  required String title,
-  required Widget content,
-  VoidCallback? onEdit,
-}) {
-  return Container(
-    
-    margin: const EdgeInsets.only(bottom: 12.0),
-    padding: const EdgeInsets.symmetric(vertical: 16.0),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(8.0),
-      border: Border.all(color: Colors.grey.shade300),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-              ElevatedButton(
-                onPressed: onEdit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  minimumSize: const Size(50, 30),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                ),
-                child: const Text(
-                  "Ubah",
-                  style: TextStyle(
+    required String title,
+    required Widget content,
+    VoidCallback? onEdit,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12.0),
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
                     fontFamily: 'Poppins',
-                    fontSize: 12,
-                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
-              ),
-            ],
+                ElevatedButton(
+                  onPressed: onEdit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    minimumSize: const Size(50, 30),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                  ),
+                  child: const Text(
+                    "Ubah",
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 12,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: content,
-        ),
-      ],
-    ),
-  );
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: content,
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-}
 
 
 class PinInputScreen extends StatefulWidget {

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'terms.dart';
 import 'package:intl/date_symbol_data_local.dart'; // Untuk inisialisasi data lokal
+import 'package:provider/provider.dart'; // Menambahkan package provider
+import 'dana_provider.dart'; // Import DanaProvider yang sudah Anda buat
+import 'terms.dart';
 import 'home.dart';
 
 void main() async {
@@ -14,17 +16,25 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final hasSeenOnboarding = prefs.getBool('hasSeenOnboarding') ?? false;
 
-  runApp(MaterialApp(
-    routes: {
-  '/home': (context) => MyApp(),
-},
-    debugShowCheckedModeBanner: false,
-    theme: ThemeData(
-      fontFamily: 'Poppins', // Set default font to Poppins
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => DanaProvider()), // Menambahkan DanaProvider
+      ],
+      child: MaterialApp(
+        routes: {
+          '/home': (context) => MyApp(),
+        },
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Poppins', // Set default font to Poppins
+        ),
+        home: hasSeenOnboarding ? TermsAndConditionsScreen() : OnboardingScreen(),
+      ),
     ),
-    home: hasSeenOnboarding ? TermsAndConditionsScreen() : OnboardingScreen(),
-  ));
+  );
 }
+
 
 class OnboardingScreen extends StatefulWidget {
   @override
