@@ -16,7 +16,7 @@ class CouponService {
       }
 
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/api/coupons/'),
+        Uri.parse('http://192.168.251.1:8000/api/coupons/'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -55,7 +55,7 @@ Future<List<Map<String, dynamic>>> fetchClaimedCoupons() async {
 
     // Step 2: Make the GET request to the server
     final response = await http.get(
-      Uri.parse('http://127.0.0.1:8000/api/coupons/inventory'),
+      Uri.parse('http://192.168.251.1:8000/api/coupons/inventory'),
       headers: {
         'Authorization': 'Bearer $token',
       },
@@ -114,7 +114,7 @@ Future<void> redeemCoupon(String couponCode) async {
 
     // Make the POST request to redeem the coupon
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8000/api/coupons/$couponCode/redeem'), // Using couponCode in the URL
+      Uri.parse('http://192.168.251.1:8000/api/coupons/$couponCode/redeem'), // Using couponCode in the URL
       headers: {
         'Content-Type': 'application/json',  // Ensure correct content type
         'Authorization': 'Bearer $token',    // Pass the token for authorization
@@ -149,7 +149,7 @@ Future<void> redeemCoupon(String couponCode) async {
       }
 
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/api/coupons/redeemed'),
+        Uri.parse('http://192.168.251.1:8000/api/coupons/redeemed'),
         headers: {
           'Authorization': 'Bearer $token',
         },
