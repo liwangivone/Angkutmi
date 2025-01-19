@@ -4,6 +4,7 @@ import 'service/trip_service.dart';
 import 'package:provider/provider.dart'; // Import Provider
 import 'dana_provider.dart'; // Import DanaProvider
 import 'service/payment_service.dart';
+import 'track_order.dart';
 
 class Pemesananinstandetail extends StatefulWidget {
   final InputInstanModel input;
@@ -508,7 +509,10 @@ class _PinInputScreenState extends State<PinInputScreen> {
             onPressed: () {
               _onConfirm();
               if (inputPin.length == pinLength) {
-                Navigator.pushNamed(context, '/home');
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => OrderTrackingScreen()),
+                );
               }
             },
             style: ElevatedButton.styleFrom(

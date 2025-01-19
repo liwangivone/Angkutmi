@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'mapsnantipi.dart';
 import 'pemesanannantipidetail.dart';
 import 'modelsnantipi.dart';
+import 'active_paket_provider.dart';
+import 'package:provider/provider.dart';
 
 class PemesananNantipi extends StatelessWidget {
   @override
@@ -103,15 +105,7 @@ class PemesananNantipi extends StatelessWidget {
               child: TabBarView(
                 children: [
                   PaketTab(),
-                  Container(
-                    color: Colors.white,
-                      child: Center(
-                        child: Text(
-                        'Lagi aktif',
-                        style: TextStyle(fontSize: 16),
-                        )
-                      ),
-                  ),
+                  LagiAktifTab(),
                 ],
               ),
             ),
@@ -148,6 +142,88 @@ class PaketTab extends StatelessWidget {
             price: 'Rp125.000',
           ),
         ],
+      ),
+    );
+  }
+}
+
+// Replace the "Lagi aktif" tab content in pemesanannantipi.dart with this:
+class LagiAktifTab extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      child: Consumer<ActivePaketProvider>(
+        builder: (context, provider, child) {
+          if (provider.activePakets.isEmpty) {
+            return const Center(
+              child: Text(
+                'Belum ada paket aktif',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            );
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16.0),
+            itemCount: provider.activePakets.length,
+            itemBuilder: (context, index) {
+              final paket = provider.activePakets[index];
+              return Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                elevation: 3,
+                margin: const EdgeInsets.only(bottom: 16),
+                color: const Color(0xFFFFF2B2),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        paket.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Berlaku: ${paket.startDate} - ${paket.endDate}',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Alamat: ${paket.address}',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                         'Rp${paket.price.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

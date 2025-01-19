@@ -4,10 +4,12 @@ import 'modelsnantipi.dart'; // Pastikan untuk mengimpor model-model yang dibutu
 import 'service/api_langganan.dart'; // Pastikan path API benar
 import 'dana_provider.dart';
 import 'package:provider/provider.dart';
+import 'active_paket_provider.dart';
 
 class Pemesanannantipidetail extends StatelessWidget {
   final PaketModel paket; // Menyimpan data harga paket dan durasi
   final AlamatModel alamat; // Menyimpan data alamat, tanggal, dan waktu
+  
 
   const Pemesanannantipidetail({
     Key? key,
@@ -238,8 +240,14 @@ class Pemesanannantipidetail extends StatelessWidget {
       } else {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => PinInputScreen()),
+          MaterialPageRoute(
+            builder: (context) => PinInputScreen(
+              paket: paket,
+              alamat: alamat,
+            ),
+          ),
         );
+
       }
     } else {
       // Jika saldo tidak cukup
@@ -338,12 +346,24 @@ class Pemesanannantipidetail extends StatelessWidget {
   );
 }
 
+
 }
 
 
 
 
 class PinInputScreen extends StatefulWidget {
+  final PaketModel paket;
+  final AlamatModel alamat;
+  
+
+  const PinInputScreen({
+    Key? key,
+    required this.paket,
+    required this.alamat,
+    
+  }) : super(key: key);
+
   @override
   _PinInputScreenState createState() => _PinInputScreenState();
 }
@@ -351,6 +371,20 @@ class PinInputScreen extends StatefulWidget {
 class _PinInputScreenState extends State<PinInputScreen> {
   final int pinLength = 6;
   String inputPin = "";
+
+ // Fungsi untuk menghitung tanggal akhir berdasarkan tanggal mulai dan durasi
+  String _calculateEndDate(String startDate, int duration) {
+    try {
+      final dateFormat = DateFormat('yyyy-MM-dd');
+      final start = dateFormat.parse(startDate);
+      final end = start.add(Duration(days: duration));
+
+      final outputFormat = DateFormat('d MMMM yyyy', 'id_ID');
+      return outputFormat.format(end);
+    } catch (e) {
+      return 'Invalid date format';
+    }
+  }
 
   void _onKeyPress(String value) {
     if (value == "backspace") {
@@ -367,19 +401,37 @@ class _PinInputScreenState extends State<PinInputScreen> {
       }
     }
   }
-
-  void _onConfirm() {
+  
+  // Modify PinInputScreen in pemesanannantipidetail.dart to save the active package
+void _onConfirm() {
     if (inputPin.length == pinLength) {
-      // Lakukan validasi atau navigasi
+      // Create active package
+      final activePaket = ActivePaketModel(
+        name: widget.paket.name,
+        price: widget.paket.price,
+        duration: widget.paket.duration,
+        startDate: widget.alamat.date,
+        endDate: _calculateEndDate(widget.alamat.date, widget.paket.duration),
+        address: widget.alamat.address,
+      );
+      
+      // Save to provider
+      Provider.of<ActivePaketProvider>(context, listen: false)
+          .addActivePaket(activePaket);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("PIN berhasil: $inputPin")),
       );
+      Navigator.of(context).pop(true);
+      Navigator.pushReplacementNamed(context, '/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Masukkan PIN lengkap!")),
       );
     }
-  }
+}
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -447,9 +499,9 @@ class _PinInputScreenState extends State<PinInputScreen> {
           child: ElevatedButton(
             onPressed: () {
               _onConfirm();
-              if (inputPin.length == pinLength) {
-                Navigator.pushNamed(context, '/home');
-              }
+              // if (inputPin.length == pinLength) {
+              //   Navigator.pushNamed(context, '/home');
+              // }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,

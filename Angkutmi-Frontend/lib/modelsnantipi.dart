@@ -28,10 +28,6 @@ class PaketModel {
 }
 
 
-
-
-
-
 class AlamatModel {
   final String address;
   final String date; // Date dalam format string
@@ -66,6 +62,46 @@ class AlamatModel {
       time: map['time'],
       lat: map['lat'],
       lng: map['lng'], // Gunakan `lng` di sini
+    );
+  }
+}
+
+class ActivePaketModel {
+  final String name;
+  final double price;
+  final int duration;
+  final String startDate;
+  final String endDate;
+  final String address;
+
+  ActivePaketModel({
+    required this.name,
+    required this.price,
+    required this.duration,
+    required this.startDate,
+    required this.endDate,
+    required this.address,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'price': price,
+      'duration': duration,
+      'startDate': startDate,
+      'endDate': endDate,
+      'address': address,
+    };
+  }
+
+  factory ActivePaketModel.fromMap(Map<String, dynamic> map) {
+    return ActivePaketModel(
+      name: map['name'],
+      price: map['price'],
+      duration: map['duration'],
+      startDate: map['startDate'],
+      endDate: map['endDate'],
+      address: map['address'],
     );
   }
 }
