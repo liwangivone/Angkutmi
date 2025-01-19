@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 import 'pemesanannantipi.dart';
 import 'service/coupon_service.dart';
+import 'service/auth_service.dart';
 import 'mapsinstan.dart';
 
 import 'gacha.dart';
@@ -492,79 +493,78 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const Divider(), // Horizontal line after button 3
-                SizedBox(
-                  width: double.infinity, // Make button span full width
-                  child: TextButton(
-                    onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Konfirmasi'),
-                          content: const Text('Apakah anda yakin ingin log out?'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(); // Close the dialog
-                              },
-                              child: const Text('Batalkan'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                // Add your logout logic here
-                                Navigator.of(context).pop(); // Close the dialog
-                              },
-                              child: const Text('Log out'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                    },
-                    style: TextButton.styleFrom(
-                      // side: const BorderSide(color: Colors.grey), // Add grey border
-                      padding: const EdgeInsets.symmetric(vertical: 16.0), // Increase padding for bigger button
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0), // Change button border radius
-                      ),
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.logout, color: Color.fromARGB(255, 221, 87, 84)), // Add icon before text
-                        SizedBox(width: 8), // Add space between icon and text
-                        Text(
-                          'Log out',
-                          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 221, 87, 84)), // Make font bigger and bold
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const Divider(), // Horizontal line after button 4
-              ],
-            ),
-          ],
-        ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 90.0, vertical: 30.0),
-          child: ElevatedButton(
-            onPressed: () {
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(200, 44, 158, 75), // Change opacity to 200
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+SizedBox(
+  width: double.infinity,
+  child: TextButton(
+    onPressed: () {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Konfirmasi'),
+            content: const Text('Apakah anda yakin ingin log out?'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close dialog
+                },
+                child: const Text('Batalkan'),
               ),
-            ),
-            child: const Text(
-              'ingin menjadi driver?',
-              style: TextStyle(fontSize: 16, color: Colors.white),
-            ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(context).pop(); // Close dialog
+                  await AuthService().logout(context); // Logout and reroute
+                },
+                child: const Text('Log out'),
+              ),
+            ],
+          );
+        },
+      );
+    },
+    style: TextButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 16.0), // Bigger padding
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0), // Square button
+      ),
+    ),
+    child: const Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.logout, color: Color.fromARGB(255, 221, 87, 84)), // Icon
+        SizedBox(width: 8), // Space between icon and text
+        Text(
+          'Log out',
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 221, 87, 84), // Text color
           ),
         ),
-      ),
-    );
+      ],
+    ),
+  ),
+),
+
+        // bottomNavigationBar: Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 90.0, vertical: 30.0),
+        //   child: ElevatedButton(
+        //     onPressed: () {
+        //     },
+        //     style: ElevatedButton.styleFrom(
+        //       backgroundColor: const Color.fromARGB(200, 44, 158, 75), // Change opacity to 200
+        //       shape: RoundedRectangleBorder(
+        //         borderRadius: BorderRadius.circular(10),
+        //       ),
+        //     ),
+        //     child: const Text(
+        //       'ingin menjadi driver?',
+        //     ),
+        //   ),
+        // ),
+           ] ),
+   ]
+         )));
   }
 }
 
