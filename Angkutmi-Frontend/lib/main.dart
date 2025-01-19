@@ -5,6 +5,7 @@ import 'package:provider/provider.dart'; // Menambahkan package provider
 import 'dana_provider.dart'; // Import DanaProvider yang sudah Anda buat
 import 'terms.dart';
 import 'home.dart';
+import 'active_paket_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +21,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => DanaProvider()), // Menambahkan DanaProvider
+         ChangeNotifierProvider(create: (_) => ActivePaketProvider()),
       ],
       child: MaterialApp(
         routes: {
