@@ -624,27 +624,31 @@ class _VoucherPageState extends State<VoucherPage> {
   }
 
   // Fetch the list of claimed vouchers from the backend
-  Future<void> _fetchVouchers() async {
-    try {
-      final vouchers = await couponService.fetchClaimedCoupons(); // Fetch claimed coupons
-      setState(() {
-        _vouchers.addAll(vouchers); // Add the fetched claimed vouchers to the list
-        _isLoading = false; // Update loading state
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false; // Update loading state in case of an error
-      });
-      print('Error: $e');
-    }
+Future<void> _fetchVouchers() async {
+  try {
+    final vouchers = await couponService.fetchClaimedCoupons(); // Fetch claimed coupons
+    setState(() {
+      _vouchers.clear(); // Clear the current list of vouchers
+      _vouchers.addAll(vouchers); // Add the fetched claimed vouchers to the list
+      _isLoading = false; // Update loading state
+    });
+  } catch (e) {
+    setState(() {
+      _isLoading = false; // Update loading state in case of an error
+    });
+    print('Error: $e');
   }
+}
 
-  void _navigateToFortuneWheelPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const GachaPage()),
-    );
-  }
+
+void _navigateToFortuneWheelPage() async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const GachaPage()),
+  );
+  _fetchVouchers(); // Re-fetch vouchers when returning from the GachaPage
+}
+
 
   // Method to add a test voucher manually (for testing)
   void _addVoucher() {
@@ -656,87 +660,91 @@ class _VoucherPageState extends State<VoucherPage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 44, 158, 75),
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(66.0),
-            topRight: Radius.circular(66.0),
-          ),
-        ),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: ElevatedButton(
-                onPressed: _navigateToFortuneWheelPage,
-                style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color.fromARGB(255, 44, 158, 75),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-                  textStyle: const TextStyle(fontSize: 16),
-                ),
-                child: const Text("Ke Fortune Wheel",
-                style: TextStyle(color: Colors.white),),
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 15, bottom: 20),
-              child: Text(
-                "Voucher anda",
-                style: TextStyle(fontSize: 18, color: Colors.black),
-              ),
-            ),
-            Expanded(
-              child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : _vouchers.isEmpty
-                      ? const Center(
-                          child: Text(
-                            "Belum ada voucher",
-                            style: TextStyle(fontSize: 18, color: Colors.grey),
-                          ),
-                        )
-                      : ListView.builder(
-                          itemCount: _vouchers.length,
-                          itemBuilder: (context, index) {
-                            final voucher = _vouchers[index];
-                            return Card(
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 30),
-                              color: Colors.white,
-                              elevation: 3,
-                              child: ListTile(
-                                leading: voucher['picture_url'] != null
-                                    ? Image.network(
-                                        voucher['picture_url'],
-                                        width: 50,
-                                        height: 50,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (context, error, stackTrace) => 
-                                            const Icon(Icons.image_not_supported, size: 50),
-                                      )
-                                    : const Icon(
-                                        Icons.local_cafe,
-                                        color: Colors.grey,
-                                        size: 40,
-                                      ),
-                                title: Text(voucher['product_name']),
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 20, horizontal: 25),
-                              ),
-                            );
-                          },
-                        ),
-            ),
-          ],
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: const Color.fromARGB(255, 44, 158, 75),
+    body: Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(66.0),
+          topRight: Radius.circular(66.0),
         ),
       ),
-    );
-  }
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: ElevatedButton(
+              onPressed: _navigateToFortuneWheelPage,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 44, 158, 75),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                textStyle: const TextStyle(fontSize: 16),
+              ),
+              child: const Text(
+                "Ke Fortune Wheel",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(top: 15, bottom: 20),
+            child: Text(
+              "Voucher anda",
+              style: TextStyle(fontSize: 18, color: Colors.black),
+            ),
+          ),
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _vouchers.isEmpty
+                    ? const Center(
+                        child: Text(
+                          "Belum ada voucher",
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: _vouchers.length,
+                        itemBuilder: (context, index) {
+                          final voucher = _vouchers[index];
+                          return Card(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 30),
+                            color: Colors.white,
+                            elevation: 3,
+                            child: ListTile(
+                              leading: voucher['picture_url'] != null
+                                  ? Image.network(
+                                      voucher['picture_url'],
+                                      width: 50,
+                                      height: 50,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) =>
+                                          const Icon(Icons.image_not_supported, size: 50),
+                                    )
+                                  : const Icon(
+                                      Icons.local_cafe,
+                                      color: Colors.grey,
+                                      size: 40,
+                                    ),
+                              title: Text(voucher['product_name']),
+                              subtitle: Text("Code: ${voucher['code']}"),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 20, horizontal: 25),
+                              
+                            ),
+                          );
+                        },
+                      ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 }

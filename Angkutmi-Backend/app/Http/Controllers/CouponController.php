@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Log;
 
 class CouponController extends Controller
 {
@@ -156,5 +157,65 @@ class CouponController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    /**
+ * Remove a coupon from the user's inventory.
+ */
+/**
+ * Remove a specific coupon.
+ */
+/**
+ * Remove a specific coupon.
+ */
+
+
+ public function destroy(Request $request, $id): JsonResponse
+ {
+     try {
+         // Log the incoming ID to verify it's being passed correctly
+         Log::info("Attempting to delete coupon with ID: " . $id);
+         
+         // Find the coupon by ID
+         $coupon = Coupon::find($id);
+ 
+         // Log if the coupon is found or not
+         if (!$coupon) {
+             Log::error("Coupon with ID {$id} not found.");
+             return response()->json([
+                 'message' => 'Coupon not found.',
+             ], Response::HTTP_NOT_FOUND);
+         }
+ 
+         // Check if the coupon has been claimed by any user
+         $userCouponClaim = \DB::table('user_coupon_claims')->where('coupon_id', $coupon->id)->first();
+ 
+         // If there are claims in the user_coupon_claims table, we need to remove it
+         if ($userCouponClaim) {
+             // Log and remove the coupon claim from the user_coupon_claims table
+             Log::info("Coupon with ID {$id} has been claimed, removing from user_coupon_claims.");
+             \DB::table('user_coupon_claims')->where('coupon_id', $coupon->id)->delete();
+         }
+ 
+         // Delete the coupon from the coupons table
+         $coupon->delete();
+ 
+         // Log successful deletion
+         Log::info("Coupon with ID {$id} deleted successfully.");
+ 
+         return response()->json([
+             'message' => 'Coupon deleted successfully.',
+         ], Response::HTTP_OK);
+     } catch (\Exception $e) {
+         // Log the exception
+         Log::error("Error while deleting coupon: " . $e->getMessage());
+         
+         return response()->json([
+             'message' => 'An error occurred while deleting the coupon.',
+             'error' => $e->getMessage(),
+         ], Response::HTTP_INTERNAL_SERVER_ERROR);
+     }
+ }
+ 
+
     
     }

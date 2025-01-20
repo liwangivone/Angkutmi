@@ -119,13 +119,13 @@ class WheelOfFortuneController extends Controller
         $progressionBar->save();
         
         return response()->json([
-            'message' => 'Reward claimed successfully, but not yet redeemed.',
+            'message' => 'Reward claimed successfully',
             'coupon' => [
                 'code' => $coupon->code,
                 'product_name' => $coupon->product_name,
                 'expires_at' => $coupon->end_date,
             ],
-        ]);
+        ], 200);
     }
 
 
@@ -215,18 +215,23 @@ public function getProgress()
         return response()->json(['message' => 'User not authenticated.'], 401);
     }
 
+    // Fetch the authenticated user
+    $user = Auth::user();
+
     // Fetch the user's progression bar
-    $progressionBar = ProgressionBar::where('user_id', Auth::id())->first();
+    $progressionBar = ProgressionBar::where('user_id', $user->id)->first();
 
     // If the progression bar doesn't exist, return an error message
     if (!$progressionBar) {
         return response()->json(['message' => 'Progression bar not found.'], 404);
     }
 
-    // Return the current progress value
+    // Return the current progress and trip count
     return response()->json([
         'progress' => $progressionBar->progress,
+        'trip_count' => $user->trip_count, // Assuming the user model has a trip_count column
     ]);
 }
+
 
 }
