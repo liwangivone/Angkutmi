@@ -90,7 +90,6 @@ class _MapsInstanState extends State<MapsInstan> {
 }
 
 
-
   Future<void> _searchLocation(String query) async {
     if (query.isEmpty) return;
 
@@ -144,7 +143,8 @@ class _MapsInstanState extends State<MapsInstan> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {Navigator.pop(context);
+            } ,
             child: const Text(
               "OK",
               style: TextStyle(fontFamily: 'Poppins'),

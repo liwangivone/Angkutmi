@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'modelsinstan.dart';
 import 'service/trip_service.dart';
 import 'package:provider/provider.dart'; // Import Provider
@@ -121,7 +122,7 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => PinInputScreen()),
+        MaterialPageRoute(builder: (context) => PinInputScreen(tripId: tripid)),
       );
     } else {
       throw Exception(response['message'] ?? 'Gagal mengirim data pembayaran.');
@@ -132,6 +133,7 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
     );
   }
 }
+
 
 
 
@@ -404,14 +406,36 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
 
 
 
+
 class PinInputScreen extends StatefulWidget {
+    final int tripId;
+
+  const PinInputScreen({
+    Key? key,
+    required this.tripId,
+  }) : super(key: key);
   @override
   _PinInputScreenState createState() => _PinInputScreenState();
 }
 
 class _PinInputScreenState extends State<PinInputScreen> {
+  
   final int pinLength = 6;
   String inputPin = "";
+
+
+
+//   void navigateToTracking(Map<String, dynamic> response) {
+//   final tripId = response['data']['trip_id']; // Mengambil trip_id dari response
+  
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(
+//       builder: (context) => OrderTrackingScreen(tripId:tripId),
+//     ),
+//   );
+// }
+
 
   void _onKeyPress(String value) {
     if (value == "backspace") {
@@ -509,10 +533,7 @@ class _PinInputScreenState extends State<PinInputScreen> {
             onPressed: () {
               _onConfirm();
               if (inputPin.length == pinLength) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => OrderTrackingScreen()),
-                );
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>OrderTrackingScreen()));
               }
             },
             style: ElevatedButton.styleFrom(
