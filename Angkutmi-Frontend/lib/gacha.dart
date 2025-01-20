@@ -62,48 +62,51 @@ class _ExamplePageState extends State<GachaPage> {
   }
 
   // Fetch current progress from the backend
-  Future<void> fetchProgress() async {
-    try {
-      final progressData = await gachaService.fetchProgress();
+// Fetch current progress from the backend
+Future<void> fetchProgress() async {
+  try {
+    final progressData = await gachaService.fetchProgress();
 
-      if (progressData != null) {
-        setState(() {
-          progress = progressData['progress'] / 100.0;  // Normalize progress (0-1)
-          tripsCompleted = progressData['trips_completed']; // Assuming trips completed is part of progress data
-        });
-      } else {
-        print("Error: No progress data received");
-      }
-    } catch (e) {
-      print("Error fetching progress: $e");
+    if (progressData != null) {
+      setState(() {
+        progress = progressData['progress'] / 100.0; // Normalize progress (0-1)
+        tripsCompleted = progressData['trips_completed']; // Update tripsCompleted with trip_count
+      });
+    } else {
+      print("Error: No progress data received");
     }
+  } catch (e) {
+    print("Error fetching progress: $e");
+  }
+}
+void spinWheel() async {
+  fetchProgress();
+  if (justNavigated) {
+    return; // Skip spinning if just navigated
   }
 
-  void spinWheel() async {
-        if (justNavigated) {
-      return; // Skip spinning if just navigated
-    }
-    if (tripsCompleted < 3) { // Check if trips completed is less than 3
-      // Show a popup if the user hasn't completed 3 trips
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Tidak cukup trip"),
-            content: const Text("Selesaikan tiga trip untuk memutar roda"),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // Close the dialog
-                },
-                child: const Text("OK"),
-              ),
-            ],
-          );
-        },
-      );
-      return; // Exit the function if not enough trips
-    }
+  if (tripsCompleted < 3) { // Check if trips completed is less than 3
+    // Show a popup if the user hasn't completed 3 trips
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Tidak cukup trip"),
+          content: const Text("Selesaikan tiga trip untuk memutar roda"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); 
+                fetchProgress();// Close the dialog
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+    return; // Exit the function if not enough trips
+  }
 
     try {
       // Fetch the backend response
@@ -388,7 +391,7 @@ class _ExamplePageState extends State<GachaPage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text("Error"),
+              title: const Text("Success"),
               content: Text(response['message'] ?? "Failed to claim the reward."),
               actions: [
                 TextButton(
