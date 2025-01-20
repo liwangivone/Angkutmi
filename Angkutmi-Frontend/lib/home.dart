@@ -174,14 +174,14 @@ class HomeContent extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(top: 10, right: 30, left: 30),
+                      margin: const EdgeInsets.only(top: 10, right: 25, left: 25),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           const Text(
-                            'Task harian',
+                            'Reward Progress',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 13,
                               color: Colors.white,
                             ),
                           ),
@@ -196,19 +196,20 @@ class HomeContent extends StatelessWidget {
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            // mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
                               Row(
                                 children: <Widget>[ 
-                                  const Padding(
-                                    padding: EdgeInsets.only(right: 3.0),
-                                    child: Text(
-                                      '5',
-                                      style: TextStyle(
-                                        color: Color.fromARGB(255, 255, 242, 178),
-                                        fontSize: 15.0,
-                                      ),
-                                    ),
-                                  ),
+                                  // const Padding(
+                                  //   padding: EdgeInsets.only(right: 3.0),
+                                  //   child: Text(
+                                  //     '5',
+                                  //     style: TextStyle(
+                                  //       color: Color.fromARGB(255, 255, 242, 178),
+                                  //       fontSize: 15.0,
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   SvgPicture.asset('assets/home/poin.svg', height: 15),
                                 ],
                               ),
@@ -334,7 +335,11 @@ class HomeContent extends StatelessWidget {
               aspectRatio: 16/9,
               viewportFraction: 0.8,
             ),
-            items: [1, 2, 3].map((i) {
+            items: [
+              'assets/home/carousel1.jpg',
+              'assets/carousel/image2.png',
+              'assets/carousel/image3.png'
+            ].map((imagePath) {
               return Builder(
                 builder: (BuildContext context) {
                   return Container(
@@ -344,9 +349,12 @@ class HomeContent extends StatelessWidget {
                       color: const Color.fromARGB(255, 158, 215, 99),
                       borderRadius: BorderRadius.circular(15.0), // Added border radius
                     ),
-                    child: Text(
-                      'carousel $i',
-                      style: const TextStyle(fontSize: 16.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15.0),
+                      child: Image.asset(
+                        imagePath,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   );
                 },
@@ -386,7 +394,7 @@ class ProfileScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 20.0, bottom: 30),
+                  padding: const EdgeInsets.only(top: 25.0, bottom: 30),
                   child: Text(
                     // 'Profile anda',
                     userName,
@@ -410,7 +418,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 50),
                 const Divider(), // Space between profile and buttons
                 SizedBox(
                   width: double.infinity, // Make button span full width
@@ -565,6 +573,7 @@ SizedBox(
            ] ),
    ]
          )));
+
   }
 }
 
@@ -633,7 +642,7 @@ class _VoucherPageState extends State<VoucherPage> {
   void _navigateToFortuneWheelPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ExamplePage()),
+      MaterialPageRoute(builder: (context) => const GachaPage()),
     );
   }
 
