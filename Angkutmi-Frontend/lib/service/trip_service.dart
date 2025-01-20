@@ -119,6 +119,8 @@ class TripService {
     }
   }
 
+
+  
   // void handleTripCreation(Map<String, dynamic> tripData) async {
   //   final tripResponse = await createTrip(tripData);
 

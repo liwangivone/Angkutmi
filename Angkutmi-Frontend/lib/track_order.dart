@@ -1,16 +1,75 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:math';
+import 'package:intl/intl.dart';
+import 'home.dart';
 
-// class OrderTrackingApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: OrderTrackingScreen(),
-//     );
-//   }
-// }
+class OrderTrackingScreen extends StatefulWidget {
+  @override
+  _OrderTrackingScreenState createState() => _OrderTrackingScreenState();
+}
 
-class OrderTrackingScreen extends StatelessWidget {
+class _OrderTrackingScreenState extends State<OrderTrackingScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Timer _timer;
+  late int _remainingTime;
+  late String _currentDate;
+  late String _orderNumber;
+
+  @override
+  void initState() {
+    super.initState();
+    _generateOrderNumber();
+    _generateRandomTime();
+    _updateCurrentDate();
+
+    // Initialize animation controller
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 2),
+    )..repeat();
+
+    // Start timer
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_remainingTime > 0) {
+          _remainingTime--;
+        } else {
+          _timer.cancel();
+        }
+      });
+    });
+  }
+
+  void _generateOrderNumber() {
+    final random = Random();
+    _orderNumber = (10000 + random.nextInt(900000)).toString(); // Generates a 5-6 digit number
+  }
+
+  void _generateRandomTime() {
+    final random = Random();
+    _remainingTime = 60 + random.nextInt(20 * 60 - 60); // Random time between 1 and 20 minutes in seconds
+  }
+
+  void _updateCurrentDate() {
+    final now = DateTime.now();
+    final formatter = DateFormat('EEEE, d MMMM yyyy', 'id_ID');
+    _currentDate = formatter.format(now);
+  }
+
+  String _formatRemainingTime() {
+    final minutes = (_remainingTime / 60).floor();
+    final seconds = _remainingTime % 60;
+    return '$minutes menit ${seconds.toString().padLeft(2, '0')} detik';
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _timer.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,22 +77,22 @@ class OrderTrackingScreen extends StatelessWidget {
         backgroundColor: const Color.fromARGB(255, 44, 158, 75),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back, color: Colors.white, size: 28),
+          onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyApp())),
         ),
         title: Text(
           'Lacak pesanan',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 24, fontFamily: 'Poppins'),
         ),
       ),
       body: Column(
         children: [
-          // Header with rounded background
           Container(
             decoration: BoxDecoration(
               color: const Color.fromARGB(255, 44, 158, 75),
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(30),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(40.0),
+                bottomRight: Radius.circular(40.0),
               ),
             ),
             padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
@@ -45,12 +104,12 @@ class OrderTrackingScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Kamis, 4 Desember 2024',
+                        _currentDate,
                         style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                       SizedBox(height: 5),
                       Text(
-                        'Nomor Pesanan: #25693',
+                        'Nomor Pesanan: #$_orderNumber',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -66,47 +125,54 @@ class OrderTrackingScreen extends StatelessWidget {
 
           SizedBox(height: 20),
 
-          // Order tracking steps
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 50, vertical: 60),
               child: Column(
                 children: [
-                  TrackingStep(
+                  AnimatedTrackingStep(
                     label: 'Pesanan diterima',
                     isCompleted: true,
+                    animation: _animationController,
+                    isLast: false,
                   ),
-                  TrackingStep(
+                  AnimatedTrackingStep(
                     label: 'Driver sedang menuju lokasi',
                     isCompleted: true,
+                    animation: _animationController,
+                    isLast: false,
                   ),
-                  TrackingStep(
+                  AnimatedTrackingStep(
                     label: 'Berhasil diangkut',
                     isCompleted: false,
+                    animation: _animationController,
+                    isLast: true,
                   ),
                   Spacer(),
-                  // Estimated time
                   Text(
-                    'Estimasi waktu: 11 menit',
+                    'Estimasi waktu: ${_formatRemainingTime()}',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 30),
-                  // Back to Home button
                   ElevatedButton(
-                  onPressed: () {
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => MyApp()),
+                      );
                     },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 44, 158, 75),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 44, 158, 75),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text(
+                      'Kembali ke Beranda',
+                      style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),
-                  child: const Text(
-                    'Kembali ke Beranda',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
-                SizedBox(height: 30), // Added bottom padding/margin
+                  SizedBox(height: 30),
                 ],
               ),
             ),
@@ -117,13 +183,17 @@ class OrderTrackingScreen extends StatelessWidget {
   }
 }
 
-class TrackingStep extends StatelessWidget {
+class AnimatedTrackingStep extends StatelessWidget {
   final String label;
   final bool isCompleted;
+  final AnimationController animation;
+  final bool isLast;
 
-  const TrackingStep({
+  const AnimatedTrackingStep({
     required this.label,
     required this.isCompleted,
+    required this.animation,
+    required this.isLast,
   });
 
   @override
@@ -133,7 +203,6 @@ class TrackingStep extends StatelessWidget {
       children: [
         Column(
           children: [
-            // Checkmark or Circle
             Container(
               width: 24,
               height: 24,
@@ -145,12 +214,36 @@ class TrackingStep extends StatelessWidget {
                   ? Icon(Icons.check, size: 16, color: Colors.white)
                   : null,
             ),
-            // Vertical Line
-            Container(
-              width: 2,
-              height: 50,
-              color: isCompleted ? Colors.green : Colors.grey.shade300,
-            ),
+            if (!isLast)
+              AnimatedBuilder(
+                animation: animation,
+                builder: (context, child) {
+                  return Container(
+                    width: 2,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: isCompleted
+                            ? [
+                                Colors.green,
+                                Colors.green,
+                                Colors.green.withOpacity(0.5),
+                                Colors.green,
+                              ]
+                            : [
+                                Colors.grey.shade300,
+                                Colors.grey.shade300,
+                              ],
+                        stops: isCompleted
+                            ? [0, animation.value, animation.value + 0.2, 1]
+                            : [0, 1],
+                      ),
+                    ),
+                  );
+                },
+              ),
           ],
         ),
         SizedBox(width: 20),

@@ -79,7 +79,8 @@ class _MapState extends State<Maps> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {Navigator.pop(context);
+            } ,
             child: const Text(
               "OK",
               style: TextStyle(fontFamily: 'Poppins'),

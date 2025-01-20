@@ -7,7 +7,6 @@ import 'package:angkutmi/login.dart'; // Import the login screen to redirect aft
 
 // Initialize the storage for secure token storage
 final storage = FlutterSecureStorage();
-
 // API endpoint URLs
 const String apiLoginUrl = 'http://192.168.1.7:8080/api/login';
 const String apiLogoutUrl = 'http://192.168.1.7:8080/api/logout';
