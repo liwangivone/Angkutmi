@@ -5,10 +5,10 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 import 'pemesanannantipi.dart';
 import 'service/coupon_service.dart';
+import 'service/auth_service.dart';
 import 'mapsinstan.dart';
 
 import 'gacha.dart';
-import 'track_order.dart';
 
 // Main entry point for the app
 class MyApp extends StatefulWidget {
@@ -174,14 +174,14 @@ class HomeContent extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(top: 10, right: 30, left: 30),
+                      margin: const EdgeInsets.only(top: 10, right: 25, left: 25),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           const Text(
-                            'Task harian',
+                            'Reward Progress',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 13,
                               color: Colors.white,
                             ),
                           ),
@@ -196,19 +196,20 @@ class HomeContent extends StatelessWidget {
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            // mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
                               Row(
                                 children: <Widget>[ 
-                                  const Padding(
-                                    padding: EdgeInsets.only(right: 3.0),
-                                    child: Text(
-                                      '5',
-                                      style: TextStyle(
-                                        color: Color.fromARGB(255, 255, 242, 178),
-                                        fontSize: 15.0,
-                                      ),
-                                    ),
-                                  ),
+                                  // const Padding(
+                                  //   padding: EdgeInsets.only(right: 3.0),
+                                  //   child: Text(
+                                  //     '5',
+                                  //     style: TextStyle(
+                                  //       color: Color.fromARGB(255, 255, 242, 178),
+                                  //       fontSize: 15.0,
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   SvgPicture.asset('assets/home/poin.svg', height: 15),
                                 ],
                               ),
@@ -334,7 +335,11 @@ class HomeContent extends StatelessWidget {
               aspectRatio: 16/9,
               viewportFraction: 0.8,
             ),
-            items: [1, 2, 3].map((i) {
+            items: [
+              'assets/home/carousel1.jpg',
+              'assets/carousel/image2.png',
+              'assets/carousel/image3.png'
+            ].map((imagePath) {
               return Builder(
                 builder: (BuildContext context) {
                   return Container(
@@ -344,9 +349,12 @@ class HomeContent extends StatelessWidget {
                       color: const Color.fromARGB(255, 158, 215, 99),
                       borderRadius: BorderRadius.circular(15.0), // Added border radius
                     ),
-                    child: Text(
-                      'carousel $i',
-                      style: const TextStyle(fontSize: 16.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15.0),
+                      child: Image.asset(
+                        imagePath,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   );
                 },
@@ -386,7 +394,7 @@ class ProfileScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 20.0, bottom: 30),
+                  padding: const EdgeInsets.only(top: 25.0, bottom: 30),
                   child: Text(
                     // 'Profile anda',
                     userName,
@@ -410,7 +418,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 50),
                 const Divider(), // Space between profile and buttons
                 SizedBox(
                   width: double.infinity, // Make button span full width
@@ -493,79 +501,79 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const Divider(), // Horizontal line after button 3
-                SizedBox(
-                  width: double.infinity, // Make button span full width
-                  child: TextButton(
-                    onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Konfirmasi'),
-                          content: const Text('Apakah anda yakin ingin log out?'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(); // Close the dialog
-                              },
-                              child: const Text('Batalkan'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                // Add your logout logic here
-                                Navigator.of(context).pop(); // Close the dialog
-                              },
-                              child: const Text('Log out'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                    },
-                    style: TextButton.styleFrom(
-                      // side: const BorderSide(color: Colors.grey), // Add grey border
-                      padding: const EdgeInsets.symmetric(vertical: 16.0), // Increase padding for bigger button
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0), // Change button border radius
-                      ),
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.logout, color: Color.fromARGB(255, 221, 87, 84)), // Add icon before text
-                        SizedBox(width: 8), // Add space between icon and text
-                        Text(
-                          'Log out',
-                          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 221, 87, 84)), // Make font bigger and bold
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const Divider(), // Horizontal line after button 4
-              ],
-            ),
-          ],
-        ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 90.0, vertical: 30.0),
-          child: ElevatedButton(
-            onPressed: () {
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(200, 44, 158, 75), // Change opacity to 200
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+SizedBox(
+  width: double.infinity,
+  child: TextButton(
+    onPressed: () {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Konfirmasi'),
+            content: const Text('Apakah anda yakin ingin log out?'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close dialog
+                },
+                child: const Text('Batalkan'),
               ),
-            ),
-            child: const Text(
-              'ingin menjadi driver?',
-              style: TextStyle(fontSize: 16, color: Colors.white),
-            ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(context).pop(); // Close dialog
+                  await AuthService().logout(context); // Logout and reroute
+                },
+                child: const Text('Log out'),
+              ),
+            ],
+          );
+        },
+      );
+    },
+    style: TextButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 16.0), // Bigger padding
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0), // Square button
+      ),
+    ),
+    child: const Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.logout, color: Color.fromARGB(255, 221, 87, 84)), // Icon
+        SizedBox(width: 8), // Space between icon and text
+        Text(
+          'Log out',
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 221, 87, 84), // Text color
           ),
         ),
-      ),
-    );
+      ],
+    ),
+  ),
+),
+
+        // bottomNavigationBar: Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 90.0, vertical: 30.0),
+        //   child: ElevatedButton(
+        //     onPressed: () {
+        //     },
+        //     style: ElevatedButton.styleFrom(
+        //       backgroundColor: const Color.fromARGB(200, 44, 158, 75), // Change opacity to 200
+        //       shape: RoundedRectangleBorder(
+        //         borderRadius: BorderRadius.circular(10),
+        //       ),
+        //     ),
+        //     child: const Text(
+        //       'ingin menjadi driver?',
+        //     ),
+        //   ),
+        // ),
+           ] ),
+   ]
+         )));
+
   }
 }
 
@@ -634,7 +642,7 @@ class _VoucherPageState extends State<VoucherPage> {
   void _navigateToFortuneWheelPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ExamplePage()),
+      MaterialPageRoute(builder: (context) => const GachaPage()),
     );
   }
 

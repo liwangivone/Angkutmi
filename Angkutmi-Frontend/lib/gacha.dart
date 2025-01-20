@@ -5,14 +5,14 @@ import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // For secure storage
 import 'service/gacha_service.dart'; // Import the service class for fetching wheel slices
 
-class ExamplePage extends StatefulWidget {
-  const ExamplePage({super.key});
+class GachaPage extends StatefulWidget {
+  const GachaPage({super.key});
 
   @override
   _ExamplePageState createState() => _ExamplePageState();
 }
 
-class _ExamplePageState extends State<ExamplePage> {
+class _ExamplePageState extends State<GachaPage> {
   StreamController<int> selected = StreamController<int>();
   final FlutterSecureStorage storage = FlutterSecureStorage(); // Instance of secure storage
   String token = "";
@@ -20,6 +20,9 @@ class _ExamplePageState extends State<ExamplePage> {
   String selectedReward = ''; // To store the selected reward name
   String selectedImg = ''; // To store the selected image URL
   double progress = 0.0; // Variable to hold the progress
+  int tripsCompleted = 0; // Variable to track completed trips
+
+  bool justNavigated = true;
 
   // GachaService instance to interact with the backend API
   final GachaService gachaService = GachaService();
@@ -66,6 +69,7 @@ class _ExamplePageState extends State<ExamplePage> {
       if (progressData != null) {
         setState(() {
           progress = progressData['progress'] / 100.0;  // Normalize progress (0-1)
+          tripsCompleted = progressData['trips_completed']; // Assuming trips completed is part of progress data
         });
       } else {
         print("Error: No progress data received");
@@ -76,6 +80,31 @@ class _ExamplePageState extends State<ExamplePage> {
   }
 
   void spinWheel() async {
+        if (justNavigated) {
+      return; // Skip spinning if just navigated
+    }
+    if (tripsCompleted < 3) { // Check if trips completed is less than 3
+      // Show a popup if the user hasn't completed 3 trips
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Tidak cukup trip"),
+            content: const Text("Selesaikan tiga trip untuk memutar roda"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close the dialog
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+      return; // Exit the function if not enough trips
+    }
+
     try {
       // Fetch the backend response
       final response = await gachaService.spinWheel();
@@ -139,6 +168,8 @@ class _ExamplePageState extends State<ExamplePage> {
     fetchProgress();  // Fetch the user's progress when the page loads
   }
 
+  
+
   @override
   void dispose() {
     selected.close();
@@ -147,10 +178,16 @@ class _ExamplePageState extends State<ExamplePage> {
 
   @override
   Widget build(BuildContext context) {
+        if (justNavigated) {
+      justNavigated = false; // Reset the flag
+    }
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Roda Keberuntungan'),
+        title: const Text(
+          'Roda Keberuntungan',
+          style: TextStyle(color: Colors.white), // Change font color to white
+        ),
         backgroundColor: const Color.fromARGB(255, 44, 158, 75),
       ),
       backgroundColor: const Color.fromARGB(255, 44, 158, 75),
@@ -163,7 +200,7 @@ class _ExamplePageState extends State<ExamplePage> {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 10),
+          padding: const EdgeInsets.only(left: 35, right: 35, top: 40),
           child: Column(
             children: [
               Center(
@@ -172,10 +209,13 @@ class _ExamplePageState extends State<ExamplePage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                   ),
-                  child: const Text("Spin the Wheel"),
+                  child: const Text(
+                    "Putar Roda",
+                    style: TextStyle(color: Colors.white), // Change text color to white
+                  ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 50),
 
               // Progress bar below the spin button
               ClipRRect(
@@ -188,7 +228,7 @@ class _ExamplePageState extends State<ExamplePage> {
                       valueColor: const AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 158, 215, 99)),
                       minHeight: 10.0,
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 10),
                     Text(
                       '${(progress * 100).toStringAsFixed(0)}%', // Display percentage
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -196,6 +236,22 @@ class _ExamplePageState extends State<ExamplePage> {
                   ],
                 ),
               ),
+              // Claim button when progress reaches 100%
+              if (progress >= 1.0) // Check if progress is 100%
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: ElevatedButton(
+                    onPressed: claimReward,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 231, 216, 80),
+                      minimumSize: const Size(200, 60), // Make the button bigger
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10), // Change the radius here
+                      ),
+                    ),
+                    child: const Text("Claim Reward !", style: TextStyle(fontSize: 18, color: Colors.black)), // Optional: Increase text size
+                  ),
+                ),
               Expanded(
                 child: Stack(
                   children: [
@@ -243,7 +299,7 @@ class _ExamplePageState extends State<ExamplePage> {
                                             ),
                                             const SizedBox(height: 20),
                                             selectedImg.isNotEmpty
-                                                ? Image.network(selectedImg)
+                                                ? Image.network(selectedImg) // ganti ini untuk image voucher
                                                 : const SizedBox(),
                                           ],
                                         ),
@@ -277,5 +333,96 @@ class _ExamplePageState extends State<ExamplePage> {
         ),
       ),
     );
+  }
+
+    Future<void> claimReward() async {
+    try {
+      final response = await gachaService.claimReward();
+
+      // Check if the reward claim was successful
+      if (response != null && response['status'] == 'success') {
+        // Show a dialog with the reward details
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Reward Claimed!"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    response['message'] ?? "You have successfully claimed your reward!",
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                  if (response['reward'] != null)
+                    Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        Text(
+                          "Reward: ${response['reward']['label']}",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 10),
+                        response['reward']['img'] != null
+                            ? Image.network(response['reward']['img'])
+                            : const SizedBox(),
+                      ],
+                    ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    fetchProgress(); // Refresh progress after claiming the reward
+                  },
+                  child: const Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        // Handle failure case
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Error"),
+              content: Text(response['message'] ?? "Failed to claim the reward."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } catch (e) {
+      print("Error claiming the reward: $e");
+
+      // Show an error dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Error"),
+            content: const Text("An error occurred while claiming the reward."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }
