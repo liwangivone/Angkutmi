@@ -185,13 +185,6 @@ Container(
         return const CircularProgressIndicator();
       }
 
-      if (snapshot.hasError || !snapshot.hasData) {
-        return const Text(
-          'Failed to load progress',
-          style: TextStyle(color: Colors.red),
-        );
-      }
-
       final progress = snapshot.data?['progress'] ?? 0.0;
       final tripsCompleted = snapshot.data?['trips_completed'] ?? 0;
 
@@ -208,7 +201,7 @@ Container(
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: LinearProgressIndicator(
-              value: progress / 100.0,
+              value: snapshot.hasError || !snapshot.hasData ? 0.0 : progress / 100.0,
               backgroundColor: const Color.fromARGB(255, 255, 242, 178),
               valueColor: const AlwaysStoppedAnimation<Color>(
                   Color.fromARGB(255, 158, 215, 99)),
@@ -218,7 +211,7 @@ Container(
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              SvgPicture.asset('assets/home/poin.svg', height: 15),
+              // SvgPicture.asset('assets/home/poin.svg', height: 15),
               Text(
                 '$tripsCompleted trips',
                 style: const TextStyle(
@@ -227,7 +220,7 @@ Container(
                 ),
               ),
               Text(
-                '${progress.toStringAsFixed(1)}%',
+                '${snapshot.hasError || !snapshot.hasData ? 0.0 : progress.toStringAsFixed(1)}%',
                 style: const TextStyle(
                   color: Color.fromARGB(255, 255, 242, 178),
                   fontSize: 15.0,
@@ -341,13 +334,13 @@ Container(
                   ),
                 ),
         Container(
-          margin: const EdgeInsets.only(top: 40.0), // Added margin top
+          margin: const EdgeInsets.only(top: 40.0),
           child: CarouselSlider(
             options: CarouselOptions(
               height: 200.0,
               autoPlay: true,
               enlargeCenterPage: true,
-              aspectRatio: 16/9,
+              aspectRatio: 16 / 9,
               viewportFraction: 0.8,
             ),
             items: [
@@ -369,6 +362,17 @@ Container(
                       child: Image.asset(
                         imagePath,
                         fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: const Color.fromARGB(255, 158, 215, 99),
+                            // child: const Center(
+                            //   child: Text(
+                            //     'Image not found',
+                            //     style: TextStyle(color: Colors.white),
+                            //   ),
+                            // ),
+                          );
+                        },
                       ),
                     ),
                   );
@@ -568,7 +572,7 @@ SizedBox(
     ),
   ),
 ),
-
+const Divider()
         // bottomNavigationBar: Padding(
         //   padding: const EdgeInsets.symmetric(horizontal: 90.0, vertical: 30.0),
         //   child: ElevatedButton(
