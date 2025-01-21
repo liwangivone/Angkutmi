@@ -6,6 +6,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'pemesanannantipi.dart';
 import 'service/coupon_service.dart';
 import 'service/auth_service.dart';
+import 'service/gacha_service.dart';
 import 'mapsinstan.dart';
 
 import 'gacha.dart';
@@ -22,6 +23,8 @@ class _MyAppState extends State<MyApp> {
   String userName = ''; // Variable to store the user name
 
   final _storage = const FlutterSecureStorage();
+  final gachaService = GachaService();
+
 
   // Function to fetch the user name from secure storage
   Future<void> _getUserName() async {
@@ -173,58 +176,70 @@ class HomeContent extends StatelessWidget {
                         fontSize: 19.0,
                       ),
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 10, right: 25, left: 25),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          const Text(
-                            'Reward Progress',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.white,
-                            ),
-                          ),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: const LinearProgressIndicator(
-                              value: 0.48,
-                              backgroundColor: Color.fromARGB(255, 255, 242, 178),
-                              valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 158, 215, 99)),
-                              minHeight: 10.0,
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            // mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[ 
-                                  // const Padding(
-                                  //   padding: EdgeInsets.only(right: 3.0),
-                                  //   child: Text(
-                                  //     '5',
-                                  //     style: TextStyle(
-                                  //       color: Color.fromARGB(255, 255, 242, 178),
-                                  //       fontSize: 15.0,
-                                  //     ),
-                                  //   ),
-                                  // ),
-                                  SvgPicture.asset('assets/home/poin.svg', height: 15),
-                                ],
-                              ),
-                              const Text(
-                                '48%',
-                                style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 242, 178),
-                                  fontSize: 15.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+Container(
+  margin: const EdgeInsets.only(top: 10, right: 25, left: 25),
+  child: FutureBuilder<Map<String, dynamic>>(
+    future: GachaService().fetchProgress(),  // Create an instance of GachaService and call fetchProgress
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const CircularProgressIndicator();
+      }
+
+      if (snapshot.hasError || !snapshot.hasData) {
+        return const Text(
+          'Failed to load progress',
+          style: TextStyle(color: Colors.red),
+        );
+      }
+
+      final progress = snapshot.data?['progress'] ?? 0.0;
+      final tripsCompleted = snapshot.data?['trips_completed'] ?? 0;
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text(
+            'Reward Progress',
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.white,
+            ),
+          ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: progress / 100.0,
+              backgroundColor: const Color.fromARGB(255, 255, 242, 178),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                  Color.fromARGB(255, 158, 215, 99)),
+              minHeight: 10.0,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              SvgPicture.asset('assets/home/poin.svg', height: 15),
+              Text(
+                '$tripsCompleted trips',
+                style: const TextStyle(
+                  color: Color.fromARGB(255, 255, 242, 178),
+                  fontSize: 15.0,
+                ),
+              ),
+              Text(
+                '${progress.toStringAsFixed(1)}%',
+                style: const TextStyle(
+                  color: Color.fromARGB(255, 255, 242, 178),
+                  fontSize: 15.0,
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    },
+  ),
+),
                   ],
                 ),
               ),
