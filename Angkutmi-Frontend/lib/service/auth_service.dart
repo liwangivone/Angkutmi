@@ -8,8 +8,8 @@ import 'package:angkutmi/login.dart'; // Import the login screen to redirect aft
 // Initialize the storage for secure token storage
 final storage = FlutterSecureStorage();
 // API endpoint URLs
-const String apiLoginUrl = 'http://192.168.19.157:8080/api/login';
-const String apiLogoutUrl = 'http://192.168.19.157:8080/api/logout';
+const String apiLoginUrl = 'http://127.0.0.1:8080/api/login';
+const String apiLogoutUrl = 'http://127.0.0.1:8080/api/logout';
 
 class AuthService {
   // Login function
@@ -71,7 +71,7 @@ class AuthService {
   // Register function
   Future<Map<String, dynamic>> register(
       String name, String phone, String password) async {
-    final url = Uri.parse('http://192.168.19.157:8080/api/register');
+    final url = Uri.parse('http://127.0.0.1:8080/api/register');
 
     try {
       print("Attempting to register with name: $name, phone: $phone");
@@ -114,7 +114,7 @@ Future<void> logout(BuildContext parentContext) async {
     // Revoke token logic (API call)
     final token = await storage.read(key: 'auth_token');
     final response = await http.post(
-      Uri.parse('http://192.168.19.157:8080/api/logout'),
+      Uri.parse('http://127.0.0.1:8080/api/logout'),
       headers: {
         'Authorization': 'Bearer $token',
       },
