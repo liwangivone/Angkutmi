@@ -420,6 +420,7 @@ void _onConfirm() {
       Provider.of<ActivePaketProvider>(context, listen: false)
           .addActivePaket(activePaket);
 
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("PIN berhasil")),
       );
@@ -493,9 +494,9 @@ void _onConfirm() {
           ),
           const SizedBox(height: 18),
           Padding(
-          padding: const EdgeInsets.only(bottom: 24.0), // Tambahkan jarak 24 pixel dari bawah
+          padding: const EdgeInsets.only(bottom: 24.0),
           child: ElevatedButton(
-            onPressed: () {
+            onPressed: onPressed: () {
               _onConfirm();
               if (inputPin.length == pinLength) {
                 Navigator.pushReplacement(

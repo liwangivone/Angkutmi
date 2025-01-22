@@ -262,15 +262,18 @@ void spinWheel() async {
                             ? FortuneWheel(
                                 selected: selected.stream,
                                 items: [
-                                  for (var slice in wheelSlices)
+                                  for (var index = 0; index < wheelSlices.length; index++)
                                     FortuneItem(
                                       child: Text(
-                                        slice['label'] ?? 'Unnamed Slice',
+                                        wheelSlices[index]['label'] ?? 'Unnamed Slice',
                                         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                       ),
                                       style: FortuneItemStyle(
-                                        color: const Color.fromARGB(255, 44, 158, 75), // Updated to match top green
-                                        borderColor: Colors.white,
+                                        color: index % 2 == 0 
+                                            ? const Color.fromARGB(255, 44, 158, 75) // Green for even index
+                                            : const Color.fromARGB(255, 158, 215, 99), // Alternate color for odd index
+                                        borderColor: Color.fromARGB(255, 158, 215, 99),
+                                        borderWidth: 10.0, // Change border thickness here
                                       ),
                                     ),
                                 ],
