@@ -97,6 +97,14 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
     if (price <= 0) {
       throw Exception("Harga tidak valid!");
     }
+    // Periksa apakah saldo mencukupi
+    if (danaProvider.jumlahDana < price) {
+      // Jika saldo tidak mencukupi, tampilkan pesan error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Saldo anda tidak cukup untuk melanjutkan pembayaran.")),
+      );
+      return; // Keluar dari fungsi tanpa melanjutkan proses pembayaran
+    }
 
     // Kirim data ke server terlebih dahulu
     final paymentService = PaymentService();
@@ -112,13 +120,13 @@ class _PemesananinstandetailState extends State<Pemesananinstandetail> {
       // Jika pembayaran di backend berhasil, baru kurangi dana
       danaProvider.kurangiDana(price);
       
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Pembayaran berhasil! Sisa saldo: Rp${danaProvider.jumlahDana.toStringAsFixed(0)}",
-          ),
-        ),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   // SnackBar(
+      //   //   content: Text(
+      //   //     "Pembayaran berhasil! Sisa saldo: Rp${danaProvider.jumlahDana.toStringAsFixed(0)}",
+      //   //   ),
+      //   // ),
+      // );
 
       Navigator.pushReplacement(
         context,
@@ -457,7 +465,7 @@ class _PinInputScreenState extends State<PinInputScreen> {
     if (inputPin.length == pinLength) {
       // Lakukan validasi atau navigasi
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("PIN berhasil: $inputPin")),
+        SnackBar(content: Text("PIN berhasil")),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

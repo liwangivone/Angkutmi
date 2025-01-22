@@ -253,7 +253,7 @@ class Pemesanannantipidetail extends StatelessWidget {
     } else {
       // Jika saldo tidak cukup
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Saldo tidak cukup untuk melanjutkan pembayaran")),
+        SnackBar(content: Text("Saldo anda tidak cukup untuk melanjutkan pembayaran")),
       );
     }
   },
@@ -420,11 +420,12 @@ void _onConfirm() {
       Provider.of<ActivePaketProvider>(context, listen: false)
           .addActivePaket(activePaket);
 
-      // Navigate to home screen, replacing the entire stack
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => MyApp()),
-        (route) => false,
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("PIN berhasil")),
       );
+      Navigator.of(context).pop(true);
+      // Navigator.pushReplacementNamed(context, '/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Masukkan PIN lengkap!")),
@@ -495,7 +496,15 @@ void _onConfirm() {
           Padding(
           padding: const EdgeInsets.only(bottom: 24.0),
           child: ElevatedButton(
-            onPressed: _onConfirm,
+            onPressed: onPressed: () {
+              _onConfirm();
+              if (inputPin.length == pinLength) {
+                Navigator.pushReplacement(
+                  context, 
+                  MaterialPageRoute(builder: (context) => MyApp()), 
+                );
+              }
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40),
