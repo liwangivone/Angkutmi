@@ -499,9 +499,9 @@ void _onConfirm() {
           child: ElevatedButton(
             onPressed: () {
               _onConfirm();
-              // if (inputPin.length == pinLength) {
-              //   Navigator.pushNamed(context, '/home');
-              // }
+              if (inputPin.length == pinLength) {
+                Navigator.pushNamed(context, '/home');
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
