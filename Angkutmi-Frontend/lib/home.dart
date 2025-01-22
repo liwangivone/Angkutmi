@@ -391,6 +391,39 @@ class ProfileScreen extends StatelessWidget {
 
   const ProfileScreen({super.key, required this.userName});
 
+  Future<void> _handleLogout(BuildContext contextFromBuild) async {
+    final shouldLogout = await showDialog<bool>(
+      context: contextFromBuild,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Konfirmasi'),
+          content: const Text('Apakah anda yakin ingin log out?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(false);
+              },
+              child: const Text('Batalkan'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(true);
+              },
+              child: const Text('Log out'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldLogout == true) {
+      // Use the original context for logout
+      if (contextFromBuild.mounted) {
+        await AuthService().logout(contextFromBuild);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -519,49 +552,24 @@ class ProfileScreen extends StatelessWidget {
 SizedBox(
   width: double.infinity,
   child: TextButton(
-    onPressed: () {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Konfirmasi'),
-            content: const Text('Apakah anda yakin ingin log out?'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close dialog
-                },
-                child: const Text('Batalkan'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  Navigator.of(context).pop(); // Close dialog
-                  await AuthService().logout(context); // Logout and reroute
-                },
-                child: const Text('Log out'),
-              ),
-            ],
-          );
-        },
-      );
-    },
+    onPressed: () => _handleLogout(context),
     style: TextButton.styleFrom(
-      padding: const EdgeInsets.symmetric(vertical: 16.0), // Bigger padding
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(0), // Square button
+        borderRadius: BorderRadius.circular(0),
       ),
     ),
     child: const Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.logout, color: Color.fromARGB(255, 221, 87, 84)), // Icon
-        SizedBox(width: 8), // Space between icon and text
+        Icon(Icons.logout, color: Color.fromARGB(255, 221, 87, 84)),
+        SizedBox(width: 8),
         Text(
           'Log out',
           style: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 221, 87, 84), // Text color
+            color: Color.fromARGB(255, 221, 87, 84),
           ),
         ),
       ],
