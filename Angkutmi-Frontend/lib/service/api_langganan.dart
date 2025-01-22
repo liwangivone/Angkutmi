@@ -4,7 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '/modelsnantipi.dart'; // Import model PaketModel and AlamatModel
 
 class ApiLangganan {
-  static const String apiUrl = "http://127.0.0.1:8080/api/subscriptions";
+  static const String apiUrl = "http://192.168.19.157:8080/api/subscriptions";
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   Future<Map<String, dynamic>> createSubscription(
