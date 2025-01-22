@@ -420,11 +420,11 @@ void _onConfirm() {
       Provider.of<ActivePaketProvider>(context, listen: false)
           .addActivePaket(activePaket);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("PIN berhasil: $inputPin")),
+      // Navigate to home screen, replacing the entire stack
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => MyApp()),
+        (route) => false,
       );
-      Navigator.of(context).pop(true);
-      Navigator.pushReplacementNamed(context, '/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Masukkan PIN lengkap!")),
@@ -493,17 +493,9 @@ void _onConfirm() {
           ),
           const SizedBox(height: 18),
           Padding(
-          padding: const EdgeInsets.only(bottom: 24.0), // Tambahkan jarak 24 pixel dari bawah
+          padding: const EdgeInsets.only(bottom: 24.0),
           child: ElevatedButton(
-            onPressed: () {
-              _onConfirm();
-              if (inputPin.length == pinLength) {
-                Navigator.pushReplacement(
-                  context, 
-                  MaterialPageRoute(builder: (context) => MyApp()), 
-                );
-              }
-            },
+            onPressed: _onConfirm,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40),

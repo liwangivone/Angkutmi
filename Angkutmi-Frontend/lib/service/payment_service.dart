@@ -3,7 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class PaymentService {
-  final String apiUrl = "http://192.168.251.1:8080/api/payments";
+  final String apiUrl = "http://192.168.19.157:8080/api/payments";
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   Future<Map<String, dynamic>> createPayment({
@@ -90,7 +90,7 @@ class PaymentService {
 
   // Method untuk mendapatkan detail pembayaran
   Future<Map<String, dynamic>> getPaymentDetails(int paymentId) async {
-    final url = Uri.parse("http://192.168.251.1/api/payments/$paymentId");
+    final url = Uri.parse("http://192.168.19.157/api/payments/$paymentId");
 
     try {
       // Ambil token dari penyimpanan
