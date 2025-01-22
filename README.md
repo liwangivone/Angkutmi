@@ -9,6 +9,8 @@ Aplikasi ini diberi nama "Angkutmi", yang berarti memudahkan dan memastikan peng
 
 Bagian front-end dikembangkan menggunakan Flutter, sedangkan back-end dikembangkan menggunakan Laravel 11.
 
+<img src="preview.png" alt="angkutmi :D" width="300px" align="right">
+
 # Contributors
 1. Hainzel (Team Lead, Back-end)
 2. Andrey (Front-end)
