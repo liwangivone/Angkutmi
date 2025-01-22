@@ -473,10 +473,7 @@ class _PinInputScreenState extends State<PinInputScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF2C9E4B),
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         
