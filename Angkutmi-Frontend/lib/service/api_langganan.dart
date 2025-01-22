@@ -3,13 +3,17 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '/modelsnantipi.dart'; // Import model PaketModel and AlamatModel
 
+// import '../url.dart';
+
 class ApiLangganan {
-  static const String apiUrl = "http://192.168.19.157:8080/api/subscriptions";
+
+  static const String apiUrl = "192.168.251.1:8080"; // ganti agar sama dengan ../url.dart
+
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   Future<Map<String, dynamic>> createSubscription(
       PaketModel paket, AlamatModel alamat) async {
-    final url = Uri.parse(apiUrl);
+    final url = Uri.parse("http://$apiUrl/api/subscriptions");
 
     try {
       // Get the authentication token

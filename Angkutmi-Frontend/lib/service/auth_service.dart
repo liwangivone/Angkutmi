@@ -5,11 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:angkutmi/home.dart';
 import 'package:angkutmi/login.dart'; // Import the login screen to redirect after logout
 
+import '../url.dart';
+
 // Initialize the storage for secure token storage
 final storage = FlutterSecureStorage();
+// Base API URL
+// const String baseUrl = 'http://192.168.251.1:8080';
 // API endpoint URLs
-const String apiLoginUrl = 'http://192.168.19.157:8080/api/login';
-const String apiLogoutUrl = 'http://192.168.19.157:8080/api/logout';
+const String apiLoginUrl = '$baseUrl/api/login';
+const String apiLogoutUrl = '$baseUrl/api/logout';
 
 class AuthService {
   // Login function
@@ -71,7 +75,7 @@ class AuthService {
   // Register function
   Future<Map<String, dynamic>> register(
       String name, String phone, String password) async {
-    final url = Uri.parse('http://192.168.19.157:8080/api/register');
+    final url = Uri.parse('$baseUrl/api/register');
 
     try {
       print("Attempting to register with name: $name, phone: $phone");
@@ -109,41 +113,40 @@ class AuthService {
   }
 
   // Logout function
-Future<void> logout(BuildContext parentContext) async {
-  try {
-    // Revoke token logic (API call)
-    final token = await storage.read(key: 'auth_token');
-    final response = await http.post(
-      Uri.parse('http://192.168.19.157:8080/api/logout'),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
+  Future<void> logout(BuildContext parentContext) async {
+    try {
+      // Revoke token logic (API call)
+      final token = await storage.read(key: 'auth_token');
+      final response = await http.post(
+        Uri.parse(apiLogoutUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
 
-    if (response.statusCode == 200) {
-      // Clear stored token
-      await storage.delete(key: 'auth_token');
+      if (response.statusCode == 200) {
+        // Clear stored token
+        await storage.delete(key: 'auth_token');
 
-      // Show snackbar on the parent context
+        // Show snackbar on the parent context
+        ScaffoldMessenger.of(parentContext).showSnackBar(
+          const SnackBar(content: Text('Logout successful')),
+        );
+
+        // Navigate to the login screen
+        Navigator.pushAndRemoveUntil(
+          parentContext,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+          (route) => false,
+        );
+      } else {
+        throw Exception('Failed to logout');
+      }
+    } catch (e) {
+      // Error handling
       ScaffoldMessenger.of(parentContext).showSnackBar(
-        const SnackBar(content: Text('Logout successful')),
+        const SnackBar(content: Text('An error occurred during logout')),
       );
-
-      // Navigate to the login screen
-      Navigator.pushAndRemoveUntil(
-        parentContext,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-        (route) => false,
-      );
-    } else {
-      throw Exception('Failed to logout');
     }
-  } catch (e) {
-    // Error handling
-    ScaffoldMessenger.of(parentContext).showSnackBar(
-      const SnackBar(content: Text('An error occurred during logout')),
-    );
   }
-}
-
 }

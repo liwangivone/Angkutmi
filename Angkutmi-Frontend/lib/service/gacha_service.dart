@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../url.dart';
+
 class GachaService {
-  final String baseUrl = "http://192.168.19.157:8080/api/";
+  // final String baseUrl = "http://192.168.251.1:8080"; // Base URL variable
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   // Retrieve token
@@ -20,44 +22,42 @@ class GachaService {
     }
   }
 
+  // Fetch current progress
+  Future<Map<String, dynamic>> fetchProgress() async {
+    try {
+      final token = await getToken();
+      final response = await http.get(
+        Uri.parse("$baseUrl/api/wheel/progress"), // Updated URL
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
 
-    // Fetch current progress
-// Fetch current progress
-Future<Map<String, dynamic>> fetchProgress() async {
-  try {
-    final token = await getToken();
-    final response = await http.get(
-      Uri.parse("http://192.168.19.157:8080/api/wheel/progress"),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final responseData = json.decode(response.body);
-      print({
-        'progress': responseData['progress'],
-        'trips_completed': responseData['trip_count'], // Ensure 'trip_count' is included in the API response
-      });
-      return {
-        'progress': responseData['progress'],
-        'trips_completed': responseData['trip_count'], // Ensure 'trip_count' is included in the API response
-      };
-    } else {
-      throw Exception("Failed to fetch progress: ${response.body}");
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        print({
+          'progress': responseData['progress'],
+          'trips_completed': responseData['trip_count'], // Ensure 'trip_count' is included in the API response
+        });
+        return {
+          'progress': responseData['progress'],
+          'trips_completed': responseData['trip_count'], // Ensure 'trip_count' is included in the API response
+        };
+      } else {
+        throw Exception("Failed to fetch progress: ${response.body}");
+      }
+    } catch (e) {
+      print("Error fetching progress: $e");
+      throw Exception("Error fetching progress: $e");
     }
-  } catch (e) {
-    print("Error fetching progress: $e");
-    throw Exception("Error fetching progress: $e");
   }
-}
 
   // Fetch wheel slices
   Future<List<Map<String, dynamic>>> fetchWheelSlices() async {
     try {
       final token = await getToken();
       final response = await http.get(
-        Uri.parse("http://192.168.19.157:8080/api/wheel/slices"),
+        Uri.parse("$baseUrl/api/wheel/slices"), // Updated URL
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -87,7 +87,7 @@ Future<Map<String, dynamic>> fetchProgress() async {
     try {
       final token = await getToken();
       final response = await http.post(
-        Uri.parse("http://192.168.19.157:8080/api/wheel/spin"),
+        Uri.parse("$baseUrl/api/wheel/spin"), // Updated URL
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -109,7 +109,7 @@ Future<Map<String, dynamic>> fetchProgress() async {
     try {
       final token = await getToken();
       final response = await http.post(
-        Uri.parse("http://192.168.19.157:8080/api/reward/claim"),
+        Uri.parse("$baseUrl/api/reward/claim"), // Updated URL
         headers: {
           'Authorization': 'Bearer $token',
         },

@@ -1,13 +1,15 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-//inisalah jie bg bukan user ini
+
+import '../url.dart';
+
 class TripService {
-  // static const String baseUrl = "";
+  // static const String baseUrl = "http://192.168.251.1:8080";
   final storage = FlutterSecureStorage();
 
   Future<Map<String, dynamic>> createTrip(Map<String, dynamic> tripData) async {
-    final url = Uri.parse("http://192.168.19.157:8080/api/trip");
+    final url = Uri.parse("$baseUrl/api/trip");
     final token = await storage.read(key: 'auth_token');
 
     try {
@@ -33,7 +35,7 @@ class TripService {
   }
 
   Future<Map<String, dynamic>> updateLocation(int tripId, Map<String, dynamic> locationData) async {
-    final url = Uri.parse("http://192.168.19.157:8080/api/trip/$tripId/location");
+    final url = Uri.parse("$baseUrl/api/trip/$tripId/location");
     final token = await storage.read(key: 'auth_token');
 
     try {
@@ -59,7 +61,7 @@ class TripService {
   }
 
   Future<Map<String, dynamic>> acceptTrip(int tripId, Map<String, dynamic> driverData) async {
-    final url = Uri.parse("http://192.168.19.157:8080/api/trip/$tripId/accept");
+    final url = Uri.parse("$baseUrl/api/trip/$tripId/accept");
     final token = await storage.read(key: 'auth_token');
 
     try {
@@ -85,7 +87,7 @@ class TripService {
   }
 
   Future<Map<String, dynamic>> startTrip(int tripId) async {
-    final url = Uri.parse("http://192.168.19.157:8080/api/trip/$tripId/start");
+    final url = Uri.parse("$baseUrl/api/trip/$tripId/start");
     final token = await storage.read(key: 'auth_token');
 
     try {
@@ -110,7 +112,7 @@ class TripService {
   }
 
   Future<Map<String, dynamic>> endTrip(int tripId) async {
-    final url = Uri.parse("http://192.168.19.157:8080/api/trip/$tripId/end");
+    final url = Uri.parse("$baseUrl/api/trip/$tripId/end");
     final token = await storage.read(key: 'auth_token');
 
     try {
