@@ -129,27 +129,31 @@ class TripController extends Controller
         if ($trip->vehicle_type !== $driver->vehicle->type) {
             return response()->json(['message' => 'You cannot accept this trip. Vehicle type mismatch.'], 403);
         }
-        return response()->json($request->driver_location);
     
         $request->validate([
             'driver_location' => 'required'
         ]);
     
+        // Check if the trip has already been accepted
         if ($trip->driver_id) {
             return response()->json(['message' => 'This trip has already been accepted by another driver.'], 400);
         }
     
         try {
+            // Update the trip with driver information and location
             $trip->update([
                 'driver_id' => $request->user()->id,
                 'driver_location' => $request->driver_location,
             ]);
     
+            // Load the related driver and user for response
             $trip->load('driver.user');
     
+            // Dispatch the TripAccepted event
             TripAccepted::dispatch($trip, $trip->user);
     
-            return $trip;
+            // Return the updated trip
+            return response()->json($trip, 200);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to accept the trip. Please try again.',
@@ -157,6 +161,7 @@ class TripController extends Controller
             ], 500);
         }
     }
+    
     
     /**
      * @OA\Post(

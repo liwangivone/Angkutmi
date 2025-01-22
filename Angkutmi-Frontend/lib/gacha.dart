@@ -22,8 +22,6 @@ class _ExamplePageState extends State<GachaPage> {
   double progress = 0.0; // Variable to hold the progress
   int tripsCompleted = 0; // Variable to track completed trips
 
-  bool justNavigated = true;
-
   // GachaService instance to interact with the backend API
   final GachaService gachaService = GachaService();
 
@@ -81,10 +79,6 @@ Future<void> fetchProgress() async {
 }
 void spinWheel() async {
   fetchProgress();
-  if (justNavigated) {
-    return; // Skip spinning if just navigated
-  }
-
   if (tripsCompleted < 3) { // Check if trips completed is less than 3
     // Show a popup if the user hasn't completed 3 trips
     showDialog(
@@ -138,7 +132,7 @@ void spinWheel() async {
           });
 
           // Fetch and update progress after the spin completes
-          await fetchProgress(); // Fetch the updated progress
+          fetchProgress(); // Fetch the updated progress
         }
       } else {
         print("Error: Response is null");
@@ -181,9 +175,6 @@ void spinWheel() async {
 
   @override
   Widget build(BuildContext context) {
-        if (justNavigated) {
-      justNavigated = false; // Reset the flag
-    }
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -225,15 +216,18 @@ void spinWheel() async {
                 borderRadius: BorderRadius.circular(10),
                 child: Column(
                   children: [
-                    LinearProgressIndicator(
-                      value: progress,
-                      backgroundColor: const Color.fromARGB(255, 255, 242, 178),
-                      valueColor: const AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 158, 215, 99)),
-                      minHeight: 10.0,
+                    SizedBox(
+                      width: double.infinity, // Make the progress bar full width
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        backgroundColor: const Color.fromARGB(255, 255, 242, 178),
+                        valueColor: const AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 44, 158, 75)),
+                        minHeight: 10.0,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      '${(progress * 100).toStringAsFixed(0)}%', // Display percentage
+                      '${(progress * 100).toStringAsFixed(0)}%',
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -274,8 +268,13 @@ void spinWheel() async {
                                         slice['label'] ?? 'Unnamed Slice',
                                         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                       ),
+                                      style: FortuneItemStyle(
+                                        color: const Color.fromARGB(255, 44, 158, 75), // Updated to match top green
+                                        borderColor: Colors.white,
+                                      ),
                                     ),
                                 ],
+                                animateFirst: false, // Prevent initial animation
                                 // Change the color of the wheel
                                 indicators: <FortuneIndicator>[
                                   FortuneIndicator(
@@ -285,7 +284,7 @@ void spinWheel() async {
                                     ),
                                   ),
                                 ],
-                                onAnimationEnd: () async {
+                                onAnimationEnd: () {
                                   // Show the reward in a dialog after the animation ends
                                   showDialog(
                                     barrierDismissible: true,
@@ -294,6 +293,7 @@ void spinWheel() async {
                                       return AlertDialog(
                                         title: const Text("Selamat! Anda Mendapatkan"),
                                         content: Column(
+                                          mainAxisSize: MainAxisSize.min, // Add this to prevent overflow
                                           children: [
                                             const SizedBox(height: 10),
                                             Text(
@@ -302,13 +302,16 @@ void spinWheel() async {
                                             ),
                                             const SizedBox(height: 20),
                                             selectedImg.isNotEmpty
-                                                ? Image.network(selectedImg) // ganti ini untuk image voucher
+                                                ? Image.network(selectedImg)
                                                 : const SizedBox(),
                                           ],
                                         ),
                                         actions: [
                                           TextButton(
                                             onPressed: closeDialog,
+                                            style: TextButton.styleFrom(
+                                              foregroundColor: const Color.fromARGB(255, 44, 158, 75),
+                                            ),
                                             child: const Text('OK'),
                                           ),
                                         ],
@@ -317,14 +320,16 @@ void spinWheel() async {
                                   );
 
                                   // Fetch and update progress after the animation ends
-                                  await fetchProgress(); // Fetch the updated progress
+                                  fetchProgress(); // Remove await since we don't need to wait for it
                                 },
                                 onFocusItemChanged: (value) {
                                   setReward(value); // Set reward details when the slice is selected
                                 },
                               )
-                            : const Center(
-                                child: CircularProgressIndicator(),
+                            : Center(
+                                child: CircularProgressIndicator(
+                                  color: const Color.fromARGB(255, 44, 158, 75),
+                                ),
                               ),
                       ),
                     ),
@@ -342,9 +347,7 @@ void spinWheel() async {
     try {
       final response = await gachaService.claimReward();
 
-      // Check if the reward claim was successful
       if (response != null && response['status'] == 'success') {
-        // Show a dialog with the reward details
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -377,8 +380,11 @@ void spinWheel() async {
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    fetchProgress(); // Refresh progress after claiming the reward
+                    fetchProgress();
                   },
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color.fromARGB(255, 44, 158, 75),
+                  ),
                   child: const Text("OK"),
                 ),
               ],
@@ -386,7 +392,6 @@ void spinWheel() async {
           },
         );
       } else {
-        // Handle failure case
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -398,6 +403,9 @@ void spinWheel() async {
                   onPressed: () {
                     Navigator.pop(context);
                   },
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color.fromARGB(255, 44, 158, 75),
+                  ),
                   child: const Text("OK"),
                 ),
               ],
@@ -420,6 +428,9 @@ void spinWheel() async {
                 onPressed: () {
                   Navigator.pop(context);
                 },
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color.fromARGB(255, 44, 158, 75),
+                ),
                 child: const Text("OK"),
               ),
             ],
