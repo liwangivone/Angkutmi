@@ -2,18 +2,16 @@
   <img src="angkutmi.png" alt="angkutmi :D" width="300px">
 </p>
 
-<div style="display: flex; align-items: center; justify-content: space-between;">
-  <div style="flex: 1; padding-right: 10px;">
-    <h1>Angkutmi</h1>
-    <p><strong>Proyek Akhir Semester 3:</strong> Aplikasi Mobile yang Menyediakan Layanan Pengangkutan Sampah.</p>
-    <p>Aplikasi ini diberi nama "Angkutmi", yang berarti memudahkan dan memastikan pengangkutan sampah secara andal. Aplikasi ini dibuat dengan memperhatikan dua tujuan SDG, yaitu aksi iklim (climate action) dan energi bersih dan terjangkau (affordable and clean energy).</p>
-    <p>Bagian front-end dikembangkan menggunakan Flutter, sedangkan back-end dikembangkan menggunakan Laravel 11.</p>
-  </div>
-  <div style="flex-shrink: 0;">
-    <img src="preview.png" alt="angkutmi :D" width="300px">
-  </div>
-</div>
+# Angkutmi
+Proyek Akhir Semester 3: Aplikasi Mobile yang Menyediakan Layanan Pengangkutan Sampah.
 
+Aplikasi ini diberi nama "Angkutmi", yang berarti memudahkan dan memastikan pengangkutan sampah secara andal. Aplikasi ini dibuat dengan memperhatikan dua tujuan SDG, yaitu aksi iklim (climate action) dan energi bersih dan terjangkau (affordable and clean energy).  
+
+Bagian front-end dikembangkan menggunakan Flutter, sedangkan back-end dikembangkan menggunakan Laravel 11.
+
+<p align="center">
+  <img src="preview.png" alt="angkutmi preview :D" width="300px">
+</p>
 
 # Contributors
 1. Hainzel (Team Lead, Back-end)
