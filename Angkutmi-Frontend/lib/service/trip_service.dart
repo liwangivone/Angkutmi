@@ -2,8 +2,11 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../url.dart';
+
 class TripService {
-  final String apiUrl = "http://192.168.19.157:8080/api/trip";
+  // final String baseUrl = "http://192.168.251.1:8080"; // Base URL variable
+  final String apiUrl = "$baseUrl/api/trip"; // Constructed API URL
 
   // Instance penyimpanan lokal
   final FlutterSecureStorage storage = const FlutterSecureStorage();
@@ -12,53 +15,52 @@ class TripService {
     // print("createTrip dipanggil ini tai sih cok kalau 2x");
     print("Creating trip with data: $tripData");
     
-  final url = Uri.parse(apiUrl);
+    final url = Uri.parse(apiUrl);
 
-  try {
-    final token = await storage.read(key: 'auth_token');
-    if (token == null) {
-      throw Exception('No token found. Silakan login kembali.');
-    }
+    try {
+      final token = await storage.read(key: 'auth_token');
+      if (token == null) {
+        throw Exception('No token found. Silakan login kembali.');
+      }
 
-    final response = await http.post(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": "Bearer $token",
-      },
-      body: json.encode(tripData),
-    );
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: json.encode(tripData),
+      );
 
-    if (response.statusCode == 201) {
-      final responseData = json.decode(response.body);
-      final trip = responseData['trip'];
+      if (response.statusCode == 201) {
+        final responseData = json.decode(response.body);
+        final trip = responseData['trip'];
 
-      return {
-        "success": true,
-        "trip_id": trip?['trip_id'] ?? trip?['id'], // Periksa semua kemungkinan key
-        "data": responseData,
-      };
-    } else {
-      final error = json.decode(response.body);
-      print("Error Response: $error");
+        return {
+          "success": true,
+          "trip_id": trip?['trip_id'] ?? trip?['id'], // Periksa semua kemungkinan key
+          "data": responseData,
+        };
+      } else {
+        final error = json.decode(response.body);
+        print("Error Response: $error");
+        return {
+          "success": false,
+          "message": error['message'] ?? 'Terjadi kesalahan.',
+        };
+      }
+    } catch (e) {
+      print("Exception: $e");
       return {
         "success": false,
-        "message": error['message'] ?? 'Terjadi kesalahan.',
+        "message": 'Gagal terhubung ke server: $e',
       };
     }
-  } catch (e) {
-    print("Exception: $e");
-    return {
-      "success": false,
-      "message": 'Gagal terhubung ke server: $e',
-    };
   }
-}
-
 
   Future<Map<String, dynamic>> getTripPrice(int tripid) async {
-    final url = Uri.parse("http://192.168.19.157:8080/api/trip/$tripid");
+    final url = Uri.parse("$baseUrl/api/trip/$tripid"); // Use baseUrl for trip price
 
     try {
       // Ambil token dari penyimpanan lokal
@@ -118,8 +120,6 @@ class TripService {
       };
     }
   }
-
-
   
   // void handleTripCreation(Map<String, dynamic> tripData) async {
   //   final tripResponse = await createTrip(tripData);

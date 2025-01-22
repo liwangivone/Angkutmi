@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../url.dart';
+
 class PaymentService {
-  final String apiUrl = "http://192.168.19.157:8080/api/payments";
+  // final String baseUrl = "http://192.168.251.1:8080";
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   Future<Map<String, dynamic>> createPayment({
@@ -26,7 +28,7 @@ class PaymentService {
       print('Token found: ${token.substring(0, 10)}...'); // Print sebagian token untuk debug
 
       final response = await http.post(
-        Uri.parse(apiUrl),
+        Uri.parse('$baseUrl/api/payments'),
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json", // Tambahkan ini
@@ -87,10 +89,9 @@ class PaymentService {
     }
   }
 
-
   // Method untuk mendapatkan detail pembayaran
   Future<Map<String, dynamic>> getPaymentDetails(int paymentId) async {
-    final url = Uri.parse("http://192.168.19.157/api/payments/$paymentId");
+    final url = Uri.parse("$baseUrl/api/payments/$paymentId");
 
     try {
       // Ambil token dari penyimpanan
