@@ -1,3 +1,4 @@
+import 'package:angkutmi/home.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Untuk memformat dan menghitung tanggal
 import 'modelsnantipi.dart'; // Pastikan untuk mengimpor model-model yang dibutuhkan
@@ -440,10 +441,7 @@ void _onConfirm() {
       appBar: AppBar(
         backgroundColor: const Color(0xFF2C9E4B),
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         
@@ -499,9 +497,12 @@ void _onConfirm() {
           child: ElevatedButton(
             onPressed: () {
               _onConfirm();
-              // if (inputPin.length == pinLength) {
-              //   Navigator.pushNamed(context, '/home');
-              // }
+              if (inputPin.length == pinLength) {
+                Navigator.pushReplacement(
+                  context, 
+                  MaterialPageRoute(builder: (context) => MyApp()), 
+                );
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
