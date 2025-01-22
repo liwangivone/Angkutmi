@@ -13,8 +13,11 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> with SingleTi
   late AnimationController _animationController;
   late Timer _timer;
   late int _remainingTime;
+  late int _totalTime; // Added to store initial time
   late String _currentDate;
   late String _orderNumber;
+  bool isDriverReached = false;
+  bool isAllCompleted = false;
 
   @override
   void initState() {
@@ -34,8 +37,17 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> with SingleTi
       setState(() {
         if (_remainingTime > 0) {
           _remainingTime--;
-        } else {
-          _timer.cancel();
+          
+          // Check if we've reached halfway point
+          if (_remainingTime <= (_totalTime * 19/20) && !isDriverReached) {
+            isDriverReached = true;
+          }
+          
+          // Check if timer has completed
+          if (_remainingTime == 0) {
+            isAllCompleted = true;
+            _timer.cancel();
+          }
         }
       });
     });
@@ -43,12 +55,13 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> with SingleTi
 
   void _generateOrderNumber() {
     final random = Random();
-    _orderNumber = (10000 + random.nextInt(900000)).toString(); // Generates a 5-6 digit number
+    _orderNumber = (10000 + random.nextInt(900000)).toString();
   }
 
   void _generateRandomTime() {
     final random = Random();
-    _remainingTime = 60 + random.nextInt(20 * 60 - 60); // Random time between 1 and 20 minutes in seconds
+    _remainingTime = 60 + random.nextInt(20 * 60 - 60);
+    _totalTime = _remainingTime; // Store initial time
   }
 
   void _updateCurrentDate() {
@@ -138,13 +151,13 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> with SingleTi
                   ),
                   AnimatedTrackingStep(
                     label: 'Driver sedang menuju lokasi',
-                    isCompleted: true,
+                    isCompleted: isDriverReached,  // Will be completed at halfway point
                     animation: _animationController,
                     isLast: false,
                   ),
                   AnimatedTrackingStep(
                     label: 'Berhasil diangkut',
-                    isCompleted: false,
+                    isCompleted: isAllCompleted,  // Will be completed when timer reaches 0
                     animation: _animationController,
                     isLast: true,
                   ),
@@ -154,22 +167,26 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> with SingleTi
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 30),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => MyApp()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 44, 158, 75),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                  SizedBox(
+                    height: 50,
+                    width: 280,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyApp()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 44, 158, 75),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
-                    ),
-                    child: const Text(
-                      'Kembali ke Beranda',
-                      style: TextStyle(fontSize: 16, color: Colors.white),
+                      child: const Text(
+                        'Kembali ke Beranda',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
                     ),
                   ),
                   SizedBox(height: 30),

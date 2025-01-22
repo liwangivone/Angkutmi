@@ -253,7 +253,7 @@ class Pemesanannantipidetail extends StatelessWidget {
     } else {
       // Jika saldo tidak cukup
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Saldo tidak cukup untuk melanjutkan pembayaran")),
+        SnackBar(content: Text("Saldo anda tidak cukup untuk melanjutkan pembayaran")),
       );
     }
   },
@@ -421,10 +421,10 @@ void _onConfirm() {
           .addActivePaket(activePaket);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("PIN berhasil: $inputPin")),
+        SnackBar(content: Text("PIN berhasil")),
       );
       Navigator.of(context).pop(true);
-      Navigator.pushReplacementNamed(context, '/home');
+      // Navigator.pushReplacementNamed(context, '/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Masukkan PIN lengkap!")),
