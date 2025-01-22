@@ -219,6 +219,7 @@ public function getProgress()
     $user = Auth::user();
 
     // Fetch the user's progression bar
+    $progressionBar = ProgressionBar::firstOrCreate(['user_id' => $user->id]);
     $progressionBar = ProgressionBar::where('user_id', $user->id)->first();
 
     // If the progression bar doesn't exist, return an error message
