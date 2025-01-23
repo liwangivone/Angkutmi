@@ -73,4 +73,4 @@ flutter pub get
 ```
 flutter run
 ```
-<p style="text-align: right;">made with ❤️ from the Angkutmi Team</p>
+<p align="right">made with ❤️ from the Angkutmi Team</p>
