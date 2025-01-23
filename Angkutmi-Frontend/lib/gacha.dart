@@ -149,12 +149,12 @@ void spinWheel() async {
   }
 
   // Close the dialog and update progress
-  void closeDialog() {
+  void closeDialog() {Navigator.pop(context); 
     setState(() {
       // You can optionally call the API again here if you need to update the progress after closing
       fetchWheelSlices();  // Re-fetch wheel slices if needed
     });
-    Navigator.pop(context); // Close the dialog
+    // Close the dialog
   }
 
   @override
@@ -177,6 +177,12 @@ void spinWheel() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28,), // Change icon color to yellow
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         centerTitle: true,
         title: const Text(
           'Roda Keberuntungan',

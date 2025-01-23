@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="angkutmi.png" alt="angkutmi :D" width="300px">
+  <img src="test.png" alt="angkutmi :D" width="325px">
 </p>
 
 # Angkutmi
@@ -9,9 +9,9 @@ Aplikasi ini diberi nama "Angkutmi", yang berarti memudahkan dan memastikan peng
 
 Bagian front-end dikembangkan menggunakan Flutter, sedangkan back-end dikembangkan menggunakan Laravel 11.
 
-<p align="center">
+<!-- <p align="center">
   <img src="preview.png" alt="angkutmi preview :D" width="300px">
-</p>
+</p> -->
 
 # Contributors
 1. Hainzel (Team Lead, Back-end)

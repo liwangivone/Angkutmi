@@ -344,9 +344,9 @@ Container(
               viewportFraction: 0.8,
             ),
             items: [
-              'assets/home/carousel1.jpg',
-              'assets/carousel/image2.png',
-              'assets/carousel/image3.png'
+              'assets/home/testPromo1.jpg',
+              'assets/home/testPromo2.jpg',
+              'assets/home/testPromo3.jpg',
             ].map((imagePath) {
               return Builder(
                 builder: (BuildContext context) {
