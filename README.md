@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="test.png" alt="angkutmi :D" width="325px">
+  <img src="angkutmiprev.png" alt="angkutmi :D" width="325px">
 </p>
 
 # Angkutmi
